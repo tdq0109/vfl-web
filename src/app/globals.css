@@ -2,26 +2,35 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@layer base {
+  body {
+    @apply bg-bg text-ink font-sans text-base antialiased;
+  }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  /* Máy bật Dark Mode làm popup <select> đổi nền tối trong khi chữ vẫn màu
+     sáng → chữ tàng hình, không thấy đã chọn ai. Lỗi này đã gặp thật trong
+     bản cũ. Ép phối sáng bất kể chế độ máy. */
+  select {
+    color-scheme: light;
+  }
+
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-brand;
   }
 }
 
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
-}
+/* ============================================================================
+   Chỉ đưa vào đây thứ lặp lại ở hàng chục chỗ và không đáng bọc thành React
+   component: ô nhập và ô chọn.
 
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
+   Cám dỗ lớn nhất khi mới dùng Tailwind là gom class thành .btn, .card, .badge
+   cho "gọn". Làm vậy là quay lại CSS toàn cục và mất hết lợi ích. Cụm class
+   lặp lại thì bọc thành component React, đừng bọc thành class CSS.
+   ============================================================================ */
+@layer components {
+  .field {
+    @apply w-full rounded-control border border-line bg-white px-2.5 py-2
+           text-ink placeholder:text-muted
+           focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand;
   }
 }
