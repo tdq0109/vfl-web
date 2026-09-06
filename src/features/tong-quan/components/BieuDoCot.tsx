@@ -4,15 +4,12 @@ import { cn } from '@/lib/utils';
 import { buocThuaNhan, nhanNgayNgan, phanTramCot, thangCot } from '../tong-quan';
 import type { DiemDoanhThu } from './../types';
 
-/* Biểu đồ cột doanh thu theo ngày, vẽ bằng div và token, không dùng thư viện.
-
-   Mọi thư viện biểu đồ đều mang theo hệ màu và hệ kích thước riêng, tức là một
-   hệ style thứ hai bên cạnh bộ token. Một biểu đồ cột là mấy chục dòng CSS, rẻ
-   hơn nhiều so với việc đồng bộ hai hệ style ở mỗi lần đổi layout. Khi nào cần
-   biểu đồ thật sự phức tạp thì hẵng bàn lại.
+/* Biểu đồ cột doanh thu theo ngày, vẽ bằng div và token, không dùng thư viện —
+   thư viện biểu đồ nào cũng mang theo hệ màu và hệ kích thước riêng, tức là một
+   hệ style thứ hai bên cạnh bộ token.
 
    Dữ liệu vào phải đã điền đủ ngày (dienDayChuoiNgay); component không tự vá dữ
-   liệu thưa, để lỗi lộ ra ở tầng tính chứ không im lặng ở tầng vẽ. */
+   liệu thưa. */
 
 interface Props {
   diem: DiemDoanhThu[];

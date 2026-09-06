@@ -1,27 +1,18 @@
-/* Đóng gói ZIP (PKZIP, phương thức STORE = không nén) — hàm thuần.
+/* Đóng gói ZIP (PKZIP, phương thức STORE = không nén) — hàm thuần. Port từ
+   commercial-console.html; một tệp .xlsx chỉ là một ZIP chứa mấy tệp XML.
 
-   Port từ commercial-console.html (crc32, u16, u32, buildZip). Đây là nền của
-   xlsx-writer: một tệp .xlsx chỉ là một ZIP chứa mấy tệp XML.
-
-   Tự viết thay vì dùng thư viện, giữ lý do của bản cũ: bỏ hẳn phụ thuộc mạng
-   lúc xuất tệp, và tự kiểm soát từng byte để tránh ca Excel báo "found a problem
-   with content". Dự án hiện có đúng một phụ thuộc lúc chạy (qrcode-generator).
-
-   Khác bản cũ một chỗ: bản cũ trả Blob, thứ chỉ có trong trình duyệt nên không
-   dùng lại được phía server. Ở đây trả Uint8Array, phần dựng Blob và tải về nằm
-   ở taiVe.ts.
+   Tự viết thay vì thêm thư viện để bỏ hẳn phụ thuộc mạng lúc xuất tệp và tự
+   kiểm soát từng byte. Trả Uint8Array chứ không trả Blob như bản cũ, phần dựng
+   Blob nằm ở taiVe.ts.
 
    Bốn chỗ đừng gỡ khi sửa:
 
-   1. ZIP dùng CRC-32/ISO-HDLC (đa thức đảo 0xEDB88320, khởi tạo 0xFFFFFFFF, XOR
-      đầu ra 0xFFFFFFFF). Dùng nhầm biến thể vẫn ra 4 byte trông hợp lệ, và
-      Excel từ chối tệp với thông báo chung chung.
-   2. >>> 0 ở cuối là bắt buộc: thiếu nó thì CRC ra số âm và ghi vào tệp thành 4
-      byte khác hẳn, JavaScript không báo gì.
-   3. Độ dài tính bằng byte chứ không phải ký tự. "Hội viên" dài 8 theo JS nhưng
-      tốn 10 byte UTF-8; lệch một byte là hỏng toàn bộ phần sau.
-   4. Offset trong bảng thư mục trung tâm trỏ tới vị trí local header của chính
-      mục đó; cộng thiếu phần dữ liệu là trình giải nén đọc vào giữa tệp. */
+   1. CRC-32/ISO-HDLC (đa thức đảo 0xEDB88320, init 0xFFFFFFFF, XOR ra
+      0xFFFFFFFF). Nhầm biến thể vẫn ra 4 byte trông hợp lệ và Excel từ chối tệp.
+   2. >>> 0 ở cuối là bắt buộc, thiếu nó thì CRC ra số âm.
+   3. Độ dài tính bằng byte chứ không phải ký tự: "Hội viên" dài 8 theo JS nhưng
+      tốn 10 byte UTF-8.
+   4. Offset trong bảng thư mục trung tâm trỏ tới local header của chính mục đó. */
 
 /** Một tệp trong gói. `noiDung` là văn bản — .xlsx chỉ gồm XML. */
 export interface TepZip {

@@ -22,14 +22,10 @@ import {
 import { dienDayChuoiNgay, khoangKy, soNgay } from './tong-quan';
 import type { Ky, MaKy } from './types';
 
-/* Container của Dashboard.
+/* Container của Dashboard, hai tầng hiển thị: khối "hôm nay" ai đăng nhập cũng
+   thấy, còn khối báo cáo (doanh thu, hợp đồng, công nợ) từ Trưởng nhóm trở lên.
 
-   Hai tầng hiển thị:
-     · khối “hôm nay” — ai đăng nhập cũng thấy, đó là việc phải làm trong ngày;
-     · khối báo cáo (doanh thu, hợp đồng, công nợ) — từ Trưởng nhóm trở lên,
-       khớp với `bao-cao.clb` trong `lib/auth/capabilities.ts`.
-
-   Ẩn ở đây CHỈ để đỡ chật màn; backend vẫn phải từ chối nếu người không đủ
+   Ẩn ở đây chỉ để đỡ chật màn; backend vẫn phải từ chối nếu người không đủ
    quyền gọi thẳng endpoint. */
 
 export function TongQuanScreen() {

@@ -1,13 +1,11 @@
 import type { IsoDate, Vnd } from '@/lib/api/types';
 
-/* Kiểu + khoá i18n của nhãn nhóm Sản phẩm, theo khuôn nhóm Hội viên
-   (features/hoi-vien/types.ts). Các bảng dưới đây chứa khoá i18n chứ không phải
-   chữ tiếng Việt; đọc nhãn bằng t(LOAI_SAN_PHAM_KHOA[l]).
+/* Kiểu + khoá i18n của nhãn nhóm Sản phẩm; đọc nhãn bằng
+   t(LOAI_SAN_PHAM_KHOA[l]).
 
-   Ba khái niệm giá, đừng lẫn:
-     giaNiemYet — giá treo bảng, mặc định khi bán
-     giaSan     — giá thấp nhất được phép bán, chỉ Giám đốc trở lên đặt được
-     giá sau khuyến mãi — tính ra lúc bán, không được xuống dưới giá sàn */
+   Ba khái niệm giá, đừng lẫn: giaNiemYet là giá treo bảng và mặc định khi bán;
+   giaSan là mức thấp nhất được phép bán, chỉ Giám đốc trở lên đặt được; giá sau
+   khuyến mãi tính ra lúc bán và không được xuống dưới giá sàn. */
 
 export type LoaiSanPham = 'goi-tap' | 'dich-vu' | 've-ngay' | 'phu-kien';
 

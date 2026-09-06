@@ -14,14 +14,12 @@ import {
   type ThanhToanInput,
 } from '../types';
 
-/* Toàn bộ logic ghi của nhóm Hợp đồng.
+/* Toàn bộ logic ghi của nhóm Hợp đồng. Mọi thao tác đều phát sự kiện banHopDong
+   để invalidate hợp đồng, hội viên, công nợ và tổng quan cùng lúc — bán một hợp
+   đồng đụng tới cả bốn nhánh.
 
-   Mọi thao tác đều phát sự kiện `banHopDong` → invalidate hợp đồng, hội viên,
-   công nợ và tổng quan cùng lúc (khai trong lib/query/keys.ts). Bán một hợp
-   đồng đụng tới cả bốn nhánh: hội viên có gói mới, công nợ đổi, dashboard đổi.
-
-   Lỗi ProblemDetails KHÔNG nuốt — màn đọc từ `mutation.error` để gắn vào ô nhập
-   hoặc hiện nguyên câu backend trả về (409 khi trạng thái đã đổi ở máy khác). */
+   Lỗi ProblemDetails không nuốt: màn đọc từ mutation.error để gắn vào ô nhập
+   hoặc hiện nguyên câu backend trả về. */
 
 function useLuuVaLamMoi() {
   const qc = useQueryClient();
@@ -65,7 +63,7 @@ export function useUpdateHopDong() {
 }
 
 /** Một hook cho MỌI bước của máy trạng thái — chốt bán, gửi xác minh, phát
-    hành, ký, kích hoạt, huỷ. Thêm bước ở Bước 12b không phải thêm hook. */
+    hành, ký, kích hoạt, huỷ. Thêm bước mới không phải thêm hook. */
 export function useChuyenTrangThai() {
   const luu = useLuuVaLamMoi();
   const baoLoi = useBaoLoiGhi();

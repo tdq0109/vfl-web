@@ -158,11 +158,8 @@ export function crc16(s: string): string {
 /** Đưa nội dung chuyển khoản về ASCII in hoa, cắt còn DO_DAI_NOI_DUNG_TOI_DA.
 
     Bỏ dấu là bắt buộc chứ không phải cho đẹp: độ dài TLV tính theo byte, chữ có
-    dấu chiếm nhiều byte hơn số ký tự JS đếm được. Dùng lại normalize() của
-    lib/format/text, rồi viết hoa cho hợp sao kê ngân hàng.
-
-    Ký tự lạ đổi thành dấu cách rồi gộp lại — thà mất một ký tự trong nội dung
-    còn hơn hỏng cả chuỗi. */
+    dấu chiếm nhiều byte hơn số ký tự JS đếm được. Ký tự lạ đổi thành dấu cách
+    rồi gộp lại — thà mất một ký tự còn hơn hỏng cả chuỗi. */
 export function chuanHoaNoiDung(noiDung: string): string {
   return normalize(noiDung)
     .toUpperCase()
@@ -189,13 +186,9 @@ export interface ThongTinChuyenKhoan {
   noiDung?: string;
 }
 
-/** Vì sao chưa dựng được mã QR — null nghĩa là dựng được.
-
-    Cùng lối với viSaoKhongChuyenDuoc() bên Hợp đồng: ở quầy mà thấy một ô trống
-    không nói gì thì không ai biết phải sửa chỗ nào.
-
-    Trả khoá i18n chứ không trả câu tiếng Việt, màn gọi t(lyDo). Khoá trần là đủ
-    vì không nhánh nào có chỗ điền. */
+/** Vì sao chưa dựng được mã QR — null nghĩa là dựng được. Trả khoá i18n chứ
+    không trả câu tiếng Việt; ở quầy mà thấy một ô trống không nói gì thì không
+    ai biết phải sửa chỗ nào. */
 export function viSaoKhongTaoDuocQR(tt: ThongTinChuyenKhoan): string | null {
   if (!/^\d{6}$/.test(tt.bin)) {
     return 'vietqr.loi.chuaChonNganHang';

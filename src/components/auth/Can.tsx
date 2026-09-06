@@ -4,10 +4,9 @@ import type { ReactNode } from 'react';
 import { canActInLocation, hasMinRole, type Role } from '@/lib/auth/permissions';
 import { useSession } from './SessionProvider';
 
-/* Cổng quyền khai báo — CHỈ để ẩn/hiện. Backend vẫn tự kiểm tra mọi thao tác.
+/* Cổng quyền khai báo, chỉ để ẩn/hiện — backend vẫn tự kiểm tra mọi thao tác.
 
-   <Can minRole="manager">…</Can>
-   <Can inLocation={clbId}>…</Can>  */
+   <Can minRole="manager">…</Can> · <Can inLocation={clbId}>…</Can> */
 interface CanProps {
   minRole?: Role;
   inLocation?: string;

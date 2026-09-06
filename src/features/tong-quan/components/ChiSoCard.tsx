@@ -5,13 +5,9 @@ import { useT } from '@/components/shell/NgonNguProvider';
 import { cn } from '@/lib/utils';
 import { chieuThayDoi, moTaThayDoi, phanTramThayDoi } from '../tong-quan';
 
-/* Một ô chỉ số + mức thay đổi so với kỳ trước.
-
-   Thuần trình bày, nhưng phần so sánh gọi hàm thuần: kỳ trước bằng 0 thì hiện
-   "mới", không hiện "+∞%".
-
-   tangLaTot = false cho các chỉ số mà tăng là xấu (công nợ) — tô màu theo ý
-   nghĩa, không theo dấu. */
+/* Một ô chỉ số + mức thay đổi so với kỳ trước. Kỳ trước bằng 0 thì hiện "mới"
+   chứ không hiện "+∞%". tangLaTot = false cho chỉ số mà tăng là xấu (công nợ),
+   để tô màu theo ý nghĩa chứ không theo dấu. */
 
 interface Props {
   /** Chữ ĐÃ DỊCH, không phải khoá — màn gọi `t()` rồi truyền vào. */

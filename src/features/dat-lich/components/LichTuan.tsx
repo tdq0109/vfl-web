@@ -5,15 +5,12 @@ import { gomTheoNgay } from '../lich';
 import type { Buoi } from '../types';
 import { BuoiCard } from './BuoiCard';
 
-/* Lịch tuần: 7 cột ngày, mỗi cột liệt kê buổi theo giờ.
+/* Lịch tuần: 7 cột ngày, mỗi cột liệt kê buổi theo giờ. Chọn cột-theo-ngày
+   thay vì lưới-theo-giờ vì buổi tập rải rác từ 6h tới 21h, lưới theo giờ sẽ để
+   trống phần lớn diện tích và ép cuộn ngang trên máy quầy. */
 
-   Chọn cột-theo-ngày thay vì lưới-theo-giờ vì buổi tập rải rác từ 6h tới 21h —
-   lưới theo giờ sẽ để trống phần lớn diện tích và ép cuộn ngang trên máy quầy. */
-
-/* KHOÁ i18n của bảy thứ, thứ Hai đứng đầu (tuần bắt đầu từ thứ Hai).
-
-   Kiểu bộ-bảy cố định chứ không phải `string[]`: lưới lịch dựng đúng 7 cột từ
-   mảng này, thiếu hay thừa một phần tử là lệch cả tuần — để TypeScript đếm hộ. */
+/* Khoá i18n của bảy thứ, thứ Hai đứng đầu. Kiểu bộ-bảy cố định chứ không phải
+   string[]: thiếu hay thừa một phần tử là lệch cả tuần, để TypeScript đếm hộ. */
 const THU_KHOA: readonly [string, string, string, string, string, string, string] = [
   'chung.thuHai',
   'chung.thuBa',

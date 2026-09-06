@@ -19,7 +19,7 @@
      ketoan@vfl.vn  → accountant  (xác minh & phát hành)
      gd@vfl.vn      → director    (toàn hệ thống, xem báo cáo)
 
-   Phủ đủ các endpoint của mục 5: auth, hội viên, sản phẩm và khuyến mãi, hợp
+   Phủ đủ endpoint của: auth, hội viên, sản phẩm và khuyến mãi, hợp
    đồng, tổng quan, bán vé ngày tại quầy, nhân viên (kèm ba chiều phân quyền),
    đặt lịch (kèm chống trùng lịch HLV). */
 
@@ -1324,7 +1324,7 @@ const server = createServer(async (req, res) => {
         if (!String(lyDo ?? '').trim()) {
           return problem(res, 400, 'Phải ghi lý do huỷ.', { lyDo: ['Bắt buộc.'] });
         }
-        /* BÚT TOÁN ĐẢO: giữ nguyên dòng, gắn cờ. Không xoá — xem Bước 11. */
+        /* Bút toán đảo: giữ nguyên dòng, gắn cờ, không xoá. */
         gd.daHuy = true;
         gd.lyDoHuy = lyDo;
         return json(res, 200, gd);

@@ -15,12 +15,9 @@ import {
 import type { UserProfile } from '@/lib/auth/types';
 import type { DoiVaiTroInput, NhanVien } from '../types';
 
-/* Khối gán vai trò — nơi phân quyền 3 chiều hiện ra thành giao diện:
-
-   1. Cấp bậc: danh sách chọn CHỈ chứa vai trò thấp hơn hẳn người đang thao tác;
-      không sửa được người ngang hoặc cao cấp hơn mình.
-   2. Phạm vi CLB: không thao tác được người ở CLB ngoài phạm vi mình.
-   3. Cờ toàn hệ thống: ô tích chỉ bật cho Giám đốc / CEO.
+/* Khối gán vai trò, nơi phân quyền 3 chiều hiện ra thành giao diện: danh sách
+   chọn chỉ chứa vai trò thấp hơn hẳn người đang thao tác; không thao tác được
+   người ở CLB ngoài phạm vi mình; ô tích "toàn hệ thống" chỉ bật cho Giám đốc.
 
    Đây chỉ là lớp ẩn/hiện, backend .NET vẫn phải tự kiểm tra đủ ba chiều. */
 

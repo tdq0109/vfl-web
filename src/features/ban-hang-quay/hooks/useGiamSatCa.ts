@@ -5,12 +5,10 @@ import type { BoLocGiamSat } from '../types';
 
 /* Toàn bộ phần gọi API của màn Giám sát ca. Component chỉ nhận props và vẽ. */
 
-/** Danh sách ca theo bộ lọc SERVER — ngày, CLB, thu ngân, trạng thái.
+/** Danh sách ca theo bộ lọc server: ngày, CLB, thu ngân, trạng thái.
 
-    Hai tầng lọc, cố ý: những gì backend lọc được thì để backend lọc (ngày,
-    CLB, người, trạng thái) chứ không kéo cả tháng về máy rồi mới cắt; riêng
-    "chỉ ca cần chú ý" lọc ở client vì nó là kết luận của hàm thuần chuYCuaCa()
-    và hai bên không được có hai định nghĩa khác nhau về "đáng ngờ". */
+    Riêng "chỉ ca cần chú ý" lọc ở client, vì nó là kết luận của hàm thuần
+    chuYCuaCa() và hai bên không được có hai định nghĩa khác nhau. */
 export function useDanhSachCa(boLoc: BoLocGiamSat, batDau = true) {
   /* chiCanChuY không nằm trong khoá cache: nó không đổi dữ liệu tải về, chỉ
      đổi cách hiển thị. Đưa vào là mỗi lần tích/bỏ tích lại gọi mạng một lần. */
@@ -32,10 +30,8 @@ export function useDanhSachCa(boLoc: BoLocGiamSat, batDau = true) {
   });
 }
 
-/** Một ngày làm việc của quầy: mọi ca trong ngày + trạng thái chốt.
-
-    Dùng cho màn chốt ngày của chính người trực quầy nên khác useDanhSachCa: hàm
-    kia cần cấp leader, hàm này thu ngân gọi được cho CLB của mình. */
+/** Một ngày làm việc của quầy: mọi ca trong ngày + trạng thái chốt. Thu ngân
+    gọi được cho CLB của mình, khác useDanhSachCa vốn cần cấp leader. */
 export function useNgayLamViec(ngay: string, locationId: string | undefined) {
   return useQuery({
     queryKey: keys.banHangQuay.ngayLamViec(ngay, locationId ?? ''),

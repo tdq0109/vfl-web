@@ -10,24 +10,18 @@ export type IsoDate = string;
 
 /** Tài khoản ngân hàng nhận tiền chuyển khoản của một CLB.
 
-    Backend là nguồn sự thật duy nhất của mấy con số này, và đó là thay đổi có
-    chủ ý so với hệ cũ: bản cũ để mỗi máy tự cấu hình rồi lưu trong localStorage
-    (getBank/saveBank), một quầy gõ nhầm một chữ số là khách chuyển tiền vào tài
-    khoản người lạ và không ai đối chiếu được.
+    Backend là nguồn sự thật duy nhất, khác hệ cũ vốn để mỗi máy tự cấu hình rồi
+    lưu trong localStorage: một quầy gõ nhầm một chữ số là khách chuyển tiền vào
+    tài khoản người lạ mà không ai đối chiếu được.
 
-    Đi kèm Location chứ không phải một endpoint riêng: hồ sơ người dùng đã mang
-    sẵn danh sách CLB nên màn nào cũng có ngay, không thêm lời gọi API, khoá
-    cache hay trạng thái đang tải nào.
-
-    bin là mã 6 chữ số của NAPAS — tra bảng, đừng đoán. Danh sách ngân hàng biết
-    được nằm ở @/packages/vietqr/vietqr. */
+    Đi kèm Location chứ không phải endpoint riêng, vì hồ sơ người dùng đã mang
+    sẵn danh sách CLB. bin là mã 6 chữ số của NAPAS — tra bảng, đừng đoán. */
 export interface TaiKhoanNhanTien {
   bin: string;
   soTaiKhoan: string;
   tenChuTaiKhoan: string;
 }
 
-/** Một câu lạc bộ / cơ sở. */
 export interface Location {
   id: string;
   name: string;
@@ -46,7 +40,6 @@ export interface PageQuery {
   sort?: string;
 }
 
-/** Một trang kết quả trả về. */
 export interface Paged<T> {
   items: T[];
   page: number;

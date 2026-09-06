@@ -5,10 +5,9 @@ import { useT } from '@/components/shell/NgonNguProvider';
 import { capabilitiesByGroup, roleHasCapability } from '@/lib/auth/capabilities';
 import { ROLE_KHOA, ROLE_ORDER } from '@/lib/auth/permissions';
 
-/* Bảng tra "vai trò nào làm được việc gì", chỉ đọc.
-
-   Bảng suy ra từ lib/auth/capabilities.ts, là bản sao để đối chiếu. Quyền thật
-   do backend .NET quyết; khi backend chốt danh sách thì đồng bộ lại tệp đó. */
+/* Bảng tra "vai trò nào làm được việc gì", chỉ đọc. Suy ra từ
+   lib/auth/capabilities.ts — bản sao để đối chiếu, quyền thật do backend
+   quyết. */
 export function MaTranPhanQuyen() {
   const t = useT();
   const groups = capabilitiesByGroup();

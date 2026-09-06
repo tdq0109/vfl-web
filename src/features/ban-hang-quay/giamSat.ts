@@ -5,22 +5,14 @@ import type { BoLocGiamSat, CaThuNgan, DongSoGiaoDich, GiaoDich } from './types'
 
 /* Giám sát ca — hàm thuần, không import React.
 
-   quay.ts trả lời câu hỏi của thu ngân đang đứng ở quầy: ca của tôi thu được
-   bao nhiêu, két phải có bao nhiêu. Tệp này trả lời câu hỏi của người giám sát
-   nhìn nhiều ca của nhiều người: ca nào lệch, lệch có ai giải thích không, ai
-   để ca mở qua đêm, ca nào huỷ nhiều bất thường.
+   quay.ts trả lời câu hỏi của thu ngân đang đứng ở quầy; tệp này trả lời câu
+   hỏi của người giám sát nhìn nhiều ca của nhiều người: ca nào lệch, có ai giải
+   thích không, ai để ca mở qua đêm, ca nào huỷ nhiều bất thường.
 
-   Bốn quy ước ở đây đều có lý do, đừng gỡ:
-   - Ca chưa đóng thì chênh lệch là null, không phải 0. Chưa đếm tiền thì chưa
-     biết gì; coi là khớp thì bảng tổng hợp báo "mọi ca đều khớp" trong khi nửa
-     số ca chưa đối soát.
-   - Thừa cũng đáng ngờ như thiếu (thường là thu tiền mà chưa bấm máy), nên xếp
-     hạng đều lấy trị tuyệt đối.
-   - Lệch có ghi lý do khác với lệch không ai giải thích; chỉ cái sau mới là
-     việc của giám sát.
-   - Giao dịch đã huỷ không tính vào doanh thu nhưng phải giữ trong sổ. Ngược
-     với quay.ts: bán hàng thì lọc huỷ đi, đối chiếu thì huỷ chính là thứ cần
-     soi.
+   Bốn quy ước đừng gỡ: ca chưa đóng thì chênh lệch là null chứ không phải 0;
+   thừa cũng đáng ngờ như thiếu nên xếp hạng lấy trị tuyệt đối; lệch có ghi lý
+   do khác lệch không ai giải thích, chỉ cái sau mới là việc của giám sát; giao
+   dịch đã huỷ không tính vào doanh thu nhưng phải giữ trong sổ.
 
    Ba ngưỡng dưới đây là giả định, chờ vận hành chốt. */
 
@@ -97,13 +89,11 @@ export function chuYCuaCa(
 export interface DongDoiSoat {
   ca: CaThuNgan;
   tomTat: TomTatCa;
-  /** Số giờ ca đã kéo dài. */
   soGio: number;
   /** Tiền đếm được — `null` khi ca chưa đóng. */
   tienDem: Vnd | null;
   /** Chênh lệch — null khi ca chưa đóng, vì chưa đếm thì chưa biết. */
   lech: number | null;
-  /** `null` khi chưa đóng. */
   cap: CapLech | null;
   tienHuy: Vnd;
   /** Khoá i18n của các dấu hiệu cần chú ý. */
@@ -212,10 +202,8 @@ export function soGiaoDich(dsCa: readonly CaThuNgan[]): DongSoGiaoDich[] {
   return ra.sort((a, b) => (a.luc < b.luc ? 1 : a.luc > b.luc ? -1 : 0));
 }
 
-/** Lọc danh sách ca theo bộ lọc của màn.
-
-    Lọc theo ngày mở ca (moLuc) chứ không phải ngày đóng — ca đêm mở 22h hôm
-    trước vẫn thuộc về hôm trước, đúng như cách thu ngân giao ca cho nhau. */
+/** Lọc danh sách ca theo bộ lọc của màn. Lọc theo ngày mở ca (moLuc) chứ không
+    phải ngày đóng — ca đêm mở 22h hôm trước vẫn thuộc về hôm trước. */
 export function locCa(
   dsCa: readonly CaThuNgan[],
   boLoc: BoLocGiamSat,
@@ -234,28 +222,24 @@ export function locCa(
   });
 }
 
-/** Doanh thu gộp của nhiều ca, để đối chiếu nhanh với báo cáo Tổng quan.
-
-    Cố ý không dùng tongHopGiamSat(): đây là đường tính độc lập, cộng thẳng từ
-    giao dịch còn hiệu lực. Hai đường ra hai số khác nhau nghĩa là có chỗ sai. */
+/** Doanh thu gộp của nhiều ca, cộng thẳng từ giao dịch còn hiệu lực. Cố ý
+    không dùng tongHopGiamSat(): hai đường tính ra hai số khác nhau nghĩa là có
+    chỗ sai. */
 export function doanhThuGop(dsCa: readonly CaThuNgan[]): Vnd {
   return dsCa.reduce((tong, ca) => tong + doanhThuCa(ca), 0);
 }
 
-/** Số giao dịch còn hiệu lực của nhiều ca. */
 export function soGiaoDichConHieuLuc(dsCa: readonly CaThuNgan[]): number {
   return dsCa.reduce((n, ca) => n + giaoDichConHieuLuc(ca.giaoDich).length, 0);
 }
 
-/* Gộp hai tầng dấu hiệu.
+/* Gộp hai tầng dấu hiệu: chuYCuaCa hỏi ca này tự nó có ổn không (lệch két, huỷ
+   nhiều phiếu), chuYCuaMatXich hỏi ca này đặt cạnh ca trước có ổn không (bàn
+   giao lệch, chồng giờ, chạy quá khung).
 
-   Một ca có thể sai ở hai tầng, trả lời hai câu khác nhau: chuYCuaCa hỏi ca này
-   tự nó có ổn không (lệch két, huỷ nhiều phiếu), còn chuYCuaMatXich hỏi ca này
-   đặt cạnh ca trước có ổn không (bàn giao lệch, chồng giờ, chạy quá khung).
-
-   Ghép lại thì khử trùng, và bỏ cái chung chung khi đã có cái cụ thể: "ca mở
-   quá lâu" chỉ còn nghĩa khi ca nằm ngoài mọi khung. Ca sáng chạy 13 tiếng thì
-   "chạy quá khung 5 giờ" nói đúng vấn đề hơn. */
+   Ghép lại thì khử trùng và bỏ cái chung chung khi đã có cái cụ thể: ca sáng
+   chạy 13 tiếng thì "chạy quá khung 5 giờ" nói đúng vấn đề hơn "ca mở quá
+   lâu". */
 
 export interface DongDoiSoatTrongChuoi extends DongDoiSoat {
   matXich: MatXichCa;
@@ -287,12 +271,9 @@ export function doiSoatTheoChuoi(
   }));
 }
 
-/** Một ngày của một CLB có gì đáng soi không.
-
-    Điều kiện phải xét cả hai tầng, cộng thêm khung không ai trực. Bản đầu chỉ
-    xét chuYCuaCa nên bộ lọc "chỉ ca cần chú ý" giấu mất đúng ca lệch bàn giao:
-    ca ấy tự nó khớp két, dấu hiệu nằm ở khớp nối với ca trước. Khung trống thì
-    không thuộc ca nào nên cũng không có dấu hiệu nào mang nó. */
+/** Một ngày của một CLB có gì đáng soi không. Phải xét cả hai tầng cộng thêm
+    khung không ai trực: chỉ xét chuYCuaCa thì bộ lọc "chỉ ca cần chú ý" giấu
+    mất đúng ca lệch bàn giao, vì ca ấy tự nó khớp két. */
 export function ngayCanChuY(ngay: {
   khungTrong: readonly unknown[];
   dong: readonly DongDoiSoatTrongChuoi[];

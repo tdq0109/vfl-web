@@ -1,12 +1,10 @@
 import type { IsoDate } from '@/lib/api/types';
 
-/* Kiểu + khoá i18n của nhãn nhóm Đặt lịch, theo khuôn nhóm Hội viên
-   (features/hoi-vien/types.ts). Các bảng dưới đây chứa khoá i18n chứ không phải
-   chữ tiếng Việt; đọc nhãn bằng t(LOAI_BUOI_KHOA[l]).
+/* Kiểu + khoá i18n của nhãn nhóm Đặt lịch; đọc nhãn bằng t(LOAI_BUOI_KHOA[l]).
 
    Thời gian dùng chuỗi 'YYYY-MM-DDTHH:mm' theo giờ địa phương, không kèm múi
    giờ, không dùng Date để lưu: cả hệ chạy một múi giờ, và so sánh chuỗi cùng
-   định dạng cho đúng thứ tự thời gian mà không lệch ngày như toISOString(). */
+   định dạng không lệch ngày như toISOString(). */
 
 export type IsoDateTime = string;
 
@@ -19,10 +17,9 @@ export const LOAI_BUOI_KHOA: Record<LoaiBuoi, string> = {
   sgt: 'datLich.loai.sgt',
 };
 
-/** Bản viết tắt — pill trên thẻ buổi, chỗ chỉ vừa vài ký tự.
-
-    Hai bảng riêng chứ không phải một, vì cùng một loại buổi có hai cách gọi tuỳ
-    chỗ đứng: "PT (1 kèm 1)" trong ô chọn nhưng chỉ "PT" trên pill. */
+/** Bản viết tắt cho pill trên thẻ buổi. Hai bảng riêng vì cùng một loại buổi
+    có hai cách gọi tuỳ chỗ đứng: "PT (1 kèm 1)" trong ô chọn, chỉ "PT" trên
+    pill. */
 export const LOAI_BUOI_NGAN_KHOA: Record<LoaiBuoi, string> = {
   pt: 'datLich.loaiNgan.pt',
   lop: 'datLich.loaiNgan.lop',
@@ -47,7 +44,6 @@ export const TRANG_THAI_BUOI_KHOA: Record<TrangThaiBuoi, string> = {
   'da-xong': 'datLich.trangThai.da-xong',
 };
 
-/** Một chỗ đã đặt trong buổi. */
 export interface ChoDat {
   id: string;
   hoiVienId: string;
@@ -58,7 +54,6 @@ export interface ChoDat {
   giuChoDenLuc?: IsoDateTime;
 }
 
-/** Một người trong hàng chờ. */
 export interface ChoDoi {
   id: string;
   hoiVienId: string;
@@ -112,7 +107,6 @@ export interface BuoiInput {
   sucChua: number;
 }
 
-/** Huấn luyện viên chọn được khi xếp lịch. */
 export interface HuanLuyenVien {
   id: string;
   hoTen: string;

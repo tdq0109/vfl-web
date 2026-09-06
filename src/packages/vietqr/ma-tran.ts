@@ -1,29 +1,18 @@
 import qrcode from 'qrcode-generator';
 import { chuoiVietQRHopLe } from './vietqr';
 
-/* Ma trận ô đen/trắng của mã QR — hàm thuần, không chạm DOM.
+/* Ma trận ô đen/trắng của mã QR — hàm thuần, không chạm DOM. Phần vẽ ở MaQR.tsx.
 
-   Bản cũ vẽ QR bằng thư viện QRious tải từ CDN. Không có bản cục bộ nào để
-   port, và CDN thì không dùng được: bản thật chạy sau tường lửa CLB, mất mạng
-   ra ngoài là quầy mất luôn mã QR thu tiền.
+   Bản cũ vẽ QR bằng QRious tải từ CDN, không dùng lại được: bản thật chạy sau
+   tường lửa CLB, mất mạng ra ngoài là quầy mất luôn mã QR thu tiền. Nay dùng
+   qrcode-generator — không có phụ thuộc con, và chính là bản gốc mà QRious dẫn
+   xuất ra.
 
-   Nay dùng qrcode-generator — không có phụ thuộc con, và chính là bản gốc mà
-   QRious cùng phần lớn thư viện QR khác dẫn xuất ra. Việc mã hoá QR gồm
-   Reed-Solomon, chọn mặt nạ và bố trí ma trận, đúng loại thuật toán phải port
-   nguyên văn chứ đừng viết lại.
-
-   Tầng này chỉ đổi chuỗi thành lưới boolean, phần vẽ nằm ở MaQR.tsx.
-
-   Ba chỗ đừng gỡ khi sửa:
-
-   1. Vẽ mã hỏng còn tệ hơn không vẽ. Mã QR nhìn thì mã nào cũng như mã nào;
-      khách quét ra chuỗi rác, hoặc tệ hơn là ra một lệnh chuyển tiền sai. Nên
-      chuỗi phải qua chuoiVietQRHopLe() trước khi dựng ma trận.
-   2. Mức sửa lỗi giữ 'M' như bản cũ. Hạ xuống 'L' cho mã nhỏ lại là mã in ra
-      giấy nhiệt bị nhoè một góc thì hết quét được.
-   3. Bộ đổi chuỗi-thành-byte mặc định của thư viện chỉ đúng với ASCII/latin.
-      chuoiVietQR() đã ép ASCII nhưng tầng này nhận chuỗi từ bên ngoài nên phải
-      tự kiểm lại. */
+   Ba chỗ đừng gỡ khi sửa: chuỗi phải qua chuoiVietQRHopLe() trước khi dựng ma
+   trận, vì mã hỏng thì khách quét ra chuỗi rác hoặc một lệnh chuyển tiền sai;
+   mức sửa lỗi giữ 'M', hạ xuống 'L' là in giấy nhiệt nhoè một góc hết quét
+   được; chuỗi phải là ASCII vì bộ đổi chuỗi-thành-byte của thư viện chỉ đúng
+   với ASCII/latin. */
 
 /** Mức sửa lỗi. Giữ 'M' như bản cũ. */
 export const MUC_SUA_LOI = 'M';

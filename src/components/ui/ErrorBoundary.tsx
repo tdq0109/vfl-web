@@ -11,7 +11,7 @@ interface Props {
   children: ReactNode;
   fallback?: ReactNode;
   /* Gọi khi người dùng bấm "Thử lại" — nơi để reset state/refetch đã gây lỗi
-     (Bước 4 nối với reset của TanStack Query). */
+     (chỗ gọi có thể nối với reset của TanStack Query). */
   onReset?: () => void;
 }
 
@@ -19,11 +19,9 @@ interface State {
   error: Error | null;
 }
 
-/* Khung báo lỗi tách riêng thành hàm vì class component KHÔNG gọi được hook.
-
-   Dịch được ở đây là nhờ `useNgonNgu()` rơi về tiếng Việt thay vì ném khi đứng
-   ngoài provider — chủ ý đã ghi ở `NgonNguProvider`. Nếu nó ném thì màn báo lỗi
-   sẽ tự nó gây lỗi, đúng lúc không còn boundary nào đỡ nữa. */
+/* Khung báo lỗi tách thành hàm riêng vì class component không gọi được hook.
+   Dịch được là nhờ useNgonNgu() rơi về tiếng Việt thay vì ném khi đứng ngoài
+   provider — nếu nó ném thì màn báo lỗi tự gây lỗi. */
 function KhungLoi({ error, onReset }: { error: Error; onReset: () => void }) {
   const t = useT();
 

@@ -12,20 +12,12 @@ import {
 import { DEFAULT_LOCALE, t as tGoc, type Locale, type ThamSo } from '@/lib/i18n';
 import { dangKy, docDaLuu, luu, ngonNguHieuLuc } from '@/lib/i18n/ngonNgu';
 
-/* Ngôn ngữ đang chọn, nhớ trong cookie.
+/* Ngôn ngữ đang chọn, nhớ trong cookie. Cùng khuôn với LocationProvider.
 
-   Dựng theo khuôn LocationProvider: useSyncExternalStore đọc kho ngoài React,
-   nên server và lần render hydrate đầu tiên dùng ảnh chụp server, hydrate xong
-   React tự đọc ảnh chụp client. Không useEffect để đặt state, không lệch
-   hydration.
-
-   Ảnh chụp server là một prop chứ không phải hằng null. Đó là toàn bộ ý nghĩa
-   của việc chuyển sang cookie: server đọc được lựa chọn (lib/i18n/ngonNguServer)
-   nên dựng HTML đúng ngôn ngữ ngay từ đầu rồi truyền chính giá trị đó xuống
-   đây, hai bên khớp nhau nên không còn nhịp tiếng Việt nháy lên.
-
-   ngonNguBanDau phải là giá trị server đã dùng để dựng HTML, không phải giá trị
-   đọc lại ở client — đọc lại là quay về đúng lệch hydration. */
+   Khác một điểm: ảnh chụp server là một prop chứ không phải hằng null, vì server
+   đọc được cookie nên dựng HTML đúng ngôn ngữ ngay từ đầu rồi truyền chính giá
+   trị đó xuống đây. ngonNguBanDau phải là giá trị server đã dùng — đọc lại ở
+   client là quay về lệch hydration. */
 
 interface NgonNguContextValue {
   ngonNgu: Locale;
@@ -53,11 +45,8 @@ export function NgonNguProvider({ children, ngonNguBanDau = DEFAULT_LOCALE }: Pr
     luu(moi);
   }, []);
 
-  /* Đồng bộ thuộc tính lang của thẻ <html>. Server đã dựng nó đúng ngay từ
-     đầu, nên effect này chỉ còn lo phần bấm nút đổi ngôn ngữ giữa chừng.
-
-     Trình đọc màn hình chọn giọng theo thuộc tính này, để sai là máy đọc tiếng
-     Anh bằng giọng tiếng Việt. */
+  /* Đồng bộ thuộc tính lang của <html> cho lần bấm đổi ngôn ngữ giữa chừng;
+     lần dựng HTML đầu server đã đặt đúng rồi. */
   useEffect(() => {
     document.documentElement.lang = ngonNgu;
   }, [ngonNgu]);
@@ -76,10 +65,8 @@ export function NgonNguProvider({ children, ngonNguBanDau = DEFAULT_LOCALE }: Pr
 
 /** Ngôn ngữ hiện tại + hàm đổi + t() đã gắn ngôn ngữ.
 
-    Ngoài provider thì rơi về tiếng Việt thay vì ném: nhiều component nền
-    (ErrorBoundary, màn đăng nhập) phải vẽ được kể cả khi cây provider chưa dựng
-    xong hoặc đã hỏng. Khác useLocationScope() có chủ ý — thiếu phạm vi CLB là
-    số liệu sai, còn thiếu ngôn ngữ chỉ là hiện tiếng Việt. */
+    Ngoài provider thì rơi về tiếng Việt thay vì ném, vì ErrorBoundary và màn
+    đăng nhập phải vẽ được kể cả khi cây provider hỏng. */
 export function useNgonNgu(): NgonNguContextValue {
   const ctx = useContext(NgonNguContext);
   if (ctx) return ctx;

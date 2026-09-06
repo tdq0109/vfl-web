@@ -5,12 +5,10 @@ import * as Dialog from '@radix-ui/react-dialog';
 import { useT } from '@/components/shell/NgonNguProvider';
 import { Button } from './Button';
 
-/* Hộp thoại xác nhận cho hành động khó lùi (ngừng bán, đổi giá sàn…).
-   Cùng nền Radix với Drawer nên hành vi bàn phím / focus giống nhau.
+/* Hộp thoại xác nhận cho hành động khó lùi. Cùng nền Radix với Drawer.
 
-   Nhãn mặc định lấy bằng t() trong thân hàm, không đặt ở giá trị mặc định của
-   tham số: giá trị mặc định tính một lần lúc nạp module nên chữ bị đóng băng
-   theo ngôn ngữ lúc đó, đổi ngôn ngữ xong hộp thoại vẫn ghi "Huỷ". */
+   Nhãn mặc định gọi t() trong thân hàm chứ không đặt ở giá trị mặc định của
+   tham số — mặc định tính một lần lúc nạp module nên chữ bị đóng băng. */
 
 interface ConfirmDialogProps {
   open: boolean;

@@ -166,14 +166,12 @@ export function HopDongScreen() {
   const result = list.data;
   const hd = detail.data;
 
-  /* Tài khoản nhận chuyển khoản tra theo CLB CỦA HỢP ĐỒNG, không theo CLB đang
-     chọn trên thanh trên. Giám đốc xem ở chế độ "Tất cả CLB" mà mở hợp đồng của
-     Quận 7 thì hai thứ đó khác nhau — lấy nhầm là khách chuyển tiền về CLB
-     khác, và kế toán CLB bán không thấy tiền đâu.
+  /* Tài khoản nhận chuyển khoản tra theo CLB của hợp đồng, không theo CLB đang
+     chọn trên thanh trên: Giám đốc xem ở chế độ "Tất cả CLB" mà mở hợp đồng của
+     Quận 7 thì hai thứ đó khác nhau, lấy nhầm là khách chuyển tiền về CLB khác.
 
-     Dữ liệu đi kèm hồ sơ người dùng nên không cần gọi API: xem `Location`
-     trong `lib/api/types.ts`. Không tìm thấy CLB (backend chưa cấu hình) thì
-     để trống — `KhoiChuyenKhoan` tự nói lý do. */
+     Dữ liệu đi kèm hồ sơ người dùng nên không cần gọi API. Không tìm thấy CLB
+     thì để trống, KhoiChuyenKhoan tự nói lý do. */
   const taiKhoanCuaHopDong = hd
     ? taiKhoanNhanTienCua(hd.locationId, user.locations)
     : undefined;

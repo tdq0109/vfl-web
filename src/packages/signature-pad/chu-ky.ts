@@ -110,12 +110,10 @@ export function veVua(anh: KichThuoc, khung: KichThuoc): OAnh | null {
 export const NGUONG_NEN_TRANG = 232;
 
 /** Đục trong nền giấy của ảnh chữ ký chụp/scan, sửa tại chỗ trên mảng RGBA.
-
     Phải xét đủ ba kênh, bỏ một kênh là xoá luôn nét ký màu vàng hoặc lam nhạt.
-    So sánh dùng > chặt như bản cũ: đúng 232 thì giữ lại.
 
-    Trả về số điểm ảnh đã đục trong, để chỗ gọi biết ảnh có đúng là nền giấy
-    không — 0 nghĩa là ảnh nền tối, đừng dùng nó làm chữ ký. */
+    Trả về số điểm ảnh đã đục trong; 0 nghĩa là ảnh nền tối, đừng dùng nó làm
+    chữ ký. */
 export function xoaNenTrang(rgba: Uint8ClampedArray, nguong: number = NGUONG_NEN_TRANG): number {
   let daXoa = 0;
   for (let i = 0; i + 3 < rgba.length; i += 4) {

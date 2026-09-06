@@ -10,9 +10,8 @@ import type { DoiVaiTroInput, NhanVien, NhanVienInput, NhanVienStatus } from '..
 /* Toàn bộ logic ghi của nhóm Nhân viên. Lỗi ProblemDetails không nuốt, màn đọc
    mutation.error để gắn vào ô nhập.
 
-   Chữ của toast lấy qua useT() bên trong hook, không gọi t() ở module scope:
-   gọi ngoài hook là đóng băng chuỗi theo ngôn ngữ lúc nạp tệp, đổi ngôn ngữ
-   xong vẫn thấy toast tiếng cũ và chỉ lộ ra đúng lúc thao tác thành công. */
+   Toast lấy chữ qua useT() bên trong hook, không gọi t() ở module scope — gọi
+   ngoài hook là đóng băng chuỗi theo ngôn ngữ lúc nạp tệp. */
 
 export function useCreateNhanVien() {
   const qc = useQueryClient();

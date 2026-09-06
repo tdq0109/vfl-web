@@ -10,17 +10,10 @@ import type { HopDong } from '../types';
 
 /* Bước ký — khung ký tay của hội viên (bên B).
 
-   Trước khi có gói signature-pad, bước này chỉ ghi nhận trạng thái và ngày,
-   quầy vẫn phải in ra ký giấy. Nay ký được trên màn.
-
-   Ký trên màn là tuỳ chọn, không bắt buộc: ép chữ ký điện tử là quyết định vận
-   hành và pháp lý chứ không phải quyết định của frontend, CLB nào còn dùng bản
-   giấy vẫn phải đi tiếp được. Vì vậy CHUYEN_TIEP và viSaoKhongChuyenDuoc()
-   không đổi, nút "Ký giấy" bên dưới đi đúng đường cũ. Khi vận hành chốt bắt
-   buộc ký màn thì thêm điều kiện vào hop-dong.ts, đừng thêm if ở component này.
-
-   Chữ ký bên A (đại diện CLB) hệ cũ lấy sẵn từ cấu hình thương hiệu và gắn lúc
-   phát hành; phần cấu hình đó chưa port. */
+   Ký trên màn là tuỳ chọn: ép chữ ký điện tử là quyết định vận hành và pháp lý,
+   CLB nào còn dùng bản giấy vẫn phải đi tiếp được. Vì vậy CHUYEN_TIEP và
+   viSaoKhongChuyenDuoc() không đổi, nút "Ký giấy" đi đường cũ; khi vận hành
+   chốt bắt buộc ký màn thì thêm điều kiện vào hop-dong.ts. */
 
 interface Props {
   hopDong: HopDong;

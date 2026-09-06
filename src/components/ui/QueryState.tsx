@@ -6,13 +6,11 @@ import { useT } from '@/components/shell/NgonNguProvider';
 import { ApiError } from '@/lib/api/errors';
 import { Button } from './Button';
 
-/* Gom ba trạng thái tải / lỗi / rỗng của mọi màn đọc dữ liệu vào một chỗ. Nhận
-   cờ boolean thuần để không phụ thuộc TanStack Query — Bước 4 nối vào chỉ việc
-   truyền `query.isLoading`, `query.isError`, v.v.
+/* Gom ba trạng thái tải / lỗi / rỗng vào một chỗ. Nhận cờ boolean thuần để
+   không phụ thuộc TanStack Query.
 
-   Ba nhãn mặc định lấy bằng t() trong thân hàm, không đặt ở giá trị mặc định
-   của tham số: mặc định tính một lần lúc nạp module nên chữ bị đóng băng theo
-   ngôn ngữ lúc đó. */
+   Ba nhãn mặc định gọi t() trong thân hàm, không đặt ở giá trị mặc định của
+   tham số — mặc định tính một lần lúc nạp module nên chữ bị đóng băng. */
 interface QueryStateProps {
   isLoading: boolean;
   isError: boolean;

@@ -4,10 +4,8 @@ import { cn } from '@/lib/utils';
 import { tinhTongHopDong } from '../hop-dong';
 import type { DongHopDong, KhuyenMaiApDung } from '../types';
 
-/* Bảng tổng tiền, thay cho class .totals của bản cũ.
-
-   Thuần trình bày, nhưng con số thì tự tính bằng tinhTongHopDong(): tổng không
-   được lưu ở đâu cả, mọi nơi hiển thị phải đi qua đúng một hàm. */
+/* Bảng tổng tiền. Thuần trình bày, nhưng con số tự tính bằng tinhTongHopDong():
+   tổng không được lưu ở đâu cả, mọi nơi hiển thị phải đi qua đúng một hàm. */
 
 interface Props {
   dong: readonly DongHopDong[];

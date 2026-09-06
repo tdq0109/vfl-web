@@ -17,13 +17,11 @@ import type {
   MoCaInput,
 } from '../types';
 
-/* Toàn bộ logic ghi của quầy.
+/* Toàn bộ logic ghi của quầy. Mọi thao tác đều làm mới ca đang mở: bán một vé
+   xong thì tiền mặt kỳ vọng cuối ca đổi ngay.
 
-   Mọi thao tác đều làm mới ca đang mở: bán một vé xong thì tiền mặt kỳ vọng
-   cuối ca đổi ngay, thu ngân phải thấy con số mới trước khi đếm két.
-
-   Chữ của toast lấy qua useT() bên trong từng hook, không đặt ở useLamMoiCa (nó
-   không hiện chữ nào) và không gọi t() ở module scope. */
+   Chữ của toast lấy qua useT() bên trong từng hook, không gọi t() ở module
+   scope. */
 
 function useLamMoiCa() {
   const qc = useQueryClient();
@@ -101,11 +99,9 @@ export function useHuyGiaoDich(locationId: string) {
   );
 }
 
-/** Chuyển ca: chốt ca đang chạy rồi mở ngay ca kế tiếp.
-
-    Toast nói rõ cả hai vế — ca nào vừa chốt, ca nào vừa mở, tiền bàn giao bao
-    nhiêu. Chỉ báo "đã chuyển ca" thì người trực không biết mình đang đứng trên
-    ca nào và két đang được tính từ con số nào. */
+/** Chuyển ca: chốt ca đang chạy rồi mở ngay ca kế tiếp. Toast nói rõ cả hai
+    vế và tiền bàn giao, vì chỉ báo "đã chuyển ca" thì người trực không biết
+    mình đang đứng trên ca nào. */
 export function useChuyenCa() {
   const lamMoi = useLamMoiCa();
   const t = useT();

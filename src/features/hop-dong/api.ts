@@ -8,10 +8,9 @@ import type {
   ThanhToanInput,
 } from './types';
 
-/* Nơi duy nhất biết đường dẫn endpoint của nhóm Hợp đồng.
-
-   Cố ý chưa có endpoint sửa hay huỷ phiếu thu đã ghi, huỷ hoá đơn đã phát hành
-   hay trả góp — những việc đó phải làm bằng bút toán đảo. */
+/* Nơi duy nhất biết đường dẫn endpoint của nhóm Hợp đồng. Cố ý chưa có endpoint
+   sửa hay huỷ phiếu thu đã ghi, huỷ hoá đơn đã phát hành hay trả góp — những
+   việc đó phải làm bằng bút toán đảo. */
 
 const BASE = '/hop-dong';
 

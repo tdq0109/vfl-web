@@ -4,15 +4,11 @@ import { clearSession, getRefreshToken, setSession } from '@/lib/auth/session';
 import type { DotnetAuthResponse } from '@/lib/auth/types';
 import { internalPath } from '@/lib/auth/paths';
 
-/* Làm mới phiên rồi quay lại trang người dùng đang muốn vào.
+/* Làm mới phiên rồi 307 về trang người dùng đang muốn vào.
 
-   Cần route GET riêng (ngoài /auth/refresh dạng POST) vì đây là điều hướng
-   trình duyệt: server component không đặt được cookie, nên khi access token hết
-   hạn thì middleware đá sang đây, route handler làm mới cookie rồi 307 về chỗ
-   cũ.
-
-   Luôn kết thúc: hoặc đặt được access token mới, hoặc xoá sạch phiên và về
-   /dang-nhap. Không có nhánh nào quay lại chính nó. */
+   Phải là GET riêng chứ không dùng /auth/refresh dạng POST, vì đây là điều
+   hướng trình duyệt và server component không đặt được cookie. Luôn kết thúc:
+   hoặc có access token mới, hoặc xoá sạch phiên và về /dang-nhap. */
 export async function GET(req: NextRequest): Promise<NextResponse> {
   const back = internalPath(req.nextUrl.searchParams.get('tu'));
   const refreshToken = await getRefreshToken();

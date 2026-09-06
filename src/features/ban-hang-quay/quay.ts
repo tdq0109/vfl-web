@@ -1,34 +1,21 @@
 import type { Vnd } from '@/lib/api/types';
 import { VAO_KET, type CaThuNgan, type DongHang, type GiaoDich, type PhuongThuc } from './types';
 
-/* Tính tiền tại quầy — hàm thuần, không import React.
+/* Tính tiền tại quầy — hàm thuần, không import React. Ba hàm moTaChenhLech,
+   viSaoKhongBanDuoc và viSaoKhongDongDuocCa trả khoá i18n chứ không trả câu.
 
-   Ba hàm moTaChenhLech, viSaoKhongBanDuoc và viSaoKhongDongDuocCa trả khoá i18n
-   chứ không trả câu tiếng Việt; màn gọi t(khoa). null vẫn giữ nghĩa "không có
-   lỗi". Cùng cách với san-pham/gia.ts và dat-lich/lich.ts.
+   Hai chỗ đừng gỡ khi sửa: chỉ tiền mặt vào két (cộng cả chuyển khoản và thẻ
+   vào tiền mặt kỳ vọng thì ca nào cũng báo thiếu và thu ngân bị nghi oan); giao
+   dịch đã huỷ không tính vào bất kỳ tổng nào. */
 
-   Đây là chỗ tiền mặt thật đi qua tay người. Sai một phép tính là cuối ca thu
-   ngân phải bù tiền túi, hoặc tiền thất thoát mà không ai biết.
-
-   Hai chỗ đừng gỡ khi sửa:
-
-   1. Chỉ tiền mặt vào két; chuyển khoản và quẹt thẻ vào tài khoản ngân hàng.
-      Cộng chúng vào tiền mặt kỳ vọng thì ca nào cũng báo thiếu tiền đúng bằng
-      doanh thu không tiền mặt, và thu ngân bị nghi oan.
-   2. Giao dịch đã huỷ không tính vào bất kỳ tổng nào. Quên lọc thì huỷ xong vẫn
-      đòi thu ngân số tiền đã trả lại cho khách. */
-
-/** Thành tiền một dòng hàng. */
 export function thanhTien(dong: Pick<DongHang, 'donGia' | 'soLuong'>): Vnd {
   return dong.donGia * dong.soLuong;
 }
 
-/** Tổng tiền giỏ hàng. */
 export function tongGioHang(dong: readonly DongHang[]): Vnd {
   return dong.reduce((tong, d) => tong + thanhTien(d), 0);
 }
 
-/** Số món trong giỏ (cộng dồn số lượng). */
 export function soMon(dong: readonly DongHang[]): number {
   return dong.reduce((n, d) => n + d.soLuong, 0);
 }
@@ -38,7 +25,6 @@ export function giaoDichConHieuLuc(giaoDich: readonly GiaoDich[]): GiaoDich[] {
   return giaoDich.filter((g) => !g.daHuy);
 }
 
-/** Doanh thu theo một phương thức thanh toán. */
 export function doanhThuTheoPhuongThuc(
   giaoDich: readonly GiaoDich[],
   phuongThuc: PhuongThuc,
@@ -48,7 +34,6 @@ export function doanhThuTheoPhuongThuc(
     .reduce((tong, g) => tong + g.tongTien, 0);
 }
 
-/** Tổng doanh thu mọi phương thức. */
 export function doanhThuCa(ca: Pick<CaThuNgan, 'giaoDich'>): Vnd {
   return giaoDichConHieuLuc(ca.giaoDich).reduce((tong, g) => tong + g.tongTien, 0);
 }
@@ -78,11 +63,8 @@ export function loaiChenhLech(lech: number): LoaiChenhLech {
   return lech > 0 ? 'thua' : 'thieu';
 }
 
-/** Khoá i18n mô tả chênh lệch cho người vận hành đọc.
-
-    Trả khoá, còn số tiền thì màn tự truyền:
-    t(khoa, { soTien: money(Math.abs(lech)) }). Phép chọn khớp/thừa/thiếu ở lại
-    đây vì nó là quy tắc, chỉ có chữ đi ra ngoài. */
+/** Khoá i18n mô tả chênh lệch. Trả khoá, còn số tiền thì màn tự truyền —
+    t(khoa, { soTien: money(Math.abs(lech)) }). */
 export function moTaChenhLech(lech: number): string {
   if (lech === 0) return 'quay.khopKet';
   return lech > 0 ? 'quay.thua' : 'quay.thieu';
@@ -102,14 +84,10 @@ export function viSaoKhongBanDuoc(
 
 /** Vì sao chưa đóng được ca — khoá i18n, null nghĩa là đóng được.
 
-    Luật "lệch két thì bắt buộc ghi lý do" từng chỉ nằm ở component:
-    DoiSoatCa.tsx tự tính một biến thieuLyDo để chặn nút, còn hàm thuần và mock
-    thì không biết gì. Nghĩa là luật chỉ tồn tại ở đúng một cái nút bấm — ai gọi
-    thẳng API là đóng được ca lệch mà không giải thích một chữ, và dấu hiệu
-    "lệch không ai giải thích" bên giamSat.ts mất nghĩa. Nay luật nằm ở đây và
-    mock chặn 400 y như vậy.
-
-    Vì phải biết có lệch hay không nên hàm cần cả tienDauCa và giaoDich. */
+    Luật "lệch két thì bắt buộc ghi lý do" từng chỉ nằm ở DoiSoatCa.tsx, nghĩa
+    là gọi thẳng API vẫn đóng được ca lệch mà không giải thích một chữ, và dấu
+    hiệu "lệch không ai giải thích" bên giamSat.ts mất nghĩa. Nay luật nằm ở đây
+    và mock chặn 400 y như vậy, nên hàm cần cả tienDauCa lẫn giaoDich. */
 export function viSaoKhongDongDuocCa(
   ca: Pick<CaThuNgan, 'trangThai' | 'tienDauCa' | 'giaoDich'> | null,
   tienDem: number | null,

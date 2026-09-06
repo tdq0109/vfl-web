@@ -2,15 +2,11 @@ import { type NextRequest, NextResponse } from 'next/server';
 import { dotnet } from '@/lib/server/dotnet';
 import { getAccessToken } from '@/lib/auth/session';
 
-/* Proxy chung: mọi `/api/<x>` không phải `/api/auth/*` → `{DOTNET}/<x>`, gắn
-   `Authorization: Bearer` lấy từ cookie httpOnly.
+/* Proxy chung: mọi /api/<x> không phải /api/auth/* đi tới {DOTNET}/<x>, gắn
+   Authorization: Bearer lấy từ cookie httpOnly.
 
-   Ở đây chỉ được đọc cookie, chuyển tiếp request và gắn header. Không truy
-   vấn, không tính toán, không nghiệp vụ — cần logic nghĩa là endpoint .NET còn
-   thiếu.
-
-   Không tự refresh khi 401: lib/api/client.ts bắt 401, gọi /api/auth/refresh
-   một lần rồi thử lại. */
+   Chỉ đọc cookie, chuyển tiếp, gắn header — cần logic ở đây nghĩa là endpoint
+   .NET còn thiếu. Không tự refresh khi 401, lib/api/client.ts lo việc đó. */
 
 const HOP_BY_HOP = new Set([
   'connection',

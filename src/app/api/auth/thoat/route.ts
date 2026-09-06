@@ -1,12 +1,9 @@
 import { type NextRequest, NextResponse } from 'next/server';
 import { clearSession } from '@/lib/auth/session';
 
-/* Xoá phiên rồi về trang đăng nhập, dạng điều hướng (khác /auth/logout dạng
-   POST dùng cho nút Đăng xuất).
-
-   Dùng khi tầng server phát hiện phiên hỏng mà không tự xoá cookie được. Sau
-   khi chạy, trình duyệt không còn cookie nào nên /dang-nhap chắc chắn hiển thị,
-   không thể lặp vòng. */
+/* Xoá phiên rồi về trang đăng nhập. Dạng điều hướng, khác /auth/logout dạng
+   POST của nút Đăng xuất; dùng khi tầng server phát hiện phiên hỏng mà không tự
+   xoá cookie được. */
 export async function GET(req: NextRequest): Promise<NextResponse> {
   await clearSession();
   return NextResponse.redirect(new URL('/dang-nhap', req.nextUrl.origin));

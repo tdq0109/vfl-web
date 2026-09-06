@@ -12,18 +12,13 @@ import type { ChotNgay } from '../types';
 
 /* Chốt ngày — bản tổng kết cả ngày để nhân viên xác nhận rồi mới khoá lại.
 
-   Đây không phải một nút bấm cho xong; nó là tờ giấy mà người trực quầy ký vào,
-   nên phải nói đủ để người ấy dám ký:
+   Nó là tờ giấy người trực quầy ký vào nên phải nói đủ để người ấy dám ký: tiền
+   mặt đầu ngày, cuối ngày lẽ ra phải có, đếm được bao nhiêu; doanh thu tách
+   theo phương thức; và có gì bất thường không. Giấu mấy dòng bất thường đi thì
+   chữ ký thành vô nghĩa.
 
-   - tiền mặt đầu ngày → cuối ngày lẽ ra phải có → đếm được bao nhiêu;
-   - doanh thu tách theo phương thức (chỉ tiền mặt mới vào két);
-   - có gì bất thường không: lệch két, lệch bàn giao, phiếu huỷ, ca mở muộn,
-     khung không ai trực. Giấu mấy dòng này đi thì chữ ký thành vô nghĩa.
-
-   Chốt xong là khoá, không mở thêm ca cho ngày đó, và nút phải nói rõ điều ấy
-   trước khi bấm.
-
-   Thuần trình bày: mọi con số do chuyenCa.ts::tongKetNgay() tính sẵn. */
+   Chốt xong là khoá, không mở thêm ca cho ngày đó, nút phải nói rõ trước khi
+   bấm. Thuần trình bày: mọi con số do chuyenCa.ts::tongKetNgay() tính sẵn. */
 
 interface Props {
   ngay: string;

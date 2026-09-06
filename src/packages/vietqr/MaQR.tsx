@@ -1,16 +1,13 @@
 import { VUNG_LANG, maTranQR } from './ma-tran';
 
-/* Vẽ mã QR VietQR ra SVG.
+/* Vẽ mã QR VietQR ra SVG chứ không phải canvas: mã rồi sẽ phải in (phiếu thu,
+   hợp đồng) mà canvas in ra là bitmap răng cưa, còn SVG sắc ở mọi khổ giấy và
+   vẽ thẳng trong lần render đầu, kể cả trên server.
 
-   Dùng SVG chứ không phải canvas vì mã QR rồi sẽ phải in (phiếu thu, hợp đồng),
-   mà canvas in ra là ảnh bitmap răng cưa. SVG thì sắc ở mọi khổ giấy và không
-   cần useEffect nào — vẽ thẳng trong lần render đầu, kể cả trên server.
-
-   Màu cố định đen trên trắng, không dùng token. Đây là ngoại lệ có chủ ý: máy
-   quét cần tương phản thật giữa ô tối và ô sáng, đúng chiều tối trên sáng. Token
-   màu có thể đổi khi designer giao bộ mới hoặc đảo lại nếu có chế độ tối, mà mã
-   QR bị đảo màu thì phần lớn ứng dụng ngân hàng không đọc nổi. Vùng lặng trắng
-   quanh mã cũng vì lý do đó, không phải để cho thoáng. */
+   Màu cố định đen trên trắng, không dùng token — máy quét cần tương phản thật
+   và đúng chiều tối trên sáng; token có thể đổi hoặc đảo lại khi có chế độ tối,
+   mà mã QR đảo màu thì phần lớn ứng dụng ngân hàng không đọc nổi. Vùng lặng
+   trắng quanh mã cũng vì lý do đó. */
 
 const MAU_O_TOI = '#000000';
 const MAU_NEN = '#FFFFFF';

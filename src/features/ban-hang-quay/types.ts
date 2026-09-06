@@ -1,19 +1,13 @@
 import type { IsoDateTime } from '@/features/dat-lich/types';
 import type { Vnd } from '@/lib/api/types';
 
-/* Kiểu + khoá i18n của nhãn nhóm Bán vé ngày tại quầy, theo khuôn nhóm Hội
-   viên (features/hoi-vien/types.ts).
+/* Kiểu + khoá i18n của nhãn nhóm Bán vé ngày tại quầy. Hai bảng nhãn dưới đây
+   chứa khoá i18n; riêng VAO_KET thì không, nó là quy tắc nghiệp vụ.
 
-   Hai bảng nhãn dưới đây chứa khoá i18n chứ không phải chữ tiếng Việt. Riêng
-   VAO_KET thì không: nó là quy tắc nghiệp vụ (tiền nào vào két), không phải
-   nhãn.
-
-   Mấy giả định còn chờ thu ngân thật xác nhận:
-   - một thu ngân mở tối đa một ca đang mở tại một CLB;
-   - huỷ giao dịch chỉ trong ca đang mở, không sửa được ca đã đóng;
-   - đóng ca cần đếm tiền mặt thực tế; lệch bao nhiêu cũng cho đóng nhưng phải
-     ghi lý do;
-   - khách vãng lai không bắt buộc để lại thông tin. */
+   Mấy giả định còn chờ thu ngân thật xác nhận: một thu ngân mở tối đa một ca
+   đang mở tại một CLB; huỷ giao dịch chỉ trong ca đang mở; đóng ca lệch bao
+   nhiêu cũng cho đóng nhưng phải ghi lý do; khách vãng lai không bắt buộc để
+   lại thông tin. */
 
 export type PhuongThuc = 'tien-mat' | 'chuyen-khoan' | 'the';
 
@@ -40,7 +34,6 @@ export const TRANG_THAI_CA_KHOA: Record<TrangThaiCa, string> = {
   'da-dong': 'quay.trangThaiCa.da-dong',
 };
 
-/** Một dòng trong giỏ hàng. */
 export interface DongHang {
   sanPhamId: string;
   ten: string;
@@ -105,16 +98,11 @@ export interface BanHangInput {
   khachSdt?: string;
 }
 
-/* Giám sát ca và sổ giao dịch.
+/* Giám sát ca và sổ giao dịch. Ba kiểu dưới đây chỉ mô tả dữ liệu, luật đọc nó
+   nằm ở giamSat.ts.
 
-   Thêm cho nhu cầu đối chiếu: quản lý phải xem được ca của người khác, cả ca đã
-   đóng, và lần được từng giao dịch trong đó. Ba kiểu dưới đây chỉ mô tả dữ
-   liệu, luật đọc nó nằm ở giamSat.ts.
-
-   Còn chờ đội .NET chốt (mục 5 tài liệu bàn giao):
-   - danh sách ca trả kèm giaoDich của từng ca; đối soát tính từ giao dịch chứ
-     không tin số tổng backend gửi kèm;
-   - lọc theo khoảng ngày dựa trên moLuc (giờ mở ca) chứ không phải giờ đóng. */
+   Còn chờ đội .NET chốt: danh sách ca trả kèm giaoDich của từng ca, và lọc theo
+   khoảng ngày dựa trên moLuc (giờ mở ca) chứ không phải giờ đóng. */
 
 /** Bộ lọc của màn Giám sát ca. Mọi trường đều tuỳ chọn. */
 export interface BoLocGiamSat {
@@ -128,10 +116,8 @@ export interface BoLocGiamSat {
   chiCanChuY?: boolean;
 }
 
-/** Một dòng trong sổ giao dịch: giao dịch kèm ca đã sinh ra nó.
-
-    Giao dịch nằm lồng trong ca nên tự nó không biết ai bán, ở đâu; đối chiếu
-    thì luôn cần ba thông tin ấy đi cùng nhau. */
+/** Một dòng trong sổ giao dịch: giao dịch kèm ca đã sinh ra nó. Giao dịch nằm
+    lồng trong ca nên tự nó không biết ai bán, ở đâu. */
 export interface DongSoGiaoDich extends GiaoDich {
   caId: string;
   maCa: string;
@@ -141,14 +127,9 @@ export interface DongSoGiaoDich extends GiaoDich {
   locationName?: string;
 }
 
-/* Chuyển ca và chốt ngày — ba cơ chế vận hành do người dùng đặt ra, xem
-   chuyenCa.ts:
-
-   - mở ca lấy giờ thật lúc bấm nút; bấm muộn hơn giờ khung thì vẫn cho mở nhưng
-     ghi lại độ muộn;
-   - chuyển ca là một thao tác: chốt ca đang chạy rồi mở ngay ca kế tiếp, tiền
-     đầu ca sau lấy thẳng từ tiền đếm của ca trước;
-   - chốt ngày tổng kết cả ngày cho nhân viên xác nhận rồi khoá ngày lại. */
+/* Chuyển ca và chốt ngày, xem chuyenCa.ts: mở ca lấy giờ thật lúc bấm nút;
+   chuyển ca là một thao tác, tiền đầu ca sau lấy thẳng từ tiền đếm của ca
+   trước; chốt ngày tổng kết cả ngày rồi khoá lại. */
 
 export interface ChuyenCaInput {
   /** Tiền mặt đếm được cuối ca đang chạy. Cũng chính là tiền đầu ca kế tiếp. */
@@ -185,6 +166,5 @@ export interface NgayLamViecQuay {
   ngay: string;
   locationId: string;
   ca: CaThuNgan[];
-  /** `null` = chưa chốt. */
   chotNgay: ChotNgay | null;
 }

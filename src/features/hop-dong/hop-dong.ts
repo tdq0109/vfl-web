@@ -16,27 +16,18 @@ import {
   type TrangThaiHopDong,
 } from './types';
 
-/* Máy trạng thái + phép tính tiền của hợp đồng — hàm thuần, không import
-   React, không gọi API. Backend .NET vẫn phải kiểm lại tất cả; phần này chỉ
-   chặn sớm và nói cho người vận hành biết vì sao chưa đi tiếp được.
+/* Máy trạng thái + phép tính tiền của hợp đồng — hàm thuần, không import React,
+   không gọi API. Backend .NET vẫn phải kiểm lại tất cả.
 
-   Sáu chỗ đừng gỡ khi sửa:
+   Sáu chỗ đừng gỡ khi sửa: chặn nhảy cóc trạng thái (CHUYEN_TIEP là nguồn sự
+   thật duy nhất, đừng rải if trong component); chặn phát hành khi chưa thu đủ;
+   chặn người lập tự xác minh hợp đồng của mình, kể cả khi đủ cấp bậc; chặn bán
+   dưới giá sàn bằng viPhamGiaSan() của san-pham; giảm giá tính trên tạm tính
+   rồi làm tròn một lần chứ không làm tròn từng dòng; het-han suy ra từ
+   ngayKetThuc chứ không lưu. */
 
-   1. Nhảy cóc trạng thái: bao-gia → da-ky phải bị chặn. CHUYEN_TIEP là nguồn sự
-      thật duy nhất, đừng rải if (trangThai === …) trong component.
-   2. Phát hành khi chưa thu đủ: hội viên vào tập mà tiền chưa về.
-   3. Người lập tự xác minh hợp đồng của mình. Đây là tách nhiệm chứ không phải
-      phân quyền thường — một người vừa bán vừa xác nhận đã thu tiền thì không
-      còn ai đối chứng. Đủ cấp bậc vẫn bị chặn.
-   4. Bán dưới giá sàn: dùng lại viPhamGiaSan() của san-pham, không viết lại.
-   5. Làm tròn tiền: giảm giá tính trên tạm tính rồi làm tròn một lần. Làm tròn
-      từng dòng rồi cộng cho ra số khác, lệch vài nghìn mỗi hợp đồng.
-   6. het-han suy ra từ ngayKetThuc chứ không lưu — xem trangThaiHienThi(). */
-
-/** Bảng chuyển trạng thái hợp lệ — nguồn sự thật duy nhất.
-
-    Mới dựng luồng thuận và huỷ trước khi phát hành. Các cạnh còn lại (kế toán
-    trả lại, huỷ hoá đơn đã phát hành, tạm dừng, đổi gói) cố ý chưa có: mở cạnh
+/** Bảng chuyển trạng thái hợp lệ — nguồn sự thật duy nhất. Mới dựng luồng
+    thuận và huỷ trước khi phát hành; các cạnh còn lại cố ý chưa có, vì mở cạnh
     trước khi có bút toán đảo là cách nhanh nhất để mất dấu tiền. */
 export const CHUYEN_TIEP: Record<TrangThaiHopDong, readonly TrangThaiHopDong[]> = {
   'bao-gia': ['cho-thu-tien', 'da-huy'],
@@ -146,11 +137,9 @@ export function dongViPhamGiaSan(
   });
 }
 
-/** Cảnh báo phá giá sàn, hiện trước khi lưu.
-
-    Trả lý do (khoá + tham số + danh sách dòng vi phạm) chứ không trả câu dựng
-    sẵn: câu này có cả số dòng lẫn chi tiết từng dòng, mà chi tiết ấy phải dịch
-    được. Ghép ra chữ bằng lyDoThanhChu() trong lyDo.ts. */
+/** Cảnh báo phá giá sàn, hiện trước khi lưu. Trả lý do (khoá + tham số + danh
+    sách dòng vi phạm) chứ không trả câu dựng sẵn; ghép ra chữ bằng
+    lyDoThanhChu() trong lyDo.ts. */
 export function canhBaoGiaSan(
   dong: readonly DongHopDong[],
   khuyenMai?: KhuyenMaiApDung,
@@ -190,10 +179,9 @@ type HopDongDeKiem = Pick<HopDong, 'trangThai' | 'dong' | 'nguoiLapId'> & {
   ngayBatDau?: string;
 };
 
-/** Vì sao chưa chuyển được sang den — null nghĩa là chuyển được.
-
-    Trả câu giải thích chứ không phải boolean: người vận hành cần biết còn thiếu
-    bao nhiêu tiền, chứ không phải một nút xám không nói gì. */
+/** Vì sao chưa chuyển được sang den — null nghĩa là chuyển được. Trả câu giải
+    thích chứ không phải boolean: người vận hành cần biết còn thiếu bao nhiêu
+    tiền, chứ không phải một nút xám không nói gì. */
 export function viSaoKhongChuyenDuoc(
   hd: HopDongDeKiem,
   den: TrangThaiHopDong,
@@ -246,10 +234,8 @@ export function viSaoKhongChuyenDuoc(
   return null;
 }
 
-/** Vì sao chưa ghi được phiếu thu — null nghĩa là thu được.
-
-    Thu thừa, trả góp và công nợ chưa làm; hiện chỉ cho thu đúng phần còn lại
-    hoặc ít hơn. */
+/** Vì sao chưa ghi được phiếu thu — null nghĩa là thu được. Thu thừa, trả góp
+    và công nợ chưa làm, hiện chỉ cho thu đúng phần còn lại hoặc ít hơn. */
 export function viSaoKhongThuDuoc(hd: HopDongDeKiem, soTien: number): LyDoChan | null {
   if (hd.trangThai !== 'cho-thu-tien') return { khoa: 'hopDong.chanThu.saiBuoc' };
   if (!Number.isFinite(soTien) || soTien <= 0) {

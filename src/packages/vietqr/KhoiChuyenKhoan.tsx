@@ -10,17 +10,15 @@ import type { TaiKhoanNhanTien } from '@/lib/api/types';
 import { MaQR } from './MaQR';
 import { chuanHoaNoiDung, chuoiVietQR, tenNganHang, viSaoKhongTaoDuocQR } from './vietqr';
 
-/* Khối "chuyển khoản vào đây" — mã QR cộng thông tin gõ tay dự phòng. Thay cho
-   payQRSection / toggleBankBox của bản cũ.
+/* Khối "chuyển khoản vào đây": mã QR cộng thông tin gõ tay dự phòng.
 
-   Luôn hiện cả số tài khoản bằng chữ chứ không chỉ mã QR: máy quét hỏng, camera
-   mờ, khách dùng ứng dụng không quét được mã — quầy phải còn đường đọc số cho
-   khách gõ. Bản cũ cũng làm vậy.
+   Luôn hiện cả số tài khoản bằng chữ chứ không chỉ mã QR — máy quét hỏng,
+   camera mờ, ứng dụng của khách không quét được, quầy phải còn đường đọc số cho
+   khách gõ.
 
-   Nút sao chép chỉ cho nội dung chuyển khoản, vì đó là ô khách hay gõ sai nhất
-   và gõ sai thì kế toán không đối chiếu được tiền về với hợp đồng nào. Số tiền
-   và số tài khoản cố ý không có nút sao chép: hai thứ đó phải được đọc và nhìn
-   thấy, không nên dán mù. */
+   Nút sao chép chỉ cho nội dung chuyển khoản, ô khách hay gõ sai nhất. Số tiền
+   và số tài khoản cố ý không có nút: hai thứ đó phải được nhìn thấy, không nên
+   dán mù. */
 
 interface Props {
   /** Thiếu = CLB chưa cấu hình tài khoản; khối này tự ẩn. */

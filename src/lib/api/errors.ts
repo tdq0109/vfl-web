@@ -19,16 +19,12 @@ export class ApiError extends Error {
       lẫn camelCase để khớp tên field trong form. */
   readonly fieldErrors: Record<string, string>;
   readonly traceId: string | undefined;
-  /** Khoá i18n cho câu hiện lên màn, khi backend KHÔNG trả `detail` lẫn `title`.
-      `null` = câu đến từ backend, cứ hiện nguyên văn `message`.
+  /** Khoá i18n cho câu hiện lên màn, khi backend không trả detail lẫn title.
+      null nghĩa là câu đến từ backend, cứ hiện nguyên văn message.
 
-      `ApiError` dựng NGOÀI React (trong `client.ts`) nên không được gọi `t()` ở
-      đây: dịch lúc dựng là đóng băng ngôn ngữ theo thời điểm nạp tệp — đúng cái
-      bẫy đã ghi cho toast. Lớp lỗi giữ KHOÁ, màn hiện lỗi mới dịch (xem
-      `QueryState`). Chỗ trống của khoá này là `{ma}`, điền bằng `status`.
-
-      `message` vẫn có chữ để đọc trong log và stack trace, nhưng là chữ cho lập
-      trình viên (`HTTP 503`) — đừng đưa thẳng lên màn khi có khoá này. */
+      ApiError dựng ngoài React nên không gọi t() ở đây — dịch lúc dựng là đóng
+      băng ngôn ngữ theo thời điểm nạp tệp. Lớp lỗi giữ khoá, màn hiện lỗi mới
+      dịch. Chỗ trống của khoá này là {ma}, điền bằng status. */
   readonly khoaThongDiep: string | null;
 
   constructor(status: number, problem: ProblemDetails = {}) {

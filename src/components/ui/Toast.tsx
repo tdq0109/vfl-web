@@ -6,7 +6,7 @@ import { useT } from '@/components/shell/NgonNguProvider';
 import { cn } from '@/lib/utils';
 
 /* Hàng đợi toast sống ở module scope nên gọi được từ ngoài React — hook mutation
-   ở Bước 4 sẽ gọi `toast.ok('Đã lưu')` mà không cần context. `<Toaster />` đặt
+   gọi `toast.ok('Đã lưu')` mà không cần context. `<Toaster />` đặt
    một lần trong layout để nghe hàng đợi này. */
 
 export type ToastTone = 'ok' | 'bad' | 'info';

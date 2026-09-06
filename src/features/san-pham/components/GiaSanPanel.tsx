@@ -10,10 +10,8 @@ import { money } from '@/lib/format';
 import { kiemTraGiaSan } from '../gia';
 import type { SanPham } from '../types';
 
-/* Giá sàn — mức thấp nhất được phép bán. Chỉ Giám đốc trở lên đặt được (khớp
-   quyền `san-pham.gia-san` trong ma trận phân quyền).
-
-   Đây chỉ là lớp ẩn/hiện, backend .NET vẫn phải kiểm tra lại. */
+/* Giá sàn — mức thấp nhất được phép bán, chỉ Giám đốc trở lên đặt được. Đây
+   chỉ là lớp ẩn/hiện, backend .NET vẫn phải kiểm tra lại. */
 
 interface Props {
   sanPham: SanPham;

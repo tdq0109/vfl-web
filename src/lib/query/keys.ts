@@ -72,7 +72,7 @@ export const keys = {
 } as const;
 
 /** Nhánh khoá cần invalidate khi mỗi sự kiện nghiệp vụ xảy ra. Mở rộng khi dựng
-    từng màn (Bước 7+). */
+    từng màn. */
 export const AFFECTED_BY = {
   hoiVienThayDoi: [keys.hoiVien.all, keys.tongQuan.all],
   nhanVienThayDoi: [keys.nhanVien.all, keys.tongQuan.all],

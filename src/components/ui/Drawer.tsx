@@ -8,7 +8,7 @@ import { cn } from '@/lib/utils';
 
 /* Ngăn kéo trượt từ phải — dựng trên Radix Dialog nên đúng ARIA (focus trap,
    Esc, khoá cuộn nền) mà không phải tự viết. Dùng cho xem chi tiết và form
-   thêm/sửa. Bước 9 có thể thay bằng shadcn dialog nếu muốn; API tương thích. */
+   thêm/sửa. */
 
 interface DrawerProps {
   open: boolean;

@@ -11,11 +11,8 @@ import type { DongHopDong, HopDong, HopDongInput, KhuyenMaiApDung } from '../typ
 import { BangTongTien } from './BangTongTien';
 import { DongSanPham } from './DongSanPham';
 
-/* Form lập / sửa báo giá. Chỉ dùng khi hợp đồng còn ở bước bao-gia, sau đó hợp
-   đồng là chứng từ và chỉ đi theo máy trạng thái.
-
-   Thuần trình bày: mọi danh sách (hội viên, sản phẩm, khuyến mãi) do màn truyền
-   vào. Ô tìm hội viên cũng do màn giữ, vì tìm là một lần gọi API. */
+/* Form lập / sửa báo giá. Chỉ dùng khi hợp đồng còn ở bước bao-gia, sau đó nó
+   là chứng từ và chỉ đi theo máy trạng thái. Mọi danh sách do màn truyền vào. */
 
 interface Props {
   defaultValue?: HopDong;

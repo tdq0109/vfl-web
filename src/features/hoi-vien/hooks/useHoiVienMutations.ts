@@ -9,13 +9,9 @@ import type { HoiVien, HoiVienInput, HoiVienStatus } from '../types';
 
 /* Toàn bộ logic ghi của nhóm Hội viên. Component chỉ gọi hook, không tự gọi API.
 
-   Thông điệp toast lấy t từ hook, không gọi t() ở module scope: gọi ở module
-   scope là chuỗi bị đóng băng theo ngôn ngữ lúc nạp tệp, đổi ngôn ngữ xong vẫn
-   thấy toast tiếng cũ và chỉ lộ ra đúng lúc thao tác thành công.
-
-   Ghi xong thì invalidate các nhánh mà sự kiện hoiVienThayDoi ảnh hưởng (khai
-   trong lib/query/keys.ts). Lỗi ProblemDetails không nuốt, để component đọc từ
-   mutation.error và gắn vào ô nhập. */
+   Toast lấy t từ hook chứ không gọi t() ở module scope, nếu không chuỗi bị đóng
+   băng theo ngôn ngữ lúc nạp tệp. Lỗi ProblemDetails không nuốt, để component
+   đọc từ mutation.error và gắn vào ô nhập. */
 
 export function useCreateHoiVien() {
   const qc = useQueryClient();

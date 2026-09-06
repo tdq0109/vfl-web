@@ -1,16 +1,12 @@
 import { toIsoDate } from '@/lib/format';
 import type { KhuyenMai, KhuyenMaiStatus, SanPham } from './types';
 
-/* Quy tắc giá — hàm thuần, không import React.
+/* Quy tắc giá — hàm thuần, không import React. Tách khỏi component vì đây là
+   chỗ tiền chạy qua: sai một phép tính là bán dưới giá vốn hàng loạt. Backend
+   .NET vẫn phải kiểm lại.
 
-   Đây là chỗ tiền chạy qua nên tách riêng khỏi component: sai một phép tính là
-   bán dưới giá vốn hàng loạt. Backend .NET vẫn phải kiểm tra lại, phần này chỉ
-   để chặn sớm và cảnh báo cho người nhập.
-
-   Ba hàm kiểm tra trả về khoá i18n chứ không phải câu tiếng Việt; màn gọi
-   t(loi). Hàm thuần không có ngôn ngữ hiện hành để mà tra, gọi t() ở tầng này
-   là đóng băng chuỗi theo ngôn ngữ lúc nạp tệp. null vẫn giữ nghĩa "không có
-   lỗi" nên chỗ gọi không phải đổi cách kiểm. */
+   Ba hàm kiểm tra trả khoá i18n chứ không trả câu tiếng Việt; null vẫn giữ
+   nghĩa "không có lỗi". */
 
 /** Giá sàn không được cao hơn giá niêm yết. Trả khoá i18n hoặc null. */
 export function kiemTraGiaSan(giaNiemYet: number, giaSan: number): string | null {

@@ -1,13 +1,11 @@
 import type { UserProfile } from './types';
 
-/* Phân quyền 3 CHIỀU. Đây chỉ để ẩn/hiện nút và lối đi — bảo mật thật nằm ở
-   backend .NET, không ngoại lệ.
+/* Phân quyền 3 chiều, chỉ để ẩn/hiện nút và lối đi — bảo mật thật nằm ở backend
+   .NET, không ngoại lệ.
 
-   1. Cấp bậc vai trò — không ai thao tác được người có vai trò ngang hoặc cao
-      hơn mình (gán vai trò, sửa hồ sơ, xoá…).
-   2. Phạm vi CLB — chỉ làm việc trong các CLB được giao.
-   3. Cờ "toàn hệ thống" (allLocations) — chỉ Giám đốc / CEO mới gán được cho
-      người khác. */
+   1. Cấp bậc vai trò: không ai thao tác được người ngang hoặc cao hơn mình.
+   2. Phạm vi CLB: chỉ làm việc trong các CLB được giao.
+   3. Cờ toàn hệ thống: chỉ Giám đốc / CEO gán được cho người khác. */
 
 export const ROLE_RANK = {
   ctv: 10,
@@ -40,7 +38,6 @@ export const ROLE_KHOA: Record<Role, string> = {
 /** Vai trò xếp từ thấp lên cao, để dựng danh sách chọn và ma trận quyền. */
 export const ROLE_ORDER: Role[] = ['ctv', 'staff', 'coach', 'leader', 'accountant', 'manager', 'director', 'ceo'];
 
-/** Cấp bậc của một mã vai trò; vai trò lạ trả 0 (thấp nhất). */
 export function rankOf(role: string): number {
   return (ROLE_RANK as Record<string, number>)[role] ?? 0;
 }

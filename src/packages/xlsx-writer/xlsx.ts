@@ -2,28 +2,18 @@ import { dungZip, type TepZip } from './zip';
 import { STYLE, STYLES_XML, THEME_XML, type TenStyle } from './mau-xml';
 
 /* Dựng tệp .xlsx (OOXML tự viết) — hàm thuần, chỉ dựng byte, không chạm DOM.
-
-   Port từ commercial-console.html (VXL). Giữ nguyên lý do bản cũ tự viết:
-   SheetJS bản miễn phí không ghi được màu nền / tô đậm khi xuất, mà đó chính là
-   thứ tệp mẫu của kế toán cần.
-
-   dungXlsx() trả Uint8Array, còn taiVe.ts lo phần trình duyệt — cùng cách đã
-   tách ở signature-pad.
+   Port từ commercial-console.html; tự viết vì SheetJS bản miễn phí không ghi
+   được màu nền và tô đậm khi xuất, mà đó chính là thứ tệp mẫu kế toán cần.
 
    Năm chỗ đừng gỡ khi sửa:
 
-   1. Tên cột không phải cơ số 26 thông thường. Excel đánh A..Z rồi AA..AZ, hệ
-      này không có "chữ số 0" nên phải trừ 1 trước mỗi lần chia. Sai một nhịp là
-      cột 27 ra "AZ", và lỗi chỉ lộ ra từ cột 27 trở đi.
-   2. Phải thoát ký tự XML. Tên hội viên có & hay < là tệp hỏng hẳn, Excel từ
-      chối mở.
-   3. Ngày phải là số serial chứ không phải chữ, nếu không Excel canh trái và
-      không lọc theo khoảng ngày được. Mốc: 1899-12-30.
-   4. Tên sheet dài quá 31 ký tự làm Excel từ chối mở workbook. Bản cũ cắt sẵn
-      bằng slice(0,31), giữ nguyên.
-   5. Số thứ tự quan hệ (rId) phải khớp danh sách sheet: workbook.xml trỏ tới
-      rId1..n, styles và theme là rId(n+1), rId(n+2). Cứng hoá rId2 cho styles
-      là workbook từ hai sheet trở lên hỏng. */
+   1. Tên cột là bijective base-26 (A..Z rồi AA..AZ), không có "chữ số 0" nên
+      phải trừ 1 trước mỗi lần chia; sai một nhịp là cột 27 ra "AZ".
+   2. Phải thoát ký tự XML — tên hội viên có & hay < là Excel từ chối mở tệp.
+   3. Ngày phải là số serial chứ không phải chữ, mốc 1899-12-30.
+   4. Tên sheet dài quá 31 ký tự làm Excel từ chối mở workbook, nên cắt sẵn.
+   5. rId phải khớp danh sách sheet: sheet là rId1..n, styles và theme là
+      rId(n+1) và rId(n+2). Cứng hoá rId2 cho styles là hỏng từ hai sheet. */
 
 export { STYLE };
 export type { TenStyle };

@@ -1,14 +1,13 @@
 import { ApiError } from './errors';
 
-/* Máy khách HTTP DUY NHẤT phía trình duyệt. Mọi lời gọi API của client đi qua
-   đây (quy ước 1 trong lộ trình). Server component / route handler KHÔNG dùng
-   tệp này — chúng gọi .NET qua `lib/server/dotnet.ts` (Bước 5).
+/* Máy khách HTTP duy nhất phía trình duyệt — mọi lời gọi API của client đi qua
+   đây. Server component và route handler dùng lib/server/dotnet.ts.
 
-   - Gọi tới `/api/*` của Next, không tự gắn Authorization: cookie phiên là
-     httpOnly nên trình duyệt tự đính kèm, JS không bao giờ chạm token.
-   - Gặp 401 thì refresh một lần rồi thử lại. Mọi request 401 đồng thời DÙNG
-     CHUNG một lần refresh — nếu không, 10 request 401 gọi refresh 10 lần và 9
-     lần sau chạy với refresh token đã xoay vòng → người dùng bị đăng xuất oan. */
+   Gọi tới /api/* của Next và không tự gắn Authorization: cookie phiên là
+   httpOnly nên trình duyệt tự đính kèm. Gặp 401 thì refresh một lần rồi thử
+   lại, và mọi request 401 đồng thời dùng chung một lần refresh — nếu không, 10
+   request 401 gọi refresh 10 lần, 9 lần sau chạy với refresh token đã xoay vòng
+   và người dùng bị đăng xuất oan. */
 
 const BASE = '/api';
 

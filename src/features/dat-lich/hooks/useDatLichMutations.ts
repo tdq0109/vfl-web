@@ -7,14 +7,12 @@ import { invalidateAffected, keys } from '@/lib/query/keys';
 import { datLichApi } from '../api';
 import type { Buoi, BuoiInput } from '../types';
 
-/* Toàn bộ logic ghi của nhóm Đặt lịch.
+/* Toàn bộ logic ghi của nhóm Đặt lịch. Mọi thao tác đụng tới chỗ ngồi đều
+   invalidate cả nhánh dat-lich chứ không chỉ buổi đang mở, vì số chỗ trống trên
+   lịch tuần cũng đổi theo.
 
-   Mọi thao tác đụng tới chỗ ngồi đều invalidate cả nhánh `dat-lich` chứ không
-   chỉ buổi đang mở: đặt/huỷ một chỗ làm số chỗ trống trên lịch tuần đổi theo.
-
-   Toast nhận khoá i18n, và useBuoiMutation mới gọi t() — gọi trong hook
-   chứ không ở module scope, nếu không chuỗi bị đóng băng theo ngôn ngữ lúc nạp
-   tệp và đổi ngôn ngữ xong vẫn thấy toast tiếng cũ. */
+   Toast nhận khoá i18n và useBuoiMutation mới gọi t(), gọi trong hook chứ không
+   ở module scope. */
 
 function useBuoiMutation<TVars>(fn: (vars: TVars) => Promise<Buoi>, khoaToast: string) {
   const qc = useQueryClient();

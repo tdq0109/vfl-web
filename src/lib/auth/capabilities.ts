@@ -1,15 +1,10 @@
 import { ROLE_RANK, type Role } from './permissions';
 
-/* Ma trận phân quyền — bảng tra "vai trò nào làm được việc gì", hiển thị ở màn
-   Nhân viên để người vận hành đối chiếu.
+/* Ma trận phân quyền: bảng tra "vai trò nào làm được việc gì", hiển thị ở màn
+   Nhân viên để người vận hành đối chiếu. Mỗi mục ghi cấp bậc tối thiểu.
 
-   Đây là bản sao để hiển thị, không phải nguồn sự thật: quyền thật do backend
-   .NET quyết, khi backend chốt danh sách quyền thì đồng bộ lại bảng này. Mỗi
-   mục ghi cấp bậc tối thiểu, ai đạt cấp đó trở lên thì có quyền.
-
-   nhomKhoa và nhanKhoa chứa khoá i18n chứ không phải chữ tiếng Việt; đọc bằng
-   t(cap.nhanKhoa). Tên trường mang chữ "Khoá" để không ai lỡ đem đi hiển thị
-   thẳng. */
+   Đây là bản sao để hiển thị, không phải nguồn sự thật — quyền thật do backend
+   .NET quyết. nhomKhoa và nhanKhoa chứa khoá i18n, đọc bằng t(cap.nhanKhoa). */
 
 export interface Capability {
   id: string;
@@ -55,7 +50,6 @@ export function capabilitiesByGroup(): { nhomKhoa: string; items: Capability[] }
   return out;
 }
 
-/** Vai trò `role` có quyền `cap` không. */
 export function roleHasCapability(role: Role, cap: Capability): boolean {
   return ROLE_RANK[role] >= cap.minRank;
 }

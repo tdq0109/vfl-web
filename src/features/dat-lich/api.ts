@@ -24,10 +24,8 @@ export const datLichApi = {
     });
   },
 
-  /** Lịch của một HLV trong tuần, mọi CLB, để dò trùng lịch.
-
-      Cố ý không có tham số locationId: HLV không thể đứng lớp ở hai CLB cùng
-      lúc nên phải nhìn toàn hệ thống. Lọc theo CLB ở đây là tạo ra lỗ hổng. */
+  /** Lịch của một HLV trong tuần, mọi CLB, để dò trùng lịch. Cố ý không có
+      tham số locationId: HLV không thể đứng lớp ở hai CLB cùng lúc. */
   lichHlv(hlvId: string, tuNgay: string): Promise<KhoangBuoi[]> {
     return api.get<KhoangBuoi[]>(`${BASE}/hlv/${hlvId}`, { query: { tuNgay } });
   },
@@ -59,7 +57,6 @@ export const datLichApi = {
     return api.post<Buoi>(`${BASE}/buoi/${buoiId}/giu-cho`, { hoiVienId });
   },
 
-  /** Chốt một chỗ đang giữ. */
   chotCho(buoiId: string, choId: string): Promise<Buoi> {
     return api.post<Buoi>(`${BASE}/buoi/${buoiId}/cho/${choId}/chot`);
   },

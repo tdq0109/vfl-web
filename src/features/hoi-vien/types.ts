@@ -1,15 +1,11 @@
 import type { IsoDate } from '@/lib/api/types';
 
-/* Kiểu + khoá i18n của nhãn nhóm Hội viên. Nhãn để một chỗ, mọi nơi hiển thị
-   lấy từ đây; đọc nhãn bằng t(HOI_VIEN_STATUS_KHOA[s]).
+/* Kiểu + khoá i18n của nhãn nhóm Hội viên; đọc nhãn bằng
+   t(HOI_VIEN_STATUS_KHOA[s]). Đây là khuôn cho các nhóm nghiệp vụ còn lại.
 
-   Vẫn giữ hình Record<HoiVienStatus, string> thay vì ghép khoá từ giá trị lúc
-   chạy, vì Record bắt TypeScript kiểm đủ nhánh ngay lúc biên dịch: thêm một
-   trạng thái mới mà quên khai nhãn là lỗi biên dịch chứ không phải một ô trống
-   trên màn. Phần còn lại — khoá có thật trong từ điển hay không — phải tự đối
-   chiếu với lib/i18n.
-
-   Đây là khuôn cho các nhóm nghiệp vụ còn lại. */
+   Giữ hình Record<HoiVienStatus, string> thay vì ghép khoá lúc chạy, để thêm
+   một trạng thái mà quên khai nhãn là lỗi biên dịch chứ không phải một ô trống
+   trên màn. */
 
 export type HoiVienStatus = 'dang-hoat-dong' | 'tam-dung' | 'het-han' | 'huy';
 

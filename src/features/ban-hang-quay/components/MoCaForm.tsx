@@ -7,14 +7,12 @@ import { useT } from '@/components/shell/NgonNguProvider';
 import { money } from '@/lib/format';
 import { cn } from '@/lib/utils';
 
-/* Mở ca: đếm tiền có sẵn trong két rồi ghi lại. Con số này là gốc của phép
-   đối soát cuối ca — nhập sai ở đây thì cuối ca lệch đúng bằng ngần ấy.
+/* Mở ca: đếm tiền có sẵn trong két rồi ghi lại. Con số này là gốc của phép đối
+   soát cuối ca, nhập sai ở đây thì cuối ca lệch đúng bằng ngần ấy. Giờ mở ca do
+   server đóng dấu, màn không gửi giờ lên.
 
-   Giờ mở ca là giờ thật lúc bấm nút, do server đóng dấu; màn không gửi giờ lên
-   và cũng không có ô nào để sửa.
-
-   Tới muộn vẫn cho mở, chỉ cảnh báo và ghi lại. Chặn không cho mở là đẩy lễ tân
-   vào chỗ bán chui không có ca: tiền vào túi, không phiếu, không dấu vết. */
+   Tới muộn vẫn cho mở, chỉ cảnh báo và ghi lại — chặn là đẩy lễ tân vào chỗ bán
+   chui không có ca. */
 interface Props {
   locationName: string;
   /** Ca hiện tại theo khung chuẩn, và mở muộn bao nhiêu phút tính tới lúc

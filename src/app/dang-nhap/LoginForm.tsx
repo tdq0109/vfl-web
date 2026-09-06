@@ -20,19 +20,13 @@ export function LoginForm() {
   const t = useT();
   const donPhien = useDonPhienKhiVaoManDangNhap();
 
-  /* CLB không bao giờ được sống sót qua trang đăng nhập.
+  /* CLB không được sống sót qua trang đăng nhập.
 
-     Nút Đăng xuất đã dọn kho nhưng nó không phải đường ra duy nhất: hết phiên
-     thì server chuyển hướng qua GET /api/auth/thoat, và đường đó không chạy
-     được mã client nên sessionStorage giữ nguyên CLB của người trước. Quầy dùng
-     chung máy, người sau đăng nhập ngay trên cùng tab là thừa hưởng — bán vé và
-     đặt lịch vào nhầm cơ sở, mà màn vẫn trông đúng.
-
-     Đặt ở đây thì phủ mọi đường tới màn đăng nhập. Không tốn gì: middleware đá
-     người còn phiên hiệu lực ra khỏi /dang-nhap.
-
-     Dọn cả cache truy vấn vì hồ sơ người trước sống trong đó và nuôi cả lớp ẩn
-     nút — xem lib/query/donPhien.ts. Chỉ CLB, không dọn ngôn ngữ. */
+     Nút Đăng xuất không phải đường ra duy nhất: hết phiên thì server chuyển
+     hướng qua GET /api/auth/thoat, đường đó không chạy mã client nên
+     sessionStorage giữ nguyên CLB của người trước. Quầy dùng chung máy nên
+     người sau sẽ bán vé vào nhầm cơ sở. Dọn cả cache truy vấn, xem
+     lib/query/donPhien.ts. */
   useEffect(() => {
     donPhien();
     /* Chỉ chạy lúc gắn: `donPhien` đổi mỗi lần render nên KHÔNG đưa vào phụ

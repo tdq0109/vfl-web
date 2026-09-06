@@ -15,11 +15,9 @@ import { conPhaiThu, viSaoKhongThuDuoc } from '../hop-dong';
 import { lyDoThanhChu } from '../lyDo';
 import type { HopDong, ThanhToanInput } from '../types';
 
-/* Ghi phiếu thu cho hợp đồng.
-
-   Mặc định điền đúng phần còn phải thu, vì thu một lần đủ là trường hợp thường
-   gặp nhất. Thu từng phần vẫn gõ được, nhưng thu thừa thì chặn: thu thừa và trả
-   góp cần bút toán riêng, chưa làm. */
+/* Ghi phiếu thu cho hợp đồng. Mặc định điền đúng phần còn phải thu vì thu một
+   lần đủ là trường hợp thường gặp nhất. Thu từng phần vẫn gõ được, thu thừa thì
+   chặn — thu thừa và trả góp cần bút toán riêng, chưa làm. */
 
 interface Props {
   hopDong: HopDong;

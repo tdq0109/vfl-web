@@ -7,27 +7,16 @@ import type {
   TrangThaiBuoi,
 } from './types';
 
-/* Logic lịch — hàm thuần, không import React.
+/* Logic lịch — hàm thuần, không import React. Bốn hàm kiểm tra trả khoá i18n
+   chứ không trả câu tiếng Việt; null vẫn giữ nghĩa "không có lỗi".
 
-   Bốn hàm kiểm tra (kiemTraKhoangGio, kiemTraSucChua, viSaoKhongDatDuoc,
-   moTaTrungLich) trả khoá i18n chứ không trả câu tiếng Việt; màn gọi t(khoa).
-   Hàm thuần không có ngôn ngữ hiện hành để mà tra, gọi t() ở tầng này là đóng
-   băng chuỗi theo ngôn ngữ lúc nạp tệp. Cùng cách với san-pham/gia.ts. null vẫn
-   giữ nghĩa "không có lỗi" nên chỗ gọi không phải đổi cách kiểm.
+   Trọng tâm là chống trùng lịch HLV, và ba chỗ đừng gỡ khi sửa:
 
-   Trọng tâm là chống trùng lịch HLV. Không kiểm tay được: số tổ hợp ngày × giờ
-   × HLV × CLB quá lớn, và lỗi chỉ lộ ra khi hai buổi thật sự chồng nhau ngoài
-   đời, lúc đó đã có một khách bị bỏ rơi.
-
-   Ba chỗ đừng gỡ khi sửa:
-
-   1. Xuyên CLB: HLV không thể có mặt ở hai CLB cùng lúc, nên lọc theo CLB trước
-      rồi mới dò trùng là cho xếp trùng. timTrungLichHlv cố ý không nhận
-      locationId.
-   2. Liền kề không phải trùng: buổi 8–9h và 9–10h là hợp lệ. Dùng khoảng nửa mở
-      [batDau, ketThuc) nên chạm biên không tính là chồng.
-   3. Khi sửa một buổi, phải bỏ chính nó ra khỏi danh sách đối chiếu, nếu không
-      buổi nào cũng báo trùng với bản thân. */
+   1. Xuyên CLB: HLV không thể có mặt ở hai CLB cùng lúc, nên timTrungLichHlv cố
+      ý không nhận locationId — lọc theo CLB trước rồi mới dò là cho xếp trùng.
+   2. Liền kề không phải trùng: 8–9h và 9–10h là hợp lệ, nên dùng khoảng nửa mở
+      [batDau, ketThuc).
+   3. Khi sửa một buổi phải bỏ chính nó ra khỏi danh sách đối chiếu. */
 
 /** Hai khoảng thời gian có chồng nhau không. Nửa mở: chạm biên không tính. */
 export function chongLan(
@@ -55,10 +44,8 @@ interface TimTrungInput {
   boQuaId?: string;
 }
 
-/** Các buổi khác của cùng HLV bị chồng giờ với buổi đang xếp.
-
-    Không nhận locationId: HLV chỉ có một người, không thể đứng lớp ở hai CLB
-    cùng lúc. Truyền vào đây toàn bộ buổi trong khoảng thời gian đó, mọi CLB. */
+/** Các buổi khác của cùng HLV bị chồng giờ với buổi đang xếp. Không nhận
+    locationId — truyền vào đây toàn bộ buổi trong khoảng đó, mọi CLB. */
 export function timTrungLichHlv(
   buoiMoi: TimTrungInput,
   cacBuoi: readonly KhoangBuoi[],
@@ -105,7 +92,6 @@ export function soChoConLai(
   return Math.max(0, buoi.sucChua - choDatConHieuLuc(buoi.daDat, bayGio).length);
 }
 
-/** Buổi còn nhận thêm người không. */
 export function conCho(
   buoi: Pick<Buoi, 'sucChua' | 'daDat'>,
   bayGio: Date = new Date(),
@@ -122,10 +108,9 @@ export function daCoCho(
   return choDatConHieuLuc(buoi.daDat, bayGio).some((c) => c.hoiVienId === hoiVienId);
 }
 
-/** Vì sao không đặt được chỗ — khoá i18n, null nghĩa là đặt được.
-
-    Thứ tự bốn nhánh là có ý: buổi huỷ hoặc đã xong nói trước, rồi mới tới lý do
-    của riêng hội viên này. Đổi thứ tự là đổi câu người dùng đọc. */
+/** Vì sao không đặt được chỗ — khoá i18n, null nghĩa là đặt được. Thứ tự bốn
+    nhánh là có ý: buổi huỷ hoặc đã xong nói trước, rồi mới tới lý do của riêng
+    hội viên này. */
 export function viSaoKhongDatDuoc(
   buoi: Pick<Buoi, 'sucChua' | 'daDat' | 'daHuy' | 'ketThuc'>,
   hoiVienId: string,
@@ -157,12 +142,10 @@ export function thoiDiem(d: Date): IsoDateTime {
   return `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}T${pad2(d.getHours())}:${pad2(d.getMinutes())}`;
 }
 
-/** Phần ngày 'YYYY-MM-DD' của một mốc thời gian. */
 export function ngayCua(luc: IsoDateTime): string {
   return luc.slice(0, 10);
 }
 
-/** Phần giờ 'HH:mm' của một mốc thời gian. */
 export function gioCua(luc: IsoDateTime): string {
   return luc.slice(11, 16);
 }

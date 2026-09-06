@@ -34,7 +34,7 @@ type Tab = 'ban-hang' | 'giao-dich' | 'doi-soat' | 'chot-ngay';
 
 /* Giả định CLB chạy 2 ca/ngày (sáng 06:00–14:00, chiều 14:00–22:00). Khung
    nằm ở khungCa.ts; nếu mỗi CLB một khung riêng thì nó phải theo Location từ
-   backend — câu hỏi đã ghi vào mục 5 tài liệu bàn giao. */
+   backend — chưa chốt với đội .NET. */
 const KHUNG = KHUNG_2_CA;
 
 function fieldErrorsOf(err: unknown): Record<string, string> | undefined {

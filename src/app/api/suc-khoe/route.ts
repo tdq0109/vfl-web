@@ -1,19 +1,12 @@
 import { NextResponse } from 'next/server';
 import { dotnet } from '@/lib/server/dotnet';
 
-/* Kiểm tra sức khoẻ — dùng cho ngày chuyển đổi (Bước 14) và cho giám sát.
+/* Web này có gọi được backend .NET không — kiểm nhanh cho ngày chuyển đổi,
+   không cần đăng nhập.
 
-   Trả lời đúng một câu hỏi: web này có nói chuyện được với backend .NET
-   không. Ngày mở CLB đầu tiên, câu đó phải trả lời được trong 2 giây mà không
-   cần ai đăng nhập.
-
-   Không lộ thông tin nội bộ: không trả địa chỉ DOTNET_API_URL, không trả
-   nguyên văn lỗi mạng. Endpoint này không yêu cầu đăng nhập nên bất kỳ ai chạm
-   được cũng đọc được phần trả lời.
-
-   Không có endpoint health riêng bên .NET nên ta gọi /auth/me không kèm token:
-   401 vẫn là sống, chỉ lỗi mạng hoặc quá hạn mới là chết. Khi đội .NET làm
-   health endpoint thật thì đổi đúng một dòng dưới đây. */
+   Vì ai cũng gọi được nên không trả DOTNET_API_URL và không trả nguyên văn lỗi
+   mạng. .NET chưa có health endpoint riêng nên gọi /auth/me không kèm token:
+   401 vẫn là sống, chỉ lỗi mạng hoặc quá hạn mới là chết. */
 
 export const dynamic = 'force-dynamic';
 

@@ -24,14 +24,11 @@ import {
   type LoaiBuoi,
 } from '../types';
 
-/* Form tạo / sửa buổi.
+/* Form tạo / sửa buổi. Dò trùng lịch HLV ngay khi nhập, trước khi bấm lưu, để
+   người xếp lịch thấy luôn buổi nào đang chặn thay vì ăn lỗi 400 rồi đoán.
 
-   Điểm quan trọng: dò trùng lịch HLV ngay khi nhập, trước khi bấm lưu. Người
-   xếp lịch thấy luôn buổi nào đang chặn và ở CLB nào, thay vì bấm lưu rồi mới
-   ăn lỗi 400 và phải đoán.
-
-   Dò ở đây chỉ để báo sớm; backend vẫn phải kiểm tra lại, vì giữa lúc mở form
-   và lúc bấm lưu thì người khác có thể đã xếp mất chỗ đó. */
+   Dò ở đây chỉ để báo sớm; backend vẫn phải kiểm lại vì giữa lúc mở form và lúc
+   bấm lưu, người khác có thể đã xếp mất chỗ. */
 
 interface Props {
   defaultValue?: Partial<BuoiInput>;

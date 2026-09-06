@@ -11,12 +11,9 @@ import { canhBaoGiaSan, dongViPhamGiaSan, thanhTienDong } from '../hop-dong';
 import { lyDoThanhChu } from '../lyDo';
 import type { DongHopDong, KhuyenMaiApDung } from '../types';
 
-/* Chọn sản phẩm, số lượng và đơn giá cho hợp đồng. Thuần trình bày: danh sách
-   sản phẩm do màn truyền vào, không tự gọi API.
-
-   Giá niêm yết và giá sàn được chụp lại vào dòng ngay lúc thêm, bảng giá đổi
-   sau đó không được làm hợp đồng cũ đọc ra con số khác. Cảnh báo phá giá sàn
-   hiện ngay khi gõ, trước khi lưu. */
+/* Chọn sản phẩm, số lượng và đơn giá cho hợp đồng. Giá niêm yết và giá sàn
+   được chụp lại vào dòng ngay lúc thêm, để bảng giá đổi sau đó không làm hợp
+   đồng cũ đọc ra con số khác. Cảnh báo phá giá sàn hiện ngay khi gõ. */
 
 interface Props {
   dong: DongHopDong[];

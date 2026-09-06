@@ -3,23 +3,15 @@ import type { DiemDoanhThu, Ky, MaKy } from './types';
 
 /* Chọn kỳ, so sánh kỳ, dựng thang biểu đồ — hàm thuần, không import React.
 
-   Dashboard không tự tính tiền (backend cộng), nhưng nó quyết định người xem so
-   cái gì với cái gì, và đó là chỗ báo cáo hay nói dối nhất.
+   Dashboard không tự tính tiền, nhưng nó quyết định người xem so cái gì với cái
+   gì, và đó là chỗ báo cáo hay nói dối nhất. Sáu chỗ đừng gỡ:
 
-   Sáu chỗ đừng gỡ khi sửa:
-
-   1. Kỳ so sánh phải cùng độ dài. Tháng này mới qua 10 ngày mà đem so với trọn
-      tháng trước thì tháng nào cũng "giảm 60%". kyTruoc() luôn trả đúng số ngày.
-   2. Kỳ trước bằng 0 thì % thay đổi là vô nghĩa: trả null, màn hiện "mới", chứ
-      không phải Infinity hay NaN.
-   3. Ngày tính theo giờ địa phương. toISOString() ở múi +7 biến 0h ngày 1 thành
-      ngày 31 tháng trước.
-   4. API chỉ trả ngày có doanh thu. Vẽ thẳng thì trục hoành co lại, ngày nghỉ
-      biến mất và đường biểu đồ dốc sai.
-   5. Mọi giá trị bằng 0 thì chia cho max = 0 ra NaN, cột SVG biến mất không báo
-      lỗi.
-   6. Kỳ ngược (từ ngày > đến ngày) làm vòng while dựng chuỗi ngày chạy mãi —
-      chặn ngay ở cửa, trả chuỗi rỗng. */
+   - kỳ so sánh phải cùng độ dài, nếu không tháng nào cũng "giảm 60%";
+   - kỳ trước bằng 0 thì trả null chứ không phải Infinity hay NaN;
+   - ngày tính theo giờ địa phương, toISOString() ở múi +7 lùi mất một ngày;
+   - API chỉ trả ngày có doanh thu nên phải điền 0 trước khi vẽ;
+   - mọi giá trị bằng 0 thì chia cho max ra NaN và cột SVG biến mất;
+   - kỳ ngược làm vòng while dựng chuỗi ngày chạy mãi, chặn ngay ở cửa. */
 
 /** Số ngày của kỳ, đóng hai đầu: 01→01 là 1 ngày. 0 nếu kỳ ngược. */
 export function soNgay(ky: Ky): number {

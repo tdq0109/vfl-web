@@ -4,19 +4,10 @@ import type { CaThuNgan } from './types';
 
 /* Khung ca chuẩn của CLB — hàm thuần, không import React.
 
-   Bản giám sát đầu tiên coi ca là một phiên thu ngân tuỳ ý: ai mở lúc nào cũng
-   được, và mỗi ca được đối soát riêng lẻ. Thực tế lễ tân chia 2 ca một ngày, có
-   nơi 3 ca, nối tiếp nhau trên cùng một két.
-
-   Ba thứ chỉ ca-nối-ca mới sinh ra, và cả ba đều là chỗ tiền biến mất:
-
-   1. Bàn giao — tiền đếm cuối ca sáng phải bằng tiền đầu ca chiều. Lệch ở khớp
-      nối này thì không ca nào sai cả: ca sáng khớp két của nó, ca chiều khớp
-      két của nó, mà tiền vẫn hụt. Đối soát từng ca riêng lẻ không thấy được.
-   2. Khoảng trống — cả ca chiều không ai mở ca. Két vẫn có tiền, khách vẫn mua
-      vé, nhưng không ai chịu trách nhiệm và không có phiếu nào.
-   3. Chồng lấn — hai thu ngân cùng mở ca trên một két, tiền của người này rơi
-      vào đối soát của người kia.
+   Lễ tân chia 2 ca một ngày, có nơi 3 ca, nối tiếp nhau trên cùng một két. Coi
+   ca là một phiên thu ngân tuỳ ý rồi đối soát riêng lẻ thì bỏ sót đúng ba chỗ
+   tiền biến mất: lệch bàn giao giữa hai ca (không ca nào sai mà tiền vẫn hụt),
+   khung không ai mở ca, và hai thu ngân cùng mở ca trên một két.
 
    Khung giờ dưới đây là giả định, chờ vận hành chốt. */
 
@@ -76,10 +67,9 @@ export function doDaiKhung(khung: KhungCa): number {
   return kt > bd ? kt - bd : kt + 24 * 60 - bd;
 }
 
-/** Khung chứa thời điểm này. null nếu rơi ngoài mọi khung.
-
-    Khung vắt qua nửa đêm (22:00 → 06:00) phải xét bằng hoặc, không phải và:
-    01:30 vừa không ≥ 22:00 vừa không thuộc khoảng nào nếu so kiểu thường. */
+/** Khung chứa thời điểm này, null nếu ngoài mọi khung. Khung vắt qua nửa đêm
+    (22:00 → 06:00) phải xét bằng hoặc: 01:30 vừa không ≥ 22:00 vừa không thuộc
+    khoảng nào nếu so kiểu thường. */
 export function khungCuaThoiDiem(luc: string, khung: readonly KhungCa[]): KhungCa | null {
   const t = phutTrongNgay(gioCua(luc));
   if (t === null) return null;
@@ -94,10 +84,8 @@ export function khungCuaThoiDiem(luc: string, khung: readonly KhungCa[]): KhungC
   return null;
 }
 
-/** Ngày làm việc của một mốc, không phải ngày trên lịch.
-
-    Ca đêm mở 23:00 ngày 04 và ca đêm mở 01:00 ngày 05 là cùng một ca của ngày
-    04. Lấy ngày lịch thì ca đêm bị cắt đôi và cả hai ngày cùng thiếu một nửa. */
+/** Ngày làm việc của một mốc, không phải ngày trên lịch: ca đêm mở 23:00 ngày
+    04 và ca mở 01:00 ngày 05 là cùng một ca của ngày 04. */
 export function ngayLamViec(luc: string, khung: readonly KhungCa[]): string {
   const ngay = luc.slice(0, 10);
   const k = khungCuaThoiDiem(luc, khung);
@@ -140,11 +128,8 @@ export interface MatXichCa {
   khung: KhungCa | null;
   ca: CaThuNgan;
   /** Lệch bàn giao so với ca liền trước: tiền đầu ca này − tiền cuối ca trước.
-
-      null khi không có ca trước, hoặc ca trước chưa đóng. Dương nghĩa là ca này
-      nhận nhiều hơn số ca trước bàn giao. */
+      null khi không có ca trước hoặc ca trước chưa đóng. */
   lechBanGiao: number | null;
-  /** Số giờ chạy quá khung. */
   gioVuotKhung: number;
   /** Ca này chồng giờ với ca liền trước tại cùng CLB. */
   chongLanCaTruoc: boolean;
@@ -164,11 +149,11 @@ export interface NgayCuaClb {
   khungTrong: KhungTrong[];
 }
 
-/** Gom ca theo ngày làm việc × CLB, xếp theo giờ mở, rồi tính lệch bàn giao
-    giữa hai ca liền nhau, ca chạy quá khung, ca chồng lấn, khung không ai trực.
+/** Gom ca theo ngày làm việc × CLB rồi tính lệch bàn giao, ca chạy quá khung,
+    ca chồng lấn, khung không ai trực.
 
-    chiKhungDaQua chỉ báo khung trống khi khung ấy đã kết thúc so với bayGio.
-    Không có nó thì 8h sáng màn đã kêu ca chiều không ai trực. */
+    chiKhungDaQua chỉ báo khung trống khi khung ấy đã kết thúc; không có nó thì
+    8h sáng màn đã kêu ca chiều không ai trực. */
 export function gomTheoNgayVaClb(
   dsCa: readonly CaThuNgan[],
   khung: readonly KhungCa[],
@@ -239,11 +224,8 @@ export function khungDaKetThuc(ngay: string, khung: KhungCa, bayGio: Date): bool
   return bayGio.getTime() >= batDau.getTime() + dai * 60_000;
 }
 
-/** Tổng tiền mặt lẽ ra còn lại cuối ngày tại một CLB, đi theo chuỗi bàn giao.
-
-    Bắt đầu bằng tiền đầu ca đầu tiên, cộng tiền mặt bán được của mọi ca; đó là
-    số phải có trong két lúc giao ca cuối, không phụ thuộc từng ca đối soát ra
-    sao. */
+/** Tổng tiền mặt lẽ ra còn lại cuối ngày tại một CLB, đi theo chuỗi bàn giao:
+    tiền đầu ca đầu tiên cộng tiền mặt bán được của mọi ca. */
 export function tienMatCuoiNgayKyVong(ngay: NgayCuaClb): Vnd | null {
   const dau = ngay.matXich[0];
   if (!dau) return null;
@@ -253,14 +235,11 @@ export function tienMatCuoiNgayKyVong(ngay: NgayCuaClb): Vnd | null {
   });
 }
 
-/** Dấu hiệu sinh ra từ vị trí của ca trong chuỗi — mảng khoá i18n.
+/** Dấu hiệu sinh ra từ vị trí của ca trong chuỗi — mảng khoá i18n. Khác
+    giamSat.ts::chuYCuaCa() vốn soi một ca đứng riêng.
 
-    Khác giamSat.ts::chuYCuaCa(), hàm kia soi một ca đứng riêng (lệch két, huỷ
-    nhiều). Hàm này chỉ thấy được khi đặt ca cạnh ca liền trước.
-
-    Lệch bàn giao không có ngưỡng: lệch két vài nghìn còn có thể do trả tiền
-    thừa, còn tiền đầu ca sau khác tiền cuối ca trước thì luôn nghĩa là ai đó
-    đếm sai hoặc ai đó cầm đi. */
+    Lệch bàn giao không có ngưỡng: tiền đầu ca sau khác tiền cuối ca trước thì
+    luôn nghĩa là ai đó đếm sai hoặc ai đó cầm đi. */
 export function chuYCuaMatXich(m: MatXichCa): string[] {
   const ra: string[] = [];
   if (m.lechBanGiao !== null && m.lechBanGiao !== 0) {

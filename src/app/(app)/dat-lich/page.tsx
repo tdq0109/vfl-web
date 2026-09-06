@@ -2,7 +2,7 @@ import { PageHeader } from '@/components/ui';
 import { tTrenServer } from '@/lib/i18n/ngonNguServer';
 import { DatLichScreen } from '@/features/dat-lich';
 
-/* Server component mỏng — theo khuôn Bước 7. */
+/* Server component mỏng: chỉ dựng khung, màn thật nằm trong features/. */
 export default async function Page() {
   const t = await tTrenServer();
 

@@ -18,18 +18,12 @@ import { KHUNG_THEO_KIEU, type KieuKhung } from './khungCa';
 import { useDanhSachCa } from './hooks/useGiamSatCa';
 import type { BoLocGiamSat } from './types';
 
-/* Màn Giám sát ca — câu hỏi của người quản lý, không phải của thu ngân.
+/* Màn Giám sát ca: mọi ca của mọi thu ngân, kể cả ca đã đóng — ngược với
+   BanHangQuayScreen vốn chỉ phục vụ người đang đứng bán.
 
-   BanHangQuayScreen phục vụ người đang đứng bán: ca của tôi, giỏ hàng của tôi.
-   Màn này nhìn ngược lại, mọi ca của mọi thu ngân kể cả ca đã đóng, để trả lời
-   ba câu trước đây không chỗ nào trong hệ thống trả lời được: ca nào lệch két
-   và có ai giải thích không, ca nào còn mở quá lâu, phiếu nào đã bị huỷ.
-
-   Mục menu chỉ hiện từ cấp leader nhưng đó chỉ là ẩn nút — backend .NET phải tự
-   chặn, mock trả 403 cho staff đúng như vậy.
-
-   Lọc hai tầng, cố ý: ngày/CLB/trạng thái do server lọc, riêng "chỉ ca cần chú
-   ý" lọc ở client vì đó là kết luận của hàm thuần chuYCuaCa(). */
+   Mục menu chỉ hiện từ cấp leader nhưng đó là ẩn nút, backend mới là nơi chặn.
+   Lọc hai tầng: ngày/CLB/trạng thái do server lọc, riêng "chỉ ca cần chú ý" lọc
+   ở client vì đó là kết luận của hàm thuần chuYCuaCa(). */
 
 type Tab = 'theo-ngay' | 'ca' | 'so-giao-dich';
 
@@ -69,12 +63,9 @@ export function GiamSatCaScreen() {
   const caQuery = useDanhSachCa(locGuiLenServer);
   const dsCa = useMemo(() => caQuery.data ?? [], [caQuery.data]);
 
-  /* Chuỗi ca dựng trước, lọc sau — thứ tự này quan trọng. Lọc "chỉ ca cần chú
-     ý" trước rồi mới nối chuỗi thì giấu mất đúng ca lệch bàn giao: ca ấy tự nó
-     khớp két, dấu hiệu chỉ xuất hiện khi đặt cạnh ca trước.
-
-     bayGio cũng chốt một lần: gọi new Date() rải rác trong lúc vẽ là mỗi dòng
-     so với một mốc hơi khác nhau, và ca đúng ngưỡng sẽ nhấp nháy. */
+  /* Dựng chuỗi ca trước rồi mới lọc: lọc trước thì mất ca lệch bàn giao, vì
+     ca ấy tự nó khớp két và dấu hiệu chỉ hiện khi đặt cạnh ca trước. bayGio
+     chốt một lần để mọi dòng cùng so với một mốc. */
   const chuoiDayDu = useMemo(() => {
     const bayGio = new Date();
     return doiSoatTheoChuoi(dsCa, KHUNG_THEO_KIEU[kieuKhung], bayGio);

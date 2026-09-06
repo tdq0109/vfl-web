@@ -3,7 +3,7 @@ import { dotnet } from '@/lib/server/dotnet';
 import { relay } from '@/lib/server/http';
 import { getAccessToken } from '@/lib/auth/session';
 
-/* Hồ sơ người dùng của phiên hiện tại. `SessionProvider` (Bước 6) gọi lúc khởi
+/* Hồ sơ người dùng của phiên hiện tại. `SessionProvider` gọi lúc khởi
    động. 401 → chưa/hết đăng nhập; client sẽ thử refresh rồi gọi lại. */
 export async function GET(): Promise<NextResponse> {
   const token = await getAccessToken();

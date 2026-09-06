@@ -4,8 +4,7 @@ import type { DiemDoanhThu, HomNay, TomTatTongQuan, TongQuanParams, TopSanPham }
 /* Nơi duy nhất biết đường dẫn endpoint của Dashboard.
 
    Không có endpoint so sánh hai kỳ: màn gọi tomTat hai lần, một cho kỳ đang xem
-   và một cho kyTruoc(), rồi so ở frontend. Backend nhờ vậy chỉ phải biết một
-   phép cộng theo khoảng ngày. */
+   và một cho kyTruoc(), rồi so ở frontend. */
 
 const BASE = '/tong-quan';
 

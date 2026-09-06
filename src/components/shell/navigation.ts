@@ -2,11 +2,8 @@ import type { Role } from '@/lib/auth/permissions';
 import { hasMinRole } from '@/lib/auth/permissions';
 import type { UserProfile } from '@/lib/auth/types';
 
-/* Menu là dữ liệu, không phải JSX. Thêm màn là thêm một dòng ở đây, quyền tự
-   lọc.
-
-   minRole là mức tối thiểu để thấy mục menu. Đường dẫn tiếng Việt để đọc URL
-   biết đang ở đâu. */
+/* Menu là dữ liệu, không phải JSX: thêm màn là thêm một dòng, quyền tự lọc.
+   minRole là mức tối thiểu để thấy mục menu. */
 
 export interface NavItem {
   /** Khoá i18n. */
@@ -29,7 +26,6 @@ export const NAV: readonly NavItem[] = [
   { labelKey: 'nav.hopDong', href: '/ban-hang/hop-dong', minRole: 'staff' },
 ];
 
-/** Lọc menu theo cấp bậc của người dùng. */
 export function visibleNav(user: Pick<UserProfile, 'role'>): NavItem[] {
   return NAV.filter((item) => item.minRole === undefined || hasMinRole(user, item.minRole));
 }

@@ -1,17 +1,15 @@
 import { type NextRequest, NextResponse } from 'next/server';
 import { ACCESS_COOKIE, REFRESH_COOKIE } from '@/lib/auth/cookies';
 
-/* Chặn trước khi React chạy, để đỡ chớp màn hình. Bảo mật thật nằm ở backend,
-   mọi route handler tự kiểm tra token khi gọi .NET.
+/* Chặn trước khi React chạy, để đỡ chớp màn hình. Bảo mật thật nằm ở backend.
 
-   Next 16 đổi tên quy ước: tệp middleware.ts + hàm middleware() thành proxy.ts +
-   hàm proxy(). Bản 16 vẫn chạy tên cũ nhưng in cảnh báo mỗi lần build.
+   Next 16 đổi tên quy ước: middleware.ts + middleware() thành proxy.ts +
+   proxy().
 
-   Phải xét cả hai cookie chứ không chỉ refresh. Bản đầu chỉ xét refresh (30
-   ngày) trong khi (app)/layout lại cần access token (15 phút): sau 15 phút
-   không thao tác, middleware cho vào /tong-quan, layout thấy thiếu access nên
-   đá về /dang-nhap, middleware thấy còn refresh nên đá về / và lặp vô tận. Ba
-   trạng thái dưới đây tách bạch để không tái diễn:
+   Phải xét cả hai cookie chứ không chỉ refresh. Bản đầu chỉ xét refresh trong
+   khi (app)/layout lại cần access token, nên sau 15 phút không thao tác thì
+   middleware cho vào /tong-quan, layout đá về /dang-nhap, middleware đá về / —
+   lặp vô tận. Ba trạng thái tách bạch để không tái diễn:
 
      có access       → vào thẳng
      chỉ có refresh  → sang /api/auth/lam-moi lấy access mới rồi quay lại

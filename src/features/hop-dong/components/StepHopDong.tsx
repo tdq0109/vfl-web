@@ -4,13 +4,10 @@ import { cn } from '@/lib/utils';
 import { BUOC_HOP_DONG, buocHienTai } from '../hop-dong';
 import { TRANG_THAI_HOP_DONG_KHOA, type TrangThaiHopDong } from '../types';
 
-/* Thanh 5 bước — thay cho class `.step` của bản cũ.
+/* Thanh 5 bước. Thuần trình bày: nhận trạng thái, tự tra bước từ BUOC_HOP_DONG.
 
-   Thuần trình bày: chỉ nhận trạng thái, tự tra bước từ `BUOC_HOP_DONG`. Bước đã
-   qua tick xanh, bước đang đứng tô đậm, bước sau xám.
-
-   Hợp đồng ra khỏi luồng thuận (đã huỷ / tạm dừng) thì thanh bước vô nghĩa —
-   hiện một dải nhắc trạng thái thay vì vẽ 5 ô chết. */
+   Hợp đồng ra khỏi luồng thuận (đã huỷ, tạm dừng) thì thanh bước vô nghĩa, hiện
+   một dải nhắc trạng thái thay vì vẽ 5 ô chết. */
 
 export function StepHopDong({ trangThai }: { trangThai: TrangThaiHopDong }) {
   const t = useT();

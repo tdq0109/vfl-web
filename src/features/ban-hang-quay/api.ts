@@ -45,16 +45,12 @@ export const banHangQuayApi = {
     return api.patch<GiaoDich>(`${BASE}/ca/${caId}/giao-dich/${giaoDichId}/huy`, { lyDo });
   },
 
-  /* Giám sát ca.
+  /* Giám sát ca. Hai đường dẫn dưới đây là giả định, chưa chốt với đội .NET.
+     Backend phải tự chặn theo quyền: không đủ cấp thì 404/403, đừng trả danh
+     sách rỗng. */
 
-     Hai đường dẫn dưới đây là giả định, chưa chốt với đội .NET (mục 5 tài liệu
-     bàn giao). Backend phải tự chặn theo quyền: ai không đủ cấp thì 404/403,
-     đừng trả danh sách rỗng. Lớp ẩn nút ở frontend không phải hàng rào. */
-
-  /** Mọi ca trong khoảng lọc, của mọi thu ngân, kể cả ca đã đóng.
-
-      Khác caDangMo(): hàm kia trả ca của chính mình để đứng bán, hàm này trả ca
-      của người khác để giám sát. Trả kèm giaoDich của từng ca vì đối soát phải
+  /** Mọi ca trong khoảng lọc, của mọi thu ngân, kể cả ca đã đóng — khác
+      caDangMo() vốn chỉ trả ca của chính mình. Trả kèm giaoDich vì đối soát
       tính từ giao dịch chứ không tin số tổng backend gửi kèm. */
   danhSachCa(boLoc: BoLocGiamSat): Promise<CaThuNgan[]> {
     return api.get<CaThuNgan[]>(`${BASE}/ca`, {
@@ -77,20 +73,14 @@ export const banHangQuayApi = {
 
   /** Chuyển ca: chốt ca đang chạy rồi mở ngay ca kế tiếp, trong một giao dịch.
 
-      Không có tham số tienDauCa, và đó là điểm quan trọng nhất của endpoint
-      này: tiền đầu ca sau là tiền đếm của ca trước, do backend gán. Cho gõ tay
-      là dựng lại đúng lỗ hổng mà cơ chế này sinh ra để bịt.
-
-      Phải nguyên tử ở backend: đóng được mà mở hỏng là quầy đứng hình giữa ca. */
+      Không có tham số tienDauCa — tiền đầu ca sau là tiền đếm của ca trước, do
+      backend gán. Phải nguyên tử: đóng được mà mở hỏng là quầy đứng hình. */
   chuyenCa(caId: string, input: ChuyenCaInput): Promise<KetQuaChuyenCa> {
     return api.post<KetQuaChuyenCa>(`${BASE}/ca/${caId}/chuyen-ca`, input);
   },
 
-  /** Một ngày làm việc của một CLB: mọi ca trong ngày + trạng thái chốt.
-
-      Khác danhSachCa(): hàm kia dành cho người giám sát (cần cấp leader), hàm
-      này dành cho chính người đang trực quầy để xác nhận ngày của mình, nên thu
-      ngân gọi được nhưng chỉ CLB của họ. */
+  /** Một ngày làm việc của một CLB: mọi ca trong ngày + trạng thái chốt. Thu
+      ngân gọi được cho CLB của mình, khác danhSachCa() vốn cần cấp leader. */
   ngayLamViec(ngay: string, locationId: string): Promise<NgayLamViecQuay> {
     return api.get<NgayLamViecQuay>(`${BASE}/ngay`, { query: { ngay, locationId } });
   },

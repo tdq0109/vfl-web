@@ -1,26 +1,16 @@
 import en from './en.json';
 import vi from './vi.json';
 
-/* i18n tối giản: từ điển phẳng theo khoá, tiếng Việt là ngôn ngữ gốc.
+/* i18n tối giản: từ điển phẳng theo khoá, tiếng Việt là ngôn ngữ gốc, bản tiếng
+   Anh giữ song song. Bộ chuyển ngôn ngữ lúc chạy nằm ở
+   components/shell/NgonNguProvider.tsx.
 
-   Phase 1 chạy tiếng Việt; bản tiếng Anh giữ song song để không phải dịch ngược
-   cả hệ thống về sau. Bộ chuyển ngôn ngữ lúc chạy nằm ở
-   components/shell/NgonNguProvider.tsx và NutDoiNgonNgu.tsx.
+   Ngôn ngữ nhớ trong cookie nên server đọc được: trang trong app/ gọi
+   tTrenServer() và <html lang> đúng ngay từ lần dựng HTML đầu, client dùng
+   useT(). Hai hàm, hai phía, đừng gọi nhầm.
 
-   Từ điển hệ cũ (tu-dien-he-cu.json) có 505 mục nhưng chỉ 43 trùng nguyên văn
-   với chuỗi đang dùng; 462 mục còn lại thuộc màn chưa làm ở Phase 1 (lương,
-   Academy, Pro Skill, chăm lead, trung tâm báo cáo, đặt target).
-
-   Đã chuyển xong toàn bộ phần sản phẩm. Đếm lại bằng npm run i18n-con-lai —
-   hiện còn 11 chuỗi, đều là câu throw cho lập trình viên hoặc mã định dạng của
-   Excel.
-
-   Ngôn ngữ nhớ trong cookie (ngonNgu.ts + cookieNgonNgu.ts) nên server đọc
-   được: trang trong app/ gọi tTrenServer() và <html lang> đúng ngay từ lần dựng
-   HTML đầu, client dùng useT(). Hai hàm, hai phía, đừng gọi nhầm.
-
-   Không có lưới tự động canh khoá gõ sai và khoá chết trong từ điển, nên thêm
-   khoá mới thì tự đối chiếu vi.json với en.json. */
+   tu-dien-he-cu.json là từ điển của hệ cũ, phần lớn thuộc màn chưa làm ở
+   Phase 1. Đếm chuỗi chưa dịch bằng npm run i18n-con-lai. */
 
 export type Locale = 'vi' | 'en';
 export const DEFAULT_LOCALE: Locale = 'vi';

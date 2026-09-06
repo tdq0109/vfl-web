@@ -23,7 +23,6 @@ function asDate(value: DateInput): Date | null {
   return Number.isNaN(d.getTime()) ? null : d;
 }
 
-/** Date → 'YYYY-MM-DD' theo giờ địa phương. */
 export function toIsoDate(date: Date): string {
   return `${date.getFullYear()}-${pad2(date.getMonth() + 1)}-${pad2(date.getDate())}`;
 }

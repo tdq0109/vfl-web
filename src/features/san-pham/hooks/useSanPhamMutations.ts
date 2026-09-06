@@ -15,10 +15,7 @@ import type {
 } from '../types';
 
 /* Toàn bộ logic ghi của nhóm Sản phẩm. Lỗi ProblemDetails không nuốt, màn đọc
-   mutation.error để gắn vào ô nhập.
-
-   Chữ của toast lấy qua useT() bên trong hook, không gọi t() ở module scope —
-   xem ghi chú cùng loại ở useNhanVienMutations.ts. */
+   mutation.error để gắn vào ô nhập. Toast lấy chữ qua useT() bên trong hook. */
 
 export function useCreateSanPham() {
   const qc = useQueryClient();

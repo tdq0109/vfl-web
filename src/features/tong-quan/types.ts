@@ -1,11 +1,8 @@
 import type { IsoDate, Vnd } from '@/lib/api/types';
 
-/* Kiểu + khoá i18n của nhãn Dashboard, theo khuôn nhóm Hội viên
-   (features/hoi-vien/types.ts). Bảng dưới đây chứa khoá i18n chứ không phải chữ
-   tiếng Việt; đọc nhãn bằng t(MA_KY_KHOA[m]).
+/* Kiểu + khoá i18n của nhãn Dashboard; đọc nhãn bằng t(MA_KY_KHOA[m]).
 
-   Dashboard không có nghiệp vụ riêng, nó chỉ tổng hợp lại sáu nhóm kia: mọi con
-   số là do backend cộng, frontend chỉ lo chọn kỳ, so sánh kỳ và vẽ. Đừng tự
+   Dashboard không có nghiệp vụ riêng, mọi con số là do backend cộng. Đừng tự
    cộng doanh thu từ danh sách hợp đồng ở màn này — hai nguồn số sẽ lệch nhau và
    không ai biết tin cái nào. */
 
@@ -33,7 +30,6 @@ export interface Ky {
     hai lần rồi so, không có endpoint "so sánh" riêng. */
 export interface TomTatTongQuan {
   doanhThu: Vnd;
-  /** Hợp đồng phát hành trong kỳ. */
   soHopDong: number;
   hoiVienMoi: number;
   /** Buổi tập đã diễn ra (không tính buổi huỷ). */
@@ -45,7 +41,6 @@ export interface TomTatTongQuan {
   congNo: Vnd;
 }
 
-/** Một điểm trên biểu đồ doanh thu theo ngày. */
 export interface DiemDoanhThu {
   ngay: IsoDate;
   doanhThu: Vnd;

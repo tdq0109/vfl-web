@@ -18,19 +18,12 @@ import {
 } from '@/lib/storage/clbDangChon';
 import type { Location } from '@/lib/api/types';
 
-/* CLB đang chọn, nhớ trong `sessionStorage` (mất khi đóng tab — đúng ý: mỗi
-   phiên làm việc chọn lại).
+/* CLB đang chọn, nhớ trong sessionStorage — mất khi đóng tab, đúng ý.
 
-   Đừng đọc sessionStorage lúc render: server không đọc được và hai bên sẽ ra
-   hai kết quả khác nhau.
-
-   Cách giải: `useSyncExternalStore`. Server và lần render hydrate đầu tiên dùng
-   ảnh chụp server (luôn `null` → CLB mặc định); hydrate xong React tự đọc ảnh
-   chụp client. Không `useEffect`, không `setState`, không lệch hydration.
-
-   Bản trước dùng `useState` + đọc kho trong `useEffect`. Nó chạy đúng nhưng phải
-   tắt luật `react-hooks/set-state-in-effect`, và tốn một lần render thừa mỗi lần
-   gắn. Toàn bộ phần chạm kho nay nằm ở `lib/storage/clbDangChon.ts` và có test. */
+   Đọc kho bằng useSyncExternalStore chứ không đọc trong lúc render: server
+   không đọc được sessionStorage nên hai bên sẽ ra hai kết quả khác nhau. Bản
+   trước dùng useState kèm useEffect, chạy đúng nhưng tốn một lần render thừa
+   mỗi lần gắn. Phần chạm kho nằm ở lib/storage/clbDangChon.ts. */
 
 export { MOI_CLB as ALL_LOCATIONS };
 

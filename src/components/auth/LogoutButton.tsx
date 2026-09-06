@@ -7,20 +7,12 @@ import { Button } from '@/components/ui';
 import { useT } from '@/components/shell/NgonNguProvider';
 import { useDonPhienKhiDangXuat } from '@/lib/query/donPhien';
 
-/* Gọi /api/auth/logout (Next xoá cookie, báo .NET thu hồi) rồi về trang đăng
-   nhập.
+/* Gọi /api/auth/logout rồi về trang đăng nhập.
 
-   Dọn kho của trình duyệt trước, đừng để sau lời gọi mạng. Quầy dùng chung một
-   máy: người trước đăng xuất rồi người sau đăng nhập ngay trên cùng tab, nên
-   CLB đang chọn (sessionStorage) và ngôn ngữ (cookie) phải hết trước khi người
-   sau nhìn thấy màn nào. Gọi sau await là mạng chậm hay hỏng thì có một khoảng
-   người sau đã ở trang đăng nhập mà kho vẫn còn của người trước.
-
-   Dọn cả cache truy vấn chứ không chỉ kho trình duyệt: QueryClient sống qua lần
-   đổi tài khoản nên hồ sơ người trước ở lại trong cache và cả lớp ẩn nút chạy
-   trên hồ sơ đó. Xem lib/query/donPhien.ts.
-
-   Danh sách kho nằm ở lib/storage/quenPhien.ts, thêm kho mới thì nối vào đó. */
+   Dọn kho trình duyệt và cache truy vấn trước lời gọi mạng: quầy dùng chung
+   máy, mạng chậm là có một khoảng người sau đã ở trang đăng nhập mà CLB, ngôn
+   ngữ và hồ sơ của người trước vẫn còn. Danh sách kho ở
+   lib/storage/quenPhien.ts. */
 export function LogoutButton() {
   const router = useRouter();
   const [pending, setPending] = useState(false);

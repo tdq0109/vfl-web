@@ -11,14 +11,12 @@ import { khungKeTiep, viSaoKhongChuyenDuocCa } from '../chuyenCa';
 import { khungCuaThoiDiem, type KhungCa } from '../khungCa';
 import type { CaThuNgan } from '../types';
 
-/* Phiếu đối soát cuối ca.
-
-   Tách rõ ba khối để thu ngân đọc được mà không cần giải thích: doanh thu theo
-   từng phương thức (chuyển khoản và thẻ không vào két), tiền mặt kỳ vọng bằng
-   đầu ca cộng tiền mặt bán được, rồi đếm thực tế ra chênh lệch.
+/* Phiếu đối soát cuối ca: doanh thu theo từng phương thức (chuyển khoản và thẻ
+   không vào két), tiền mặt kỳ vọng bằng đầu ca cộng tiền mặt bán được, rồi đếm
+   thực tế ra chênh lệch.
 
    Lệch thì vẫn cho đóng ca — bắt khớp tuyệt đối sẽ khiến thu ngân bù tiền túi
-   cho lệch vài nghìn thay vì báo cáo. Nhưng lệch thì bắt buộc ghi lý do. */
+   thay vì báo cáo. Nhưng lệch thì bắt buộc ghi lý do. */
 
 interface Props {
   ca: CaThuNgan;

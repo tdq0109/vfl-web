@@ -4,15 +4,12 @@ import { fmtDateTime, money } from '@/lib/format';
 import { cn } from '@/lib/utils';
 import { PHUONG_THUC_KHOA, type DongSoGiaoDich } from '../types';
 
-/* Sổ giao dịch — mọi phiếu bán tại quầy, để đối chiếu.
+/* Sổ giao dịch — mọi phiếu bán tại quầy, để đối chiếu. Thuần trình bày, cột
+   "ca" ẩn được khi bảng đã nằm trong ngăn kéo của một ca.
 
-   Giao dịch đã huỷ vẫn nằm trong sổ, chỉ gạch ngang và gắn nhãn kèm lý do. Giấu
-   chúng đi là mất dấu vết của mẫu gian lận cổ điển nhất ở quầy: bấm bán, thu
-   tiền của khách, rồi huỷ phiếu. Đối soát tiền mặt không phát hiện ra việc đó,
-   chỉ sổ này mới phát hiện được.
-
-   Thuần trình bày. Cột "ca" ẩn được để dùng lại trong ngăn kéo chi tiết một ca,
-   nơi mọi dòng đều cùng một ca. */
+   Giao dịch đã huỷ vẫn nằm trong sổ, chỉ gạch ngang kèm lý do: giấu đi là mất
+   dấu vết của mẫu gian lận cổ điển nhất ở quầy — bấm bán, thu tiền, rồi huỷ
+   phiếu — mà đối soát tiền mặt không nhìn thấy. */
 
 interface Props {
   dong: DongSoGiaoDich[];

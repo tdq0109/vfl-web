@@ -4,12 +4,10 @@ import { useLayoutEffect, useRef, type InputHTMLAttributes } from 'react';
 import { moneyInput, parseVnd } from '@/lib/format';
 import { cn } from '@/lib/utils';
 
-/* Ô nhập tiền VND: hiển thị nhóm hàng nghìn ngay khi gõ, trả về số nguyên
-   đồng.
+/* Ô nhập tiền VND: hiện nhóm hàng nghìn khi gõ, trả về số nguyên đồng.
 
-   Định dạng lại khi gõ sẽ làm con trỏ nhảy về cuối, mà người vận hành sửa số ở
-   giữa cả ngày nên phải giữ đúng chỗ. Cách làm: đếm số chữ số đứng trước con
-   trỏ, định dạng lại, rồi đặt con trỏ sau đúng ngần ấy chữ số. */
+   Định dạng lại làm con trỏ nhảy về cuối, mà người vận hành sửa số ở giữa cả
+   ngày; nên đếm số chữ số trước con trỏ, định dạng, rồi đặt lại con trỏ. */
 
 interface MoneyInputProps
   extends Omit<InputHTMLAttributes<HTMLInputElement>, 'value' | 'onChange' | 'type'> {
