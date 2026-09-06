@@ -6,11 +6,11 @@ import type { TongHopGiamSat } from '../giamSat';
 
 /* Dải số tổng phía trên bảng ca. Thuần trình bày.
 
-   ⚠ HIỆN CẢ HAI CON SỐ LỆCH, và cố ý đặt cạnh nhau:
-     · "Lệch ròng"  = thừa và thiếu bù trừ nhau — con số kế toán quan tâm;
-     · "Tổng sai sót" = cộng trị tuyệt đối — QUY MÔ sai sót thật.
-   Một ca thừa 100k và một ca thiếu 100k cho lệch ròng bằng 0. Chỉ hiện con số ấy
-   là người xem kết luận "hôm nay không lệch đồng nào", trong khi có hai ca sai. */
+   Hiện cả hai con số lệch, cố ý đặt cạnh nhau: "lệch ròng" là thừa và thiếu bù
+   trừ nhau, con số kế toán quan tâm; "tổng sai sót" cộng trị tuyệt đối, tức quy
+   mô sai sót thật. Một ca thừa 100k và một ca thiếu 100k cho lệch ròng bằng 0,
+   chỉ hiện con số ấy là người xem kết luận hôm nay không lệch đồng nào trong
+   khi có hai ca sai. */
 
 interface Props {
   tongHop: TongHopGiamSat;

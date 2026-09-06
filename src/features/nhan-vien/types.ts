@@ -1,16 +1,13 @@
 import type { IsoDate } from '@/lib/api/types';
 import type { Role } from '@/lib/auth/permissions';
 
-/* Kiểu + KHOÁ i18n của nhãn nhóm Nhân viên. Theo đúng khuôn nhóm Hội viên —
-   xem `features/hoi-vien/types.ts`.
+/* Kiểu + khoá i18n của nhãn nhóm Nhân viên, theo khuôn nhóm Hội viên
+   (features/hoi-vien/types.ts). Bảng dưới đây chứa khoá i18n chứ không phải chữ
+   tiếng Việt; đọc nhãn bằng t(NHAN_VIEN_STATUS_KHOA[s]). Giữ hình
+   Record<NhanVienStatus, string> để TypeScript vẫn bắt thiếu nhánh lúc biên
+   dịch; còn khoá có thật trong từ điển hay không thì phải tự đối chiếu.
 
-   ⚠ BẢNG DƯỚI ĐÂY CHỨA KHOÁ i18n, KHÔNG PHẢI CHỮ TIẾNG VIỆT. Đọc nhãn bằng
-   `t(NHAN_VIEN_STATUS_KHOA[s])` — xem `NgonNguProvider.useT()`. Giữ hình
-   `Record<NhanVienStatus, string>` để TypeScript vẫn bắt thiếu nhánh lúc biên
-   dịch; phần TypeScript không thấy được — là khoá
-   có thật trong từ điển hay không.
-
-   ⚠ KHÔNG có lương / phụ cấp / chấm công ở đây. Payroll không thuộc Phase 1 —
+   Không có lương, phụ cấp hay chấm công ở đây: payroll không thuộc Phase 1 —
    sai lương là sai với người lao động, phần đó cần 6–8 tuần riêng. */
 
 export type NhanVienStatus = 'dang-lam' | 'nghi-phep' | 'da-nghi';

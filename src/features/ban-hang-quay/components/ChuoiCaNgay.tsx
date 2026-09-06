@@ -7,21 +7,21 @@ import type { DongDoiSoatTrongChuoi } from '../giamSat';
 import type { KhungTrong, NgayCuaClb } from '../khungCa';
 import { ChuYPill } from './ChuYPill';
 
-/* MỘT NGÀY CỦA MỘT CLB, dựng theo CHUỖI CA nối tiếp nhau.
+/* Một ngày của một CLB, dựng theo chuỗi ca nối tiếp nhau.
 
    Đây là hình mà bảng phẳng không vẽ được. Lễ tân chia 2–3 ca một ngày trên
-   CÙNG MỘT KÉT, nên thứ cần nhìn không phải "ca nào lệch" mà là **mạch tiền đi
-   từ đầu ngày tới cuối ngày**:
+   cùng một két, nên thứ cần nhìn không phải ca nào lệch mà là mạch tiền đi từ
+   đầu ngày tới cuối ngày:
 
      ca sáng   đầu 500.000 → cuối 800.000
-        ↓ bàn giao: khớp / lệch bao nhiêu   ← CHỖ NÀY mô hình cũ không có
+        ↓ bàn giao: khớp / lệch bao nhiêu
      ca chiều  đầu 800.000 → cuối 1.000.000
 
-   Khung nào không ai mở ca thì hiện thành một ô GẠCH CHÉO đúng vị trí của nó
-   trong ngày — nhìn ra ngay "chiều nay không ai trực quầy", thứ mà danh sách
-   ca không bao giờ nói được vì nó chỉ liệt kê ca ĐÃ CÓ.
+   Khung nào không ai mở ca thì hiện thành một ô gạch chéo đúng vị trí của nó
+   trong ngày, nhìn ra ngay "chiều nay không ai trực quầy" — thứ mà danh sách ca
+   không nói được vì nó chỉ liệt kê ca đã có.
 
-   Thuần trình bày: mọi con số do `giamSat.ts` và `khungCa.ts` tính sẵn. */
+   Thuần trình bày: mọi con số do giamSat.ts và khungCa.ts tính sẵn. */
 
 interface Props {
   ngay: NgayCuaClb & { dong: DongDoiSoatTrongChuoi[] };

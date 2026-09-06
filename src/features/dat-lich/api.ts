@@ -7,7 +7,7 @@ import type {
   LichTuanParams,
 } from './types';
 
-/* NƠI DUY NHẤT biết đường dẫn endpoint của nhóm Đặt lịch. */
+/* Nơi duy nhất biết đường dẫn endpoint của nhóm Đặt lịch. */
 
 const BASE = '/dat-lich';
 
@@ -24,10 +24,10 @@ export const datLichApi = {
     });
   },
 
-  /** Lịch của MỘT HLV trong tuần, MỌI CLB — để dò trùng lịch.
+  /** Lịch của một HLV trong tuần, mọi CLB, để dò trùng lịch.
 
-      ⚠ Cố ý không có tham số locationId: HLV không thể đứng lớp ở hai CLB cùng
-      lúc, nên phải nhìn toàn hệ thống. Lọc theo CLB ở đây là tạo ra lỗ hổng. */
+      Cố ý không có tham số locationId: HLV không thể đứng lớp ở hai CLB cùng
+      lúc nên phải nhìn toàn hệ thống. Lọc theo CLB ở đây là tạo ra lỗ hổng. */
   lichHlv(hlvId: string, tuNgay: string): Promise<KhoangBuoi[]> {
     return api.get<KhoangBuoi[]>(`${BASE}/hlv/${hlvId}`, { query: { tuNgay } });
   },
@@ -52,7 +52,7 @@ export const datLichApi = {
     return api.patch<Buoi>(`${BASE}/buoi/${id}/huy`);
   },
 
-  /* ── Chỗ ngồi ────────────────────────────────────────────────────────── */
+  // Chỗ ngồi
 
   /** Giữ chỗ tạm (chưa chốt). Backend đặt hạn giữ. */
   giuCho(buoiId: string, hoiVienId: string): Promise<Buoi> {
@@ -68,7 +68,7 @@ export const datLichApi = {
     return api.delete<Buoi>(`${BASE}/buoi/${buoiId}/cho/${choId}`);
   },
 
-  /* ── Hàng chờ ────────────────────────────────────────────────────────── */
+  // Hàng chờ
 
   vaoHangCho(buoiId: string, hoiVienId: string): Promise<Buoi> {
     return api.post<Buoi>(`${BASE}/buoi/${buoiId}/hang-cho`, { hoiVienId });

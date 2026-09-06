@@ -2,8 +2,8 @@ import { Pill } from '@/components/ui';
 import { useT } from '@/components/shell/NgonNguProvider';
 import { TRANG_THAI_HIEN_THI_KHOA, type TrangThaiHienThi } from '../types';
 
-/* Nhận TRẠNG THÁI HIỂN THỊ (đã suy ra `het-han`), không nhận trạng thái lưu —
-   gọi `trangThaiHienThi()` trước khi truyền vào. */
+/* Nhận trạng thái hiển thị (đã suy ra het-han) chứ không nhận trạng thái lưu —
+   gọi trangThaiHienThi() trước khi truyền vào. */
 
 const TONE: Record<TrangThaiHienThi, 'ok' | 'warn' | 'bad' | 'default'> = {
   'bao-gia': 'default',

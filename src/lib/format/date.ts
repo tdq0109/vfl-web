@@ -1,12 +1,12 @@
-/* Ngày giờ — LÀM VIỆC THEO GIỜ ĐỊA PHƯƠNG. Không bao giờ dùng `toISOString()` để
-   lấy ngày: nó quy về UTC, ở múi giờ +7 thì 0h ngày 1 thành 17h ngày trước đó. */
+/* Ngày giờ, làm việc theo giờ địa phương. Không bao giờ dùng toISOString() để
+   lấy ngày: nó quy về UTC, ở múi giờ +7 thì 0h ngày 1 thành 17h ngày trước. */
 
 export type DateInput = Date | string | number;
 
 const pad2 = (n: number): string => String(n).padStart(2, '0');
 
-/** Nhận Date / mốc thời gian / chuỗi và trả Date, hoặc null nếu không đọc được.
-    Chuỗi 'YYYY-MM-DD' được dựng thành 0h ĐỊA PHƯƠNG (không phải 0h UTC). */
+/** Nhận Date / mốc thời gian / chuỗi và trả Date, hoặc null nếu không đọc
+    được. Chuỗi 'YYYY-MM-DD' được dựng thành 0h địa phương, không phải 0h UTC. */
 function asDate(value: DateInput): Date | null {
   if (value instanceof Date) return Number.isNaN(value.getTime()) ? null : value;
   if (typeof value === 'number') {
@@ -35,7 +35,7 @@ export function fmtDate(value: DateInput | null | undefined): string {
   return `${pad2(d.getDate())}/${pad2(d.getMonth() + 1)}/${d.getFullYear()}`;
 }
 
-/** → 'DD/MM/YYYY HH:mm' theo giờ địa phương. */
+/** Trả 'DD/MM/YYYY HH:mm' theo giờ địa phương. */
 export function fmtDateTime(value: DateInput | null | undefined): string {
   const d = value == null ? null : asDate(value);
   if (!d) return '—';

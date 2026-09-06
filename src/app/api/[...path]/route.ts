@@ -5,10 +5,11 @@ import { getAccessToken } from '@/lib/auth/session';
 /* Proxy chung: mọi `/api/<x>` không phải `/api/auth/*` → `{DOTNET}/<x>`, gắn
    `Authorization: Bearer` lấy từ cookie httpOnly.
 
-   ⚠ Ở đây CHỈ được: đọc cookie, chuyển tiếp request, gắn header. Không truy vấn,
-   không tính toán, không nghiệp vụ — cần logic nghĩa là endpoint .NET còn thiếu.
+   Ở đây chỉ được đọc cookie, chuyển tiếp request và gắn header. Không truy
+   vấn, không tính toán, không nghiệp vụ — cần logic nghĩa là endpoint .NET còn
+   thiếu.
 
-   KHÔNG tự refresh khi 401: `lib/api/client.ts` bắt 401, gọi `/api/auth/refresh`
+   Không tự refresh khi 401: lib/api/client.ts bắt 401, gọi /api/auth/refresh
    một lần rồi thử lại. */
 
 const HOP_BY_HOP = new Set([

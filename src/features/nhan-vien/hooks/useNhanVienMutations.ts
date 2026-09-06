@@ -7,12 +7,12 @@ import { invalidateAffected, keys } from '@/lib/query/keys';
 import { nhanVienApi } from '../api';
 import type { DoiVaiTroInput, NhanVien, NhanVienInput, NhanVienStatus } from '../types';
 
-/* Toàn bộ logic ghi của nhóm Nhân viên. Lỗi ProblemDetails không nuốt — màn đọc
-   `mutation.error` để gắn vào ô nhập.
+/* Toàn bộ logic ghi của nhóm Nhân viên. Lỗi ProblemDetails không nuốt, màn đọc
+   mutation.error để gắn vào ô nhập.
 
-   ⚠ Chữ của toast lấy qua `useT()` BÊN TRONG hook, không gọi `t()` ở module
-   scope: gọi ngoài hook là đóng băng chuỗi theo ngôn ngữ lúc nạp tệp — đổi ngôn
-   ngữ xong vẫn thấy toast tiếng cũ, mà chỉ lộ ra đúng lúc thao tác thành công. */
+   Chữ của toast lấy qua useT() bên trong hook, không gọi t() ở module scope:
+   gọi ngoài hook là đóng băng chuỗi theo ngôn ngữ lúc nạp tệp, đổi ngôn ngữ
+   xong vẫn thấy toast tiếng cũ và chỉ lộ ra đúng lúc thao tác thành công. */
 
 export function useCreateNhanVien() {
   const qc = useQueryClient();

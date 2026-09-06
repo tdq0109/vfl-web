@@ -9,7 +9,7 @@ import type {
   SanPhamStatus,
 } from './types';
 
-/* NƠI DUY NHẤT biết đường dẫn endpoint của nhóm Sản phẩm. */
+/* Nơi duy nhất biết đường dẫn endpoint của nhóm Sản phẩm. */
 
 const BASE = '/san-pham';
 const KM = '/khuyen-mai';
@@ -49,7 +49,7 @@ export const sanPhamApi = {
     return api.patch<SanPham>(`${BASE}/${id}/trang-thai`, { trangThai });
   },
 
-  /* ── Khuyến mãi ─────────────────────────────────────────────────────── */
+  // Khuyến mãi
 
   listKhuyenMai(): Promise<KhuyenMai[]> {
     return api.get<KhuyenMai[]>(KM);

@@ -8,18 +8,15 @@ import path from 'node:path';
    Dùng để biết còn bao nhiêu chuỗi chưa đưa vào `lib/i18n` — con số trong tài
    liệu bàn giao lấy từ đây, nên ai cũng kiểm lại được thay vì phải tin.
 
-   ⚠ KHÔNG dùng regex thủ công để bắt chuỗi trong nháy. Bản đầu của công cụ này
-   làm vậy và ĐẾM THIẾU gần bốn lần (154 thay vì 533) vì regex chỉ bắt được chữ
-   nằm giữa hai thẻ JSX. Cách hiện tại: bỏ chú thích, rồi DUYỆT TỪNG KÝ TỰ để
-   tách chuỗi ('...', "...", `...`) và văn bản JSX. Chậm hơn, nhưng đếm đúng.
+   Đừng dùng regex thủ công để bắt chuỗi trong nháy. Bản đầu làm vậy và đếm
+   thiếu gần bốn lần (154 thay vì 533) vì regex chỉ bắt được chữ nằm giữa hai
+   thẻ JSX. Cách hiện tại: bỏ chú thích rồi duyệt từng ký tự để tách chuỗi
+   ('...', "...", `...`) và văn bản JSX. Chậm hơn nhưng đếm đúng.
 
-   ⚠ CON SỐ NÀY XẤP XỈ, SAI CẢ HAI CHIỀU — dùng để đo tiến độ, đừng dùng để chốt
-   khối lượng:
-     · ĐẾM THỪA: lẫn vài chuỗi không hiện ra màn (thông điệp lỗi nội bộ, khoá).
-     · ĐẾM THIẾU: chỉ nhận ra chuỗi CÓ DẤU. Chữ tiếng Việt không dấu —
-       "CLB", "Tham gia", "Nam", "Email" — thì trông y hệt tiếng Anh, máy không
-       phân biệt được. Riêng nhóm Hội viên đã có 3 chuỗi loại này lọt lưới, chỉ
-       lộ ra khi đọc tay từng tệp. */
+   Con số này xấp xỉ và sai cả hai chiều, dùng để đo tiến độ chứ đừng dùng để
+   chốt khối lượng. Đếm thừa vì lẫn vài chuỗi không hiện ra màn (thông điệp lỗi
+   nội bộ, khoá). Đếm thiếu vì chỉ nhận ra chuỗi có dấu: "CLB", "Tham gia",
+   "Nam", "Email" trông y hệt tiếng Anh nên máy không phân biệt được. */
 
 const VIET =
   /[àáảãạăằắẳẵặâầấẩẫậèéẻẽẹêềếểễệìíỉĩịòóỏõọôồốổỗộơờớởỡợùúủũụưừứửữựỳýỷỹỵđÀÁÂĂÈÉÊÌÍÒÓÔƠÙÚƯỲĐ]/;

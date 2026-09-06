@@ -22,7 +22,7 @@ import type { DoiVaiTroInput, NhanVien } from '../types';
    2. Phạm vi CLB: không thao tác được người ở CLB ngoài phạm vi mình.
    3. Cờ toàn hệ thống: ô tích chỉ bật cho Giám đốc / CEO.
 
-   ⚠ Đây chỉ là lớp ẩn/hiện. Backend .NET vẫn phải tự kiểm tra đủ ba chiều. */
+   Đây chỉ là lớp ẩn/hiện, backend .NET vẫn phải tự kiểm tra đủ ba chiều. */
 
 interface Props {
   nhanVien: NhanVien;

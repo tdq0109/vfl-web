@@ -11,8 +11,8 @@ import type { DongHopDong, HopDong, HopDongInput, KhuyenMaiApDung } from '../typ
 import { BangTongTien } from './BangTongTien';
 import { DongSanPham } from './DongSanPham';
 
-/* Form lập / sửa BÁO GIÁ. Chỉ dùng khi hợp đồng còn ở bước `bao-gia` — sau đó
-   hợp đồng là chứng từ, chỉ đi theo máy trạng thái.
+/* Form lập / sửa báo giá. Chỉ dùng khi hợp đồng còn ở bước bao-gia, sau đó hợp
+   đồng là chứng từ và chỉ đi theo máy trạng thái.
 
    Thuần trình bày: mọi danh sách (hội viên, sản phẩm, khuyến mãi) do màn truyền
    vào. Ô tìm hội viên cũng do màn giữ, vì tìm là một lần gọi API. */

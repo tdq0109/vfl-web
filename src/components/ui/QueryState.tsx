@@ -10,9 +10,9 @@ import { Button } from './Button';
    cờ boolean thuần để không phụ thuộc TanStack Query — Bước 4 nối vào chỉ việc
    truyền `query.isLoading`, `query.isError`, v.v.
 
-   ⚠ Ba nhãn mặc định lấy bằng `t()` TRONG thân hàm, không đặt ở giá trị mặc
-   định của tham số: mặc định tính một lần lúc nạp module nên chữ bị đóng băng
-   theo ngôn ngữ lúc đó. */
+   Ba nhãn mặc định lấy bằng t() trong thân hàm, không đặt ở giá trị mặc định
+   của tham số: mặc định tính một lần lúc nạp module nên chữ bị đóng băng theo
+   ngôn ngữ lúc đó. */
 interface QueryStateProps {
   isLoading: boolean;
   isError: boolean;
@@ -25,9 +25,9 @@ interface QueryStateProps {
   children: ReactNode;
 }
 
-/* Đây là màn hiện lỗi, tức là chỗ ĐƯỢC PHÉP dịch của `ApiError`: lớp lỗi dựng
-   ngoài React nên nó chỉ giữ khoá (`khoaThongDiep`), xem `lib/api/errors.ts`.
-   Backend có trả `detail`/`title` thì câu đó là chữ thật, hiện nguyên văn. */
+/* Đây là màn hiện lỗi, tức là chỗ được phép dịch của ApiError: lớp lỗi dựng
+   ngoài React nên nó chỉ giữ khoá (khoaThongDiep), xem lib/api/errors.ts.
+   Backend có trả detail/title thì câu đó là chữ thật, hiện nguyên văn. */
 function messageOf(
   error: unknown,
   fallback: string,

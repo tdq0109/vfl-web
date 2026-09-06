@@ -2,15 +2,15 @@ import 'server-only';
 import { cookies } from 'next/headers';
 import { ACCESS_COOKIE, REFRESH_COOKIE } from './cookies';
 
-/* Phiên đăng nhập nằm trong cookie httpOnly — JavaScript trình duyệt KHÔNG BAO
-   GIỜ chạm token. Chỉ route handler trong `app/api/` gọi các hàm này.
+/* Phiên đăng nhập nằm trong cookie httpOnly — JavaScript trình duyệt không
+   chạm được token. Chỉ route handler trong app/api/ gọi các hàm này.
 
-   `setSession` / `clearSession` chỉ chạy được trong Route Handler hoặc Server
-   Action (nơi `cookies()` cho ghi). `get*` đọc được ở mọi server context.
+   setSession và clearSession chỉ chạy được trong Route Handler hoặc Server
+   Action (nơi cookies() cho ghi); các hàm get* đọc được ở mọi server context.
 
-   ⚠ Từ Next 15, `cookies()` TRẢ VỀ PROMISE nên cả bốn hàm ở đây đều async.
-   Quên `await` thì TypeScript bắt được ngay (kho cookie thành `Promise`), nhưng
-   nếu viết JS thuần thì lỗi sẽ im lặng — đây là lý do dự án bật `strict`. */
+   Từ Next 15, cookies() trả về Promise nên cả bốn hàm ở đây đều async. Quên
+   await thì TypeScript bắt được ngay, nhưng viết JS thuần thì lỗi sẽ im lặng —
+   đây là một lý do dự án bật strict. */
 
 const DEFAULT_ACCESS_TTL = 60 * 15; // 15 phút
 const DEFAULT_REFRESH_TTL = 60 * 60 * 24 * 30; // 30 ngày

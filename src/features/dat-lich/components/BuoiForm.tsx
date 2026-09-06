@@ -26,12 +26,12 @@ import {
 
 /* Form tạo / sửa buổi.
 
-   Điểm quan trọng: DÒ TRÙNG LỊCH HLV NGAY KHI NHẬP, trước khi bấm lưu. Người xếp
-   lịch thấy luôn buổi nào đang chặn, ở CLB nào — thay vì bấm lưu rồi mới ăn lỗi
-   400 và phải đoán.
+   Điểm quan trọng: dò trùng lịch HLV ngay khi nhập, trước khi bấm lưu. Người
+   xếp lịch thấy luôn buổi nào đang chặn và ở CLB nào, thay vì bấm lưu rồi mới
+   ăn lỗi 400 và phải đoán.
 
-   ⚠ Dò trùng ở đây CHỈ để báo sớm. Backend vẫn phải kiểm tra lại: giữa lúc mở
-   form và lúc bấm lưu, người khác có thể đã xếp mất chỗ đó. */
+   Dò ở đây chỉ để báo sớm; backend vẫn phải kiểm tra lại, vì giữa lúc mở form
+   và lúc bấm lưu thì người khác có thể đã xếp mất chỗ đó. */
 
 interface Props {
   defaultValue?: Partial<BuoiInput>;
@@ -82,7 +82,7 @@ export function BuoiForm({
   const loiGio = kiemTraKhoangGio(v.batDau, v.ketThuc);
   const loiSucChua = kiemTraSucChua(v.loai, v.sucChua);
 
-  /* Lịch HLV cả tuần chứa ngày đang xếp, MỌI CLB. */
+  /* Lịch HLV cả tuần chứa ngày đang xếp, mọi CLB. */
   const ngay = v.batDau ? ngayCua(v.batDau) : '';
   const lichHlv = useLichHlv(v.hlvId, ngay);
 
@@ -167,7 +167,7 @@ export function BuoiForm({
         <FormField
           label={t('datLich.ketThuc')}
           htmlFor={`${uid}-kt`}
-          /* `loiGio` là KHOÁ i18n do `kiemTraKhoangGio()` trả về. */
+          /* loiGio là khoá i18n do kiemTraKhoangGio() trả về. */
           error={fieldErrors.ketThuc ?? (loiGio ? t(loiGio) : undefined)}
           required
         >

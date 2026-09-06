@@ -10,19 +10,17 @@ import type { TaiKhoanNhanTien } from '@/lib/api/types';
 import { MaQR } from './MaQR';
 import { chuanHoaNoiDung, chuoiVietQR, tenNganHang, viSaoKhongTaoDuocQR } from './vietqr';
 
-/* Khối "chuyển khoản vào đây" — mã QR + thông tin gõ tay dự phòng.
+/* Khối "chuyển khoản vào đây" — mã QR cộng thông tin gõ tay dự phòng. Thay cho
+   payQRSection / toggleBankBox của bản cũ.
 
-   Thay cho `payQRSection` / `toggleBankBox` của bản cũ
-   (`commercial-console.html` ~12043–12070).
+   Luôn hiện cả số tài khoản bằng chữ chứ không chỉ mã QR: máy quét hỏng, camera
+   mờ, khách dùng ứng dụng không quét được mã — quầy phải còn đường đọc số cho
+   khách gõ. Bản cũ cũng làm vậy.
 
-   ⚠ LUÔN HIỆN CẢ SỐ TÀI KHOẢN BẰNG CHỮ, không chỉ mã QR. Máy quét hỏng, camera
-   mờ, khách dùng ứng dụng không quét được mã một lần — quầy phải còn đường đọc
-   số cho khách gõ. Bản cũ cũng làm vậy và đó là lựa chọn đúng.
-
-   ⚠ NÚT SAO CHÉP CHỈ CHO NỘI DUNG CHUYỂN KHOẢN. Đó là ô khách hay gõ sai nhất,
-   và gõ sai nội dung thì kế toán không đối chiếu được tiền về với hợp đồng nào.
-   Số tiền và số tài khoản cố ý KHÔNG có nút sao chép: hai thứ đó phải được đọc
-   và nhìn thấy, không nên dán mù. */
+   Nút sao chép chỉ cho nội dung chuyển khoản, vì đó là ô khách hay gõ sai nhất
+   và gõ sai thì kế toán không đối chiếu được tiền về với hợp đồng nào. Số tiền
+   và số tài khoản cố ý không có nút sao chép: hai thứ đó phải được đọc và nhìn
+   thấy, không nên dán mù. */
 
 interface Props {
   /** Thiếu = CLB chưa cấu hình tài khoản; khối này tự ẩn. */

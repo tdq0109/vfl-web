@@ -1,4 +1,4 @@
-/* Nhập thẳng module hàm thuần, KHÔNG qua cửa công khai '@/features/san-pham':
+/* Nhập thẳng module hàm thuần, không qua cửa công khai '@/features/san-pham':
    cửa đó kéo theo cả màn hình .tsx, tức là kéo React vào tầng hàm thuần. */
 import { viPhamGiaSan } from '@/features/san-pham/gia';
 import { money, roundVnd, toIsoDate } from '@/lib/format';
@@ -16,32 +16,28 @@ import {
   type TrangThaiHopDong,
 } from './types';
 
-/* Máy trạng thái + phép tính tiền của hợp đồng — HÀM THUẦN, không import React.
-   Không import React, không gọi API. Backend .NET vẫn phải kiểm lại tất cả;
-   phần này để chặn sớm và nói cho người vận hành biết vì sao chưa đi tiếp được.
+/* Máy trạng thái + phép tính tiền của hợp đồng — hàm thuần, không import
+   React, không gọi API. Backend .NET vẫn phải kiểm lại tất cả; phần này chỉ
+   chặn sớm và nói cho người vận hành biết vì sao chưa đi tiếp được.
 
-   ⚠ SÁU CÁI BẪY, đừng gỡ cái nào khi sửa hàm này:
+   Sáu chỗ đừng gỡ khi sửa:
 
-   1. NHẢY CÓC TRẠNG THÁI. `bao-gia` → `da-ky` phải bị chặn. `CHUYEN_TIEP` là
-      nguồn sự thật duy nhất — đừng rải `if (trangThai === …)` trong component.
-   2. PHÁT HÀNH KHI CHƯA THU ĐỦ. Bẫy mất tiền trực tiếp: phát hành xong là hội
-      viên vào tập, tiền thì chưa về.
-   3. NGƯỜI LẬP TỰ XÁC MINH HỢP ĐỒNG CỦA MÌNH. Đây là TÁCH NHIỆM (segregation of
-      duties), không phải phân quyền thường: một người vừa bán vừa xác nhận đã
-      thu tiền thì không còn ai đối chứng. Đủ cấp bậc vẫn bị chặn.
-   4. BÁN DƯỚI GIÁ SÀN. Dùng lại `viPhamGiaSan()` của Bước 9, không viết lại.
-   5. LÀM TRÒN TIỀN. Đã chốt: giảm giá tính TRÊN TẠM TÍNH rồi làm tròn MỘT LẦN.
-      Làm tròn từng dòng rồi cộng cho ra số khác — lệch vài nghìn mỗi hợp đồng,
-      cuối tháng kế toán không khớp nổi.
-   6. TRẠNG THÁI SUY RA vs TRẠNG THÁI LƯU. `het-han` suy từ `ngayKetThuc`, không
-      lưu — xem `trangThaiHienThi()`. */
+   1. Nhảy cóc trạng thái: bao-gia → da-ky phải bị chặn. CHUYEN_TIEP là nguồn sự
+      thật duy nhất, đừng rải if (trangThai === …) trong component.
+   2. Phát hành khi chưa thu đủ: hội viên vào tập mà tiền chưa về.
+   3. Người lập tự xác minh hợp đồng của mình. Đây là tách nhiệm chứ không phải
+      phân quyền thường — một người vừa bán vừa xác nhận đã thu tiền thì không
+      còn ai đối chứng. Đủ cấp bậc vẫn bị chặn.
+   4. Bán dưới giá sàn: dùng lại viPhamGiaSan() của san-pham, không viết lại.
+   5. Làm tròn tiền: giảm giá tính trên tạm tính rồi làm tròn một lần. Làm tròn
+      từng dòng rồi cộng cho ra số khác, lệch vài nghìn mỗi hợp đồng.
+   6. het-han suy ra từ ngayKetThuc chứ không lưu — xem trangThaiHienThi(). */
 
-/** Bảng chuyển trạng thái hợp lệ — NGUỒN SỰ THẬT DUY NHẤT.
+/** Bảng chuyển trạng thái hợp lệ — nguồn sự thật duy nhất.
 
-    Bước 12a chỉ dựng luồng thuận và huỷ TRƯỚC khi phát hành. Các cạnh của Bước
-    12b (kế toán trả lại, huỷ hoá đơn đã phát hành, tạm dừng, đổi gói) cố ý CHƯA
-    có ở đây: mở cạnh trước khi có bút toán đảo là cách nhanh nhất để mất dấu
-    tiền. */
+    Mới dựng luồng thuận và huỷ trước khi phát hành. Các cạnh còn lại (kế toán
+    trả lại, huỷ hoá đơn đã phát hành, tạm dừng, đổi gói) cố ý chưa có: mở cạnh
+    trước khi có bút toán đảo là cách nhanh nhất để mất dấu tiền. */
 export const CHUYEN_TIEP: Record<TrangThaiHopDong, readonly TrangThaiHopDong[]> = {
   'bao-gia': ['cho-thu-tien', 'da-huy'],
   'cho-thu-tien': ['cho-xac-minh', 'da-huy'],
@@ -53,8 +49,8 @@ export const CHUYEN_TIEP: Record<TrangThaiHopDong, readonly TrangThaiHopDong[]> 
   'tam-dung': [],
 };
 
-/** Cấp bậc tối thiểu để thực hiện từng bước chuyển. Chỉ để chặn sớm và ẩn nút —
-    backend .NET phải kiểm lại. */
+/** Cấp bậc tối thiểu để thực hiện từng bước chuyển. Chỉ để chặn sớm và ẩn
+    nút, backend .NET phải kiểm lại. */
 export const QUYEN_CHUYEN: Record<TrangThaiHopDong, Role> = {
   'bao-gia': 'staff',
   'cho-thu-tien': 'staff',
@@ -63,8 +59,8 @@ export const QUYEN_CHUYEN: Record<TrangThaiHopDong, Role> = {
   'da-phat-hanh': 'accountant',
   'da-ky': 'staff',
   'dang-hieu-luc': 'staff',
-  /* Huỷ trước phát hành: trưởng nhóm. Huỷ SAU phát hành là hoá đơn đã ghi —
-     việc của Bước 12b, cần Giám đốc và một bút toán đảo. */
+  /* Huỷ trước phát hành: trưởng nhóm. Huỷ sau phát hành là hoá đơn đã ghi,
+     cần Giám đốc và một bút toán đảo — chưa làm. */
   'da-huy': 'leader',
   'tam-dung': 'manager',
 };
@@ -79,10 +75,10 @@ export const BUOC_HOP_DONG: { khoa: string; trangThai: readonly TrangThaiHopDong
   { khoa: 'hopDong.buoc.hieuLuc', trangThai: ['dang-hieu-luc'] },
 ];
 
-/* ── Tiền ────────────────────────────────────────────────────────────────── */
+// Tiền
 
-/** Thành tiền một dòng. Đơn giá đã là số nguyên đồng nên không làm tròn ở đây —
-    xem bẫy 5. */
+/** Thành tiền một dòng. Đơn giá đã là số nguyên đồng nên không làm tròn ở
+    đây. */
 export function thanhTienDong(dong: Pick<DongHopDong, 'donGia' | 'soLuong'>): Vnd {
   return dong.donGia * dong.soLuong;
 }
@@ -93,7 +89,7 @@ export interface TongHopDong {
   tong: Vnd;
 }
 
-/** Tổng hợp đồng. Giảm giá tính trên TẠM TÍNH và làm tròn đúng MỘT LẦN. */
+/** Tổng hợp đồng. Giảm giá tính trên tạm tính và làm tròn đúng một lần. */
 export function tinhTongHopDong(
   dong: readonly DongHopDong[],
   khuyenMai?: KhuyenMaiApDung,
@@ -110,12 +106,12 @@ export function tinhTongHopDong(
   return { tamTinh, giam, tong: tamTinh - giam };
 }
 
-/** Tiền đã thu — phiếu thu ĐÃ HUỶ không tính (bút toán đảo, giống Bước 11). */
+/** Tiền đã thu — phiếu thu đã huỷ không tính. */
 export function tienDaThu(hd: { thanhToan: readonly ThanhToanHopDong[] }): Vnd {
   return hd.thanhToan.filter((t) => !t.daHuy).reduce((tong, t) => tong + t.soTien, 0);
 }
 
-/** Còn phải thu. Không bao giờ âm — thu thừa là ngoại lệ của Bước 12b. */
+/** Còn phải thu. Không bao giờ âm; thu thừa chưa xử lý. */
 export function conPhaiThu(
   hd: Pick<HopDong, 'dong'> & {
     khuyenMai?: KhuyenMaiApDung;
@@ -134,10 +130,10 @@ export function daThuDu(
   return conPhaiThu(hd) === 0;
 }
 
-/* ── Giá sàn ─────────────────────────────────────────────────────────────── */
+// Giá sàn
 
-/** Các dòng bán dưới giá sàn — xét CẢ khuyến mãi toàn hợp đồng, vì giảm 20%
-    trên một dòng đã sát sàn là đủ để thủng. Dùng lại `viPhamGiaSan()` Bước 9. */
+/** Các dòng bán dưới giá sàn, xét cả khuyến mãi toàn hợp đồng vì giảm 20%
+    trên một dòng đã sát sàn là đủ để thủng. Dùng lại viPhamGiaSan(). */
 export function dongViPhamGiaSan(
   dong: readonly DongHopDong[],
   khuyenMai?: KhuyenMaiApDung,
@@ -145,16 +141,16 @@ export function dongViPhamGiaSan(
   return dong.filter((d) => {
     if (d.donGia < d.giaSan) return true;
     if (!khuyenMai || khuyenMai.giaTri <= 0) return false;
-    /* `giaNiemYet` ở đây là giá bán của dòng — khuyến mãi áp lên chính nó. */
+    /* giaNiemYet ở đây là giá bán của dòng — khuyến mãi áp lên chính nó. */
     return viPhamGiaSan({ giaNiemYet: d.donGia, giaSan: d.giaSan }, khuyenMai);
   });
 }
 
-/** Cảnh báo phá giá sàn, hiện TRƯỚC KHI lưu — cùng lối trình bày với Bước 9.
+/** Cảnh báo phá giá sàn, hiện trước khi lưu.
 
-    Trả LÝ DO (khoá + tham số + danh sách dòng vi phạm), không trả câu dựng sẵn:
-    câu này có cả số dòng lẫn chi tiết từng dòng, mà chi tiết ấy phải dịch được.
-    Ghép ra chữ bằng `lyDoThanhChu()` trong `lyDo.ts`. */
+    Trả lý do (khoá + tham số + danh sách dòng vi phạm) chứ không trả câu dựng
+    sẵn: câu này có cả số dòng lẫn chi tiết từng dòng, mà chi tiết ấy phải dịch
+    được. Ghép ra chữ bằng lyDoThanhChu() trong lyDo.ts. */
 export function canhBaoGiaSan(
   dong: readonly DongHopDong[],
   khuyenMai?: KhuyenMaiApDung,
@@ -168,7 +164,7 @@ export function canhBaoGiaSan(
   };
 }
 
-/* ── Máy trạng thái ──────────────────────────────────────────────────────── */
+// Máy trạng thái
 
 export function chuyenTiepDuoc(tu: TrangThaiHopDong, den: TrangThaiHopDong): boolean {
   return CHUYEN_TIEP[tu].includes(den);
@@ -194,9 +190,9 @@ type HopDongDeKiem = Pick<HopDong, 'trangThai' | 'dong' | 'nguoiLapId'> & {
   ngayBatDau?: string;
 };
 
-/** Vì sao chưa chuyển được sang `den` — null nghĩa là chuyển được.
+/** Vì sao chưa chuyển được sang den — null nghĩa là chuyển được.
 
-    Trả CÂU GIẢI THÍCH chứ không phải boolean: người vận hành cần biết còn thiếu
+    Trả câu giải thích chứ không phải boolean: người vận hành cần biết còn thiếu
     bao nhiêu tiền, chứ không phải một nút xám không nói gì. */
 export function viSaoKhongChuyenDuoc(
   hd: HopDongDeKiem,
@@ -207,9 +203,9 @@ export function viSaoKhongChuyenDuoc(
 
   if (tu === den) return { khoa: 'hopDong.chan.dangOTrangThaiNay' };
 
-  /* BẪY 1 — bảng chuyển tiếp là cửa đầu tiên, không ngoại lệ. */
+  /* Bảng chuyển tiếp là cửa đầu tiên, không ngoại lệ. */
   if (!chuyenTiepDuoc(tu, den)) {
-    /* Hai tên trạng thái đi ra dưới dạng KHOÁ; `lyDoThanhChu()` dịch lồng. */
+    /* Hai tên trạng thái đi ra dưới dạng khoá; lyDoThanhChu() dịch lồng. */
     return {
       khoa: 'hopDong.chan.khongChuyenThang',
       thamSo: { tu: TRANG_THAI_HOP_DONG_KHOA[tu], den: TRANG_THAI_HOP_DONG_KHOA[den] },
@@ -227,18 +223,18 @@ export function viSaoKhongChuyenDuoc(
     if (tinhTongHopDong(hd.dong, hd.khuyenMai).tong <= 0) {
       return { khoa: 'hopDong.chan.tongPhaiLonHon0' };
     }
-    /* BẪY 4 — chặn tại đây thay vì lúc phát hành: sửa báo giá còn dễ, sửa hợp
-       đồng đã thu tiền thì phải hoàn tiền. */
+    /* Chặn tại đây thay vì lúc phát hành: sửa báo giá còn dễ, sửa hợp đồng
+       đã thu tiền thì phải hoàn tiền. */
     const canhBao = canhBaoGiaSan(hd.dong, hd.khuyenMai);
     if (canhBao) return canhBao;
   }
 
-  /* BẪY 2 — chưa thu đủ thì không đi tiếp, chặn ở CẢ hai cửa. */
+  /* Chưa thu đủ thì không đi tiếp, chặn ở cả hai cửa. */
   if ((den === 'cho-xac-minh' || den === 'da-phat-hanh') && !daThuDu(hd)) {
     return { khoa: 'hopDong.chan.chuaThuDu', thamSo: { soTien: money(conPhaiThu(hd)) } };
   }
 
-  /* BẪY 3 — tách nhiệm. Kiểm SAU cấp bậc để câu thông báo nói đúng nguyên nhân. */
+  /* Tách nhiệm. Kiểm sau cấp bậc để câu thông báo nói đúng nguyên nhân. */
   if (den === 'da-phat-hanh' && actor.id === hd.nguoiLapId) {
     return { khoa: 'hopDong.chan.tuXacMinh' };
   }
@@ -252,8 +248,8 @@ export function viSaoKhongChuyenDuoc(
 
 /** Vì sao chưa ghi được phiếu thu — null nghĩa là thu được.
 
-    Thu thừa, trả góp và công nợ là ngoại lệ của Bước 12b; ở 12a chỉ cho thu
-    đúng phần còn lại hoặc ít hơn. */
+    Thu thừa, trả góp và công nợ chưa làm; hiện chỉ cho thu đúng phần còn lại
+    hoặc ít hơn. */
 export function viSaoKhongThuDuoc(hd: HopDongDeKiem, soTien: number): LyDoChan | null {
   if (hd.trangThai !== 'cho-thu-tien') return { khoa: 'hopDong.chanThu.saiBuoc' };
   if (!Number.isFinite(soTien) || soTien <= 0) {
@@ -267,10 +263,10 @@ export function viSaoKhongThuDuoc(hd: HopDongDeKiem, soTien: number): LyDoChan |
   return null;
 }
 
-/* ── Trạng thái suy ra ───────────────────────────────────────────────────── */
+// Trạng thái suy ra
 
-/** BẪY 6 — `het-han` SUY RA từ ngày, không lưu. So sánh chuỗi 'YYYY-MM-DD' nên
-    không dính lệch múi giờ (dùng `toIsoDate()`, không `toISOString()`). */
+/** het-han suy ra từ ngày chứ không lưu. So sánh chuỗi 'YYYY-MM-DD' nên
+    không dính lệch múi giờ (dùng toIsoDate(), không toISOString()). */
 export function trangThaiHienThi(
   hd: Pick<HopDong, 'trangThai'> & { ngayKetThuc?: string },
   homNay: Date = new Date(),

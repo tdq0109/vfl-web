@@ -22,19 +22,17 @@ export function LoginForm() {
 
   /* CLB không bao giờ được sống sót qua trang đăng nhập.
 
-     Nút Đăng xuất đã dọn kho, nhưng nó không phải đường ra duy nhất: hết phiên
-     thì server chuyển hướng qua `GET /api/auth/thoat`, và đường đó không chạy
-     được mã client nên `sessionStorage` giữ nguyên CLB của người trước. Quầy
-     dùng chung máy, người sau đăng nhập ngay trên cùng tab là thừa hưởng — bán
-     vé và đặt lịch vào nhầm cơ sở, mà màn vẫn "trông đúng".
+     Nút Đăng xuất đã dọn kho nhưng nó không phải đường ra duy nhất: hết phiên
+     thì server chuyển hướng qua GET /api/auth/thoat, và đường đó không chạy
+     được mã client nên sessionStorage giữ nguyên CLB của người trước. Quầy dùng
+     chung máy, người sau đăng nhập ngay trên cùng tab là thừa hưởng — bán vé và
+     đặt lịch vào nhầm cơ sở, mà màn vẫn trông đúng.
 
-     Đặt ở đây thì phủ MỌI đường tới màn đăng nhập. Không tốn gì: middleware đá
-     người còn phiên hiệu lực ra khỏi `/dang-nhap` (xem `proxy.ts`), nên chỗ này
-     chỉ chạy khi thật sự không có ai đang đăng nhập.
+     Đặt ở đây thì phủ mọi đường tới màn đăng nhập. Không tốn gì: middleware đá
+     người còn phiên hiệu lực ra khỏi /dang-nhap.
 
-     Dọn cả CACHE TRUY VẤN: hồ sơ người trước sống trong đó và nuôi cả lớp "ẩn
-     nút" — xem `lib/query/donPhien.ts`. Chỉ CLB, không dọn ngôn ngữ; lý do ở
-     `lib/storage/quenPhien.ts`. */
+     Dọn cả cache truy vấn vì hồ sơ người trước sống trong đó và nuôi cả lớp ẩn
+     nút — xem lib/query/donPhien.ts. Chỉ CLB, không dọn ngôn ngữ. */
   useEffect(() => {
     donPhien();
     /* Chỉ chạy lúc gắn: `donPhien` đổi mỗi lần render nên KHÔNG đưa vào phụ

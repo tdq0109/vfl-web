@@ -2,24 +2,21 @@ import { money } from '@/lib/format';
 import type { ThamSo } from '@/lib/i18n';
 import type { LyDoChan } from './types';
 
-/* Ghép một `LyDoChan` thành câu cho người đọc.
+/* Ghép một LyDoChan thành câu cho người đọc.
 
-   ⚠ HÀM THUẦN, và nó thuần được là nhờ NHẬN `t` LÀM THAM SỐ thay vì tự import.
-   Đây là cách duy nhất vừa dịch được vừa không dính hai cái bẫy đã trả giá:
-     · gọi `t()` ở module scope của tầng hàm thuần → chuỗi đóng băng theo ngôn
-       ngữ lúc nạp tệp, đổi ngôn ngữ xong vẫn thấy chữ cũ;
-     · để màn tự ghép → logic phân nhánh bị chép ra nhiều chỗ, và mỗi chỗ ghép
-       một kiểu.
-   Nhờ nhận `t` mà tệp này có test riêng, chạy được ở cả hai ngôn ngữ. */
+   Hàm thuần, và nó thuần được là nhờ nhận t làm tham số thay vì tự import. Đây
+   là cách duy nhất vừa dịch được vừa tránh hai cái bẫy: gọi t() ở module scope
+   của tầng hàm thuần thì chuỗi đóng băng theo ngôn ngữ lúc nạp tệp, còn để màn
+   tự ghép thì logic phân nhánh bị chép ra nhiều chỗ và mỗi chỗ ghép một kiểu. */
 
 export type Dich = (khoa: string, thamSo?: ThamSo) => string;
 
-/** Các tham số MANG KHOÁ chứ không mang chữ — phải dịch lồng một lớp nữa.
+/** Các tham số mang khoá chứ không mang chữ, phải dịch lồng một lớp nữa.
 
-    `hopDong.chan.khongChuyenThang` nhận tên hai trạng thái, `…canVaiTro` nhận
-    tên vai trò. Hàm thuần chỉ biết khoá của chúng, không biết chữ. Liệt kê ra
-    đây thay vì đoán "tham số nào trông giống khoá thì dịch": đoán thì một ngày
-    nào đó tên hội viên là "hopDong.abc" và nó bị dịch mất. */
+    hopDong.chan.khongChuyenThang nhận tên hai trạng thái, …canVaiTro nhận tên
+    vai trò; hàm thuần chỉ biết khoá của chúng. Liệt kê ra đây thay vì đoán
+    "tham số nào trông giống khoá thì dịch" — đoán thì một ngày nào đó tên hội
+    viên là "hopDong.abc" và nó bị dịch mất. */
 const THAM_SO_LA_KHOA: Record<string, readonly string[]> = {
   'hopDong.chan.khongChuyenThang': ['tu', 'den'],
   'hopDong.chan.canVaiTro': ['vaiTro'],
@@ -37,8 +34,8 @@ export function lyDoThanhChu(t: Dich, ly: LyDoChan): string {
     }
   }
 
-  /* Lý do "dưới giá sàn" kèm danh sách dòng; mỗi dòng là một câu con có khoá
-     riêng, nối bằng " · " đúng như bản trước khi chuyển i18n. */
+  /* Lý do dưới giá sàn kèm danh sách dòng; mỗi dòng là một câu con có khoá
+     riêng, nối bằng " · ". */
   if (ly.dongViPham && ly.dongViPham.length > 0) {
     thamSo.chiTiet = ly.dongViPham
       .map((d) =>

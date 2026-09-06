@@ -1,16 +1,13 @@
 import type { IsoDate, Vnd } from '@/lib/api/types';
 
-/* Kiểu + KHOÁ i18n của nhãn nhóm Sản phẩm. Theo đúng khuôn nhóm Hội viên —
-   xem `features/hoi-vien/types.ts`.
-
-   ⚠ CÁC BẢNG DƯỚI ĐÂY CHỨA KHOÁ i18n, KHÔNG PHẢI CHỮ TIẾNG VIỆT. Đọc nhãn bằng
-   `t(LOAI_SAN_PHAM_KHOA[l])`; khoá phải có thật trong từ
-   điển.
+/* Kiểu + khoá i18n của nhãn nhóm Sản phẩm, theo khuôn nhóm Hội viên
+   (features/hoi-vien/types.ts). Các bảng dưới đây chứa khoá i18n chứ không phải
+   chữ tiếng Việt; đọc nhãn bằng t(LOAI_SAN_PHAM_KHOA[l]).
 
    Ba khái niệm giá, đừng lẫn:
      giaNiemYet — giá treo bảng, mặc định khi bán
-     giaSan     — giá THẤP NHẤT được phép bán; chỉ Giám đốc trở lên đặt được
-     giá sau khuyến mãi — tính ra lúc bán, KHÔNG được xuống dưới giá sàn */
+     giaSan     — giá thấp nhất được phép bán, chỉ Giám đốc trở lên đặt được
+     giá sau khuyến mãi — tính ra lúc bán, không được xuống dưới giá sàn */
 
 export type LoaiSanPham = 'goi-tap' | 'dich-vu' | 've-ngay' | 'phu-kien';
 
@@ -25,9 +22,9 @@ export const LOAI_SAN_PHAM_ORDER: LoaiSanPham[] = ['goi-tap', 'dich-vu', 've-nga
 
 export type SanPhamStatus = 'dang-ban' | 'ngung-ban';
 
-/* ⚠ "Ngừng bán" ở đây là TRẠNG THÁI (pill trên bảng). Cái NÚT cùng chữ trên
-   ngăn chi tiết là `sanPham.ngungBanNut` — một cái mô tả, một cái sai khiến,
-   và bản tiếng Anh tách hẳn ra ("Discontinued" / "Stop selling"). Đừng gộp. */
+/* "Ngừng bán" ở đây là trạng thái (pill trên bảng). Cái nút cùng chữ trên
+   ngăn chi tiết là sanPham.ngungBanNut — một cái mô tả, một cái sai khiến, và
+   bản tiếng Anh tách hẳn ra ("Discontinued" / "Stop selling"). Đừng gộp. */
 export const SAN_PHAM_STATUS_KHOA: Record<SanPhamStatus, string> = {
   'dang-ban': 'sanPham.trangThai.dang-ban',
   'ngung-ban': 'sanPham.trangThai.ngung-ban',
@@ -63,7 +60,8 @@ export interface SanPhamListParams {
   locationId?: string;
 }
 
-/** Form thêm / sửa. Giá sàn KHÔNG ở đây — có endpoint riêng vì cần quyền cao hơn. */
+/** Form thêm / sửa. Giá sàn không ở đây, có endpoint riêng vì cần quyền cao
+    hơn. */
 export interface SanPhamInput {
   ten: string;
   loai: LoaiSanPham;
@@ -74,7 +72,7 @@ export interface SanPhamInput {
   locationId?: string;
 }
 
-/* ── Khuyến mãi ─────────────────────────────────────────────────────────── */
+// Khuyến mãi
 
 export type LoaiGiam = 'phan-tram' | 'so-tien';
 
@@ -83,9 +81,9 @@ export const LOAI_GIAM_KHOA: Record<LoaiGiam, string> = {
   'so-tien': 'khuyenMai.loaiGiam.so-tien',
 };
 
-/* Thứ tự hiện trong ô chọn. Trước đây form lấy từ `Object.keys(LOAI_GIAM_LABEL)`
-   — dựa vào thứ tự khoá của object là dựa vào thứ dễ đổi mà không ai để ý, đúng
-   lỗi đã sửa ở `GIOI_TINH_ORDER` của nhóm Hội viên. */
+/* Thứ tự hiện trong ô chọn. Trước đây form lấy từ
+   Object.keys(LOAI_GIAM_LABEL) — dựa vào thứ tự khoá của object là dựa vào thứ
+   dễ đổi mà không ai để ý. */
 export const LOAI_GIAM_ORDER: LoaiGiam[] = ['phan-tram', 'so-tien'];
 
 export interface KhuyenMai {
@@ -113,11 +111,11 @@ export interface KhuyenMaiInput {
   kichHoat: boolean;
 }
 
-/** Trạng thái hiển thị của khuyến mãi — SUY RA từ ngày + cờ kích hoạt, không lưu. */
+/** Trạng thái hiển thị của khuyến mãi — suy ra từ ngày và cờ kích hoạt. */
 export type KhuyenMaiStatus = 'dang-chay' | 'sap-toi' | 'het-han' | 'tam-dung';
 
-/* ⚠ "Tạm dừng" ở đây là TRẠNG THÁI. Nút cùng chữ trên bảng là
-   `khuyenMai.tamDungNut` ("Pause" chứ không phải "Paused"). Đừng gộp. */
+/* "Tạm dừng" ở đây là trạng thái. Nút cùng chữ trên bảng là
+   khuyenMai.tamDungNut ("Pause" chứ không phải "Paused"). Đừng gộp. */
 export const KHUYEN_MAI_STATUS_KHOA: Record<KhuyenMaiStatus, string> = {
   'dang-chay': 'khuyenMai.trangThai.dang-chay',
   'sap-toi': 'khuyenMai.trangThai.sap-toi',

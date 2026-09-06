@@ -21,8 +21,8 @@ import type { Location } from '@/lib/api/types';
 /* CLB đang chọn, nhớ trong `sessionStorage` (mất khi đóng tab — đúng ý: mỗi
    phiên làm việc chọn lại).
 
-   ⚠ Bẫy hydration: KHÔNG đọc `sessionStorage` lúc render, vì server không đọc
-   được và hai bên sẽ ra hai kết quả khác nhau.
+   Đừng đọc sessionStorage lúc render: server không đọc được và hai bên sẽ ra
+   hai kết quả khác nhau.
 
    Cách giải: `useSyncExternalStore`. Server và lần render hydrate đầu tiên dùng
    ảnh chụp server (luôn `null` → CLB mặc định); hydrate xong React tự đọc ảnh

@@ -23,9 +23,9 @@ export function useTomTat(ky: Ky, locationId: string | undefined, choPhep = true
   });
 }
 
-/** Kỳ liền trước, CÙNG SỐ NGÀY — để tính % thay đổi. Dùng đúng endpoint của kỳ
-    hiện tại nên khoá cache trùng nhau khi hai kỳ chồng lấp: đổi từ "7 ngày" sang
-    "hôm nay" là lấy lại từ cache, không gọi thêm. */
+/** Kỳ liền trước, cùng số ngày, để tính % thay đổi. Dùng đúng endpoint của kỳ
+    hiện tại nên khoá cache trùng nhau khi hai kỳ chồng lấp: đổi từ "7 ngày"
+    sang "hôm nay" là lấy lại từ cache, không gọi thêm. */
 export function useTomTatKyTruoc(ky: Ky, locationId: string | undefined, choPhep = true) {
   const truoc = kyTruoc(ky);
   const p = params(truoc, locationId);

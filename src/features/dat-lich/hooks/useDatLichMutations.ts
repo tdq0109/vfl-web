@@ -12,7 +12,7 @@ import type { Buoi, BuoiInput } from '../types';
    Mọi thao tác đụng tới chỗ ngồi đều invalidate cả nhánh `dat-lich` chứ không
    chỉ buổi đang mở: đặt/huỷ một chỗ làm số chỗ trống trên lịch tuần đổi theo.
 
-   ⚠ Toast nhận KHOÁ i18n, và `useBuoiMutation` mới gọi `t()` — gọi trong hook
+   Toast nhận khoá i18n, và useBuoiMutation mới gọi t() — gọi trong hook
    chứ không ở module scope, nếu không chuỗi bị đóng băng theo ngôn ngữ lúc nạp
    tệp và đổi ngôn ngữ xong vẫn thấy toast tiếng cũ. */
 

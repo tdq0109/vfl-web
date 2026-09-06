@@ -14,11 +14,11 @@ import type {
   SanPhamStatus,
 } from '../types';
 
-/* Toàn bộ logic ghi của nhóm Sản phẩm. Lỗi ProblemDetails không nuốt — màn đọc
-   `mutation.error` để gắn vào ô nhập.
+/* Toàn bộ logic ghi của nhóm Sản phẩm. Lỗi ProblemDetails không nuốt, màn đọc
+   mutation.error để gắn vào ô nhập.
 
-   ⚠ Chữ của toast lấy qua `useT()` BÊN TRONG hook, không gọi `t()` ở module
-   scope — xem ghi chú cùng loại ở `useNhanVienMutations.ts`. */
+   Chữ của toast lấy qua useT() bên trong hook, không gọi t() ở module scope —
+   xem ghi chú cùng loại ở useNhanVienMutations.ts. */
 
 export function useCreateSanPham() {
   const qc = useQueryClient();
@@ -90,7 +90,7 @@ export function useDoiTrangThaiSanPham() {
   );
 }
 
-/* ── Khuyến mãi ───────────────────────────────────────────────────────── */
+// Khuyến mãi
 
 export function useCreateKhuyenMai() {
   const qc = useQueryClient();

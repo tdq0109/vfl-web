@@ -1,28 +1,27 @@
 import { addDays, monthBounds, toIsoDate } from '@/lib/format/date';
 import type { DiemDoanhThu, Ky, MaKy } from './types';
 
-/* Chọn kỳ · so sánh kỳ · dựng thang biểu đồ — HÀM THUẦN, không import React.
+/* Chọn kỳ, so sánh kỳ, dựng thang biểu đồ — hàm thuần, không import React.
 
-   Dashboard không tự tính tiền (backend cộng), nhưng nó quyết định NGƯỜI XEM SO
-   CÁI GÌ VỚI CÁI GÌ — và đó là chỗ báo cáo hay nói dối nhất.
+   Dashboard không tự tính tiền (backend cộng), nhưng nó quyết định người xem so
+   cái gì với cái gì, và đó là chỗ báo cáo hay nói dối nhất.
 
-   ⚠ SÁU CÁI BẪY, đừng gỡ cái nào khi sửa hàm này:
+   Sáu chỗ đừng gỡ khi sửa:
 
-   1. KỲ SO SÁNH PHẢI CÙNG ĐỘ DÀI. Tháng này mới qua 10 ngày mà đem so với TRỌN
-      tháng trước thì tháng nào cũng "giảm 60%" — Giám đốc sẽ mất niềm tin vào
-      dashboard trong đúng một tuần. `kyTruoc()` luôn trả đúng số ngày.
-   2. CHIA CHO 0. Kỳ trước bằng 0 thì % thay đổi là vô nghĩa, không phải
-      `Infinity` hay `NaN`: trả `null`, màn hiện “mới”.
-   3. NGÀY THEO GIỜ ĐỊA PHƯƠNG. `toISOString()` ở múi +7 biến 0h ngày 1 thành
-      ngày 31 tháng trước — bài học Bước 10, đừng lặp lại.
-   4. CHUỖI NGÀY THIẾU ĐIỂM. API chỉ trả ngày CÓ doanh thu. Vẽ thẳng thì trục
-      hoành co lại, ngày nghỉ biến mất và đường biểu đồ dốc sai.
-   5. THANG BIỂU ĐỒ KHI MỌI GIÁ TRỊ BẰNG 0. Chia cho max = 0 ra `NaN`, cột SVG
-      biến mất không báo lỗi.
-   6. KỲ NGƯỢC (từ ngày > đến ngày). Vòng `while` dựng chuỗi ngày sẽ chạy mãi.
-      Chặn ngay ở cửa, trả chuỗi rỗng. */
+   1. Kỳ so sánh phải cùng độ dài. Tháng này mới qua 10 ngày mà đem so với trọn
+      tháng trước thì tháng nào cũng "giảm 60%". kyTruoc() luôn trả đúng số ngày.
+   2. Kỳ trước bằng 0 thì % thay đổi là vô nghĩa: trả null, màn hiện "mới", chứ
+      không phải Infinity hay NaN.
+   3. Ngày tính theo giờ địa phương. toISOString() ở múi +7 biến 0h ngày 1 thành
+      ngày 31 tháng trước.
+   4. API chỉ trả ngày có doanh thu. Vẽ thẳng thì trục hoành co lại, ngày nghỉ
+      biến mất và đường biểu đồ dốc sai.
+   5. Mọi giá trị bằng 0 thì chia cho max = 0 ra NaN, cột SVG biến mất không báo
+      lỗi.
+   6. Kỳ ngược (từ ngày > đến ngày) làm vòng while dựng chuỗi ngày chạy mãi —
+      chặn ngay ở cửa, trả chuỗi rỗng. */
 
-/** Số ngày của kỳ, ĐÓNG hai đầu: 01→01 là 1 ngày. 0 nếu kỳ ngược. */
+/** Số ngày của kỳ, đóng hai đầu: 01→01 là 1 ngày. 0 nếu kỳ ngược. */
 export function soNgay(ky: Ky): number {
   const tu = ngayCuaChuoi(ky.tuNgay);
   const den = ngayCuaChuoi(ky.denNgay);
@@ -31,16 +30,16 @@ export function soNgay(ky: Ky): number {
   return lech < 0 ? 0 : lech + 1;
 }
 
-/** 'YYYY-MM-DD' → Date 0h ĐỊA PHƯƠNG. null nếu sai định dạng. */
+/** 'YYYY-MM-DD' → Date 0h địa phương. null nếu sai định dạng. */
 function ngayCuaChuoi(s: string): Date | null {
   const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(s);
   if (!m || !m[1] || !m[2] || !m[3]) return null;
   return new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]));
 }
 
-/** Khoảng ngày của một kỳ xem nhanh, tính theo `homNay` (mặc định: hôm nay).
+/** Khoảng ngày của một kỳ xem nhanh, tính theo homNay (mặc định: hôm nay).
 
-    `thang-nay` kết thúc ở HÔM NAY chứ không phải cuối tháng — báo cáo không đếm
+    thang-nay kết thúc ở hôm nay chứ không phải cuối tháng — báo cáo không đếm
     doanh thu của những ngày chưa xảy ra. */
 export function khoangKy(ma: MaKy, homNay: Date = new Date()): Ky {
   const nay = toIsoDate(homNay);
@@ -58,8 +57,7 @@ export function khoangKy(ma: MaKy, homNay: Date = new Date()): Ky {
   }
 }
 
-/** Kỳ liền trước, CÙNG SỐ NGÀY. Kỳ ngược thì trả lại chính nó (không có gì để
-    so). */
+/** Kỳ liền trước, cùng số ngày. Kỳ ngược thì trả lại chính nó. */
 export function kyTruoc(ky: Ky): Ky {
   const n = soNgay(ky);
   if (n === 0) return ky;
@@ -71,7 +69,7 @@ export function kyTruoc(ky: Ky): Ky {
   };
 }
 
-/** Phần trăm thay đổi giữa hai kỳ. `null` khi kỳ trước bằng 0 — “tăng vô hạn”
+/** Phần trăm thay đổi giữa hai kỳ. null khi kỳ trước bằng 0 — "tăng vô hạn"
     không phải một con số hiển thị được. */
 export function phanTramThayDoi(nay: number, truoc: number): number | null {
   if (!Number.isFinite(nay) || !Number.isFinite(truoc)) return null;
@@ -96,7 +94,7 @@ export function moTaThayDoi(pt: number | null): string {
   return `${(pt as number) > 0 ? '+' : '−'}${so}%`;
 }
 
-/** Mọi ngày trong kỳ, theo thứ tự. Rỗng nếu kỳ ngược — BẪY 6. */
+/** Mọi ngày trong kỳ, theo thứ tự. Rỗng nếu kỳ ngược. */
 export function chuoiNgay(ky: Ky): string[] {
   const n = soNgay(ky);
   const tu = ngayCuaChuoi(ky.tuNgay);
@@ -106,8 +104,8 @@ export function chuoiNgay(ky: Ky): string[] {
   return ra;
 }
 
-/** Điền 0 cho ngày không có dữ liệu và bỏ điểm nằm ngoài kỳ — BẪY 4.
-    Ngày trùng nhau thì cộng dồn, phòng khi backend trả tách theo CLB. */
+/** Điền 0 cho ngày không có dữ liệu và bỏ điểm nằm ngoài kỳ. Ngày trùng nhau
+    thì cộng dồn, phòng khi backend trả tách theo CLB. */
 export function dienDayChuoiNgay(diem: readonly DiemDoanhThu[], ky: Ky): DiemDoanhThu[] {
   const theoNgay = new Map<string, DiemDoanhThu>();
   for (const d of diem) {
@@ -131,15 +129,15 @@ export function tongDoanhThu(diem: readonly DiemDoanhThu[]): number {
 export interface ThangCot {
   /** Đỉnh trục tung, đã làm tròn lên cho dễ đọc. 0 khi chưa có số liệu. */
   dinh: number;
-  /** Ba mốc kẻ ngang, từ trên xuống. Rỗng khi `dinh === 0`. */
+  /** Ba mốc kẻ ngang, từ trên xuống. Rỗng khi dinh === 0. */
   moc: number[];
 }
 
-/** Thang trục tung: làm tròn LÊN tới bậc 1 / 2 / 5 × 10^n gần nhất để mốc đọc
-    được (2.000.000 chứ không phải 1.873.412). */
+/** Thang trục tung: làm tròn lên tới bậc 1 / 2 / 5 × 10^n gần nhất để mốc
+    đọc được (2.000.000 chứ không phải 1.873.412). */
 export function thangCot(giaTri: readonly number[]): ThangCot {
   const max = giaTri.reduce((m, v) => (v > m ? v : m), 0);
-  /* BẪY 5 — không có số liệu thì đỉnh là 0 và màn phải tự biết vẽ nền trống. */
+  /* Không có số liệu thì đỉnh là 0 và màn phải tự biết vẽ nền trống. */
   if (max <= 0) return { dinh: 0, moc: [] };
 
   const bac = 10 ** Math.floor(Math.log10(max));
@@ -148,7 +146,7 @@ export function thangCot(giaTri: readonly number[]): ThangCot {
   return { dinh, moc: [dinh, dinh / 2, 0] };
 }
 
-/** Chiều cao cột theo phần trăm (0–100). Không bao giờ trả `NaN` — BẪY 5. */
+/** Chiều cao cột theo phần trăm (0–100). Không bao giờ trả NaN. */
 export function phanTramCot(giaTri: number, dinh: number): number {
   if (!Number.isFinite(giaTri) || dinh <= 0) return 0;
   return Math.max(0, Math.min(100, (giaTri / dinh) * 100));

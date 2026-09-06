@@ -6,8 +6,8 @@ import { useT } from '@/components/shell/NgonNguProvider';
 import type { Location } from '@/lib/api/types';
 import type { NhanVienInput } from '../types';
 
-/* Form thêm / sửa HỒ SƠ. Vai trò và cờ toàn hệ thống KHÔNG ở đây — chúng có
-   khối riêng (`VaiTroPanel`) vì chịu kiểm tra phân quyền chặt hơn. */
+/* Form thêm / sửa hồ sơ. Vai trò và cờ toàn hệ thống không ở đây — chúng có
+   khối riêng (VaiTroPanel) vì chịu kiểm tra phân quyền chặt hơn. */
 
 interface Props {
   defaultValue?: Partial<NhanVienInput>;

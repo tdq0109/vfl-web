@@ -32,9 +32,9 @@ import type { DongHang, GiaoDich, HangQuay, PhuongThuc } from './types';
 
 type Tab = 'ban-hang' | 'giao-dich' | 'doi-soat' | 'chot-ngay';
 
-/* ⚠ GIẢ ĐỊNH: CLB chạy 2 ca/ngày (sáng 06:00–14:00 · chiều 14:00–22:00). Khung
-   nằm ở `khungCa.ts`; nếu mỗi CLB một khung riêng thì nó phải theo `Location`
-   từ backend — câu hỏi đã ghi vào mục 5 tài liệu bàn giao. */
+/* Giả định CLB chạy 2 ca/ngày (sáng 06:00–14:00, chiều 14:00–22:00). Khung
+   nằm ở khungCa.ts; nếu mỗi CLB một khung riêng thì nó phải theo Location từ
+   backend — câu hỏi đã ghi vào mục 5 tài liệu bàn giao. */
 const KHUNG = KHUNG_2_CA;
 
 function fieldErrorsOf(err: unknown): Record<string, string> | undefined {
@@ -46,7 +46,7 @@ export function BanHangQuayScreen() {
   const user = useSession();
   const { current: locationScope, options: locationOptions } = useLocationScope();
 
-  /* Quầy luôn thuộc MỘT CLB cụ thể — không bán được ở chế độ "Tất cả CLB". */
+  /* Quầy luôn thuộc một CLB cụ thể, không bán ở chế độ "Tất cả CLB". */
   const locationId = locationScope === ALL_LOCATIONS ? undefined : locationScope;
   const locationName = locationOptions.find((l) => l.id === locationId)?.name ?? t('quay.clbNay');
 
@@ -70,8 +70,8 @@ export function BanHangQuayScreen() {
 
   const ca = caQuery.data ?? null;
 
-  /* NGÀY LÀM VIỆC hiện tại — tính theo khung ca, không phải theo lịch: ca đêm
-     mở 22h hôm trước vẫn thuộc ngày hôm trước. Xem `khungCa.ts::ngayLamViec`. */
+  /* Ngày làm việc hiện tại tính theo khung ca chứ không theo lịch: ca đêm mở
+     22h hôm trước vẫn thuộc ngày hôm trước. Xem khungCa.ts::ngayLamViec. */
   const bayGio = new Date();
   const hai = (n: number) => String(n).padStart(2, '0');
   const mocBayGio = `${bayGio.getFullYear()}-${hai(bayGio.getMonth() + 1)}-${hai(
@@ -81,8 +81,8 @@ export function BanHangQuayScreen() {
 
   const ngayQuery = useNgayLamViec(ngayHomNay, locationId);
 
-  /* Cảnh báo mở ca muộn tính cho CHÍNH THỜI ĐIỂM NÀY, trước khi bấm nút — nói
-     sau khi đã mở thì người ta không còn lựa chọn nào để đổi. */
+  /* Cảnh báo mở ca muộn tính cho chính thời điểm này, trước khi bấm nút —
+     nói sau khi đã mở thì người ta không còn lựa chọn nào để đổi. */
   const khungBayGio = khungCuaThoiDiem(mocBayGio, KHUNG);
   const muonBayGio = soPhutMoMuon({ moLuc: mocBayGio }, KHUNG);
   const canhBaoMoCa =
@@ -99,9 +99,9 @@ export function BanHangQuayScreen() {
       ? (gomTheoNgayVaClb(ngayQuery.data.ca, KHUNG, bayGio)[0] ?? null)
       : null;
 
-  /* Tài khoản nhận chuyển khoản tra theo CLB CỦA CA đang mở, không theo CLB
+  /* Tài khoản nhận chuyển khoản tra theo CLB của ca đang mở, không theo CLB
      đang chọn trên thanh trên — cùng một luật với hợp đồng, xem
-     `taiKhoanNhanTienCua()`. */
+     taiKhoanNhanTienCua(). */
   const taiKhoanCuaCa = ca ? taiKhoanNhanTienCua(ca.locationId, user.locations) : undefined;
 
   function dongGio() {

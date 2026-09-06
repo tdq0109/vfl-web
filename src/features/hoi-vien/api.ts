@@ -2,8 +2,8 @@ import { api } from '@/lib/api';
 import type { Paged } from '@/lib/api/types';
 import type { HoiVien, HoiVienInput, HoiVienListParams, HoiVienStatus } from './types';
 
-/* NƠI DUY NHẤT biết đường dẫn endpoint của nhóm Hội viên. Đổi API → sửa ở đây,
-   không nơi nào khác. */
+/* Nơi duy nhất biết đường dẫn endpoint của nhóm Hội viên. Đổi API thì sửa ở
+   đây, không nơi nào khác. */
 
 const BASE = '/hoi-vien';
 

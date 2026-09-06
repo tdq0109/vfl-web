@@ -2,23 +2,22 @@ import type { IsoDateTime } from '@/features/dat-lich/types';
 import type { PhuongThuc } from '@/features/ban-hang-quay/types';
 import type { IsoDate, Vnd } from '@/lib/api/types';
 
-/* Kiểu + KHOÁ i18n của nhãn nhóm Hợp đồng. Theo đúng khuôn nhóm Hội viên —
-   xem `features/hoi-vien/types.ts`.
+/* Kiểu + khoá i18n của nhãn nhóm Hợp đồng, theo khuôn nhóm Hội viên
+   (features/hoi-vien/types.ts). Ba bảng nhãn dưới đây chứa khoá i18n chứ không
+   phải chữ tiếng Việt.
 
-   ⚠ BA BẢNG NHÃN DƯỚI ĐÂY CHỨA KHOÁ i18n, KHÔNG PHẢI CHỮ TIẾNG VIỆT.
+   Đây là chỗ tiền chạy qua. Ba nguyên tắc đã chốt, đừng phá:
 
-   ⚠ ĐÂY LÀ CHỖ TIỀN CHẠY QUA. Ba nguyên tắc đã chốt, đừng phá:
+   1. Tổng tiền không lưu trong kiểu này, tính từ dong + khuyenMai bằng
+      tinhTongHopDong(). Lưu tổng song song với dòng hàng là mời gọi hai con số
+      lệch nhau, hệ cũ đã dính đúng lỗi đó.
+   2. Giá niêm yết và giá sàn được chụp lại vào từng dòng lúc lập hợp đồng. Bảng
+      giá đổi sau đó không được làm hợp đồng cũ đọc ra con số khác.
+   3. Thanh toán đã huỷ vẫn nằm trong danh sách, gắn cờ daHuy — bút toán đảo,
+      không sửa đè. */
 
-   1. TỔNG TIỀN KHÔNG LƯU TRONG KIỂU NÀY. Tính từ `dong` + `khuyenMai` bằng
-      `tinhTongHopDong()`. Lưu tổng song song với dòng hàng là mời gọi hai con số
-      lệch nhau — hệ cũ đã dính đúng lỗi đó.
-   2. GIÁ NIÊM YẾT VÀ GIÁ SÀN ĐƯỢC CHỤP LẠI VÀO TỪNG DÒNG lúc lập hợp đồng.
-      Bảng giá đổi sau đó không được làm hợp đồng cũ đọc ra con số khác.
-   3. THANH TOÁN ĐÃ HUỶ VẪN NẰM TRONG DANH SÁCH, gắn cờ `daHuy` — bút toán đảo,
-      không sửa đè, giống cách huỷ giao dịch ở Bước 11. */
-
-/** Máy trạng thái hợp đồng. Bảng chuyển tiếp hợp lệ nằm ở `hop-dong.ts`, KHÔNG
-    rải `if` trong component. */
+/** Máy trạng thái hợp đồng. Bảng chuyển tiếp hợp lệ nằm ở hop-dong.ts, đừng
+    rải if trong component. */
 export type TrangThaiHopDong =
   | 'bao-gia'
   | 'cho-thu-tien'
@@ -51,10 +50,9 @@ export const TRANG_THAI_HOP_DONG_ORDER: TrangThaiHopDong[] = [
   'da-huy',
 ];
 
-/** Trạng thái để HIỂN THỊ — thêm `het-han` suy ra từ ngày kết thúc, không lưu.
-    Cùng nguyên lý với `trangThaiKhuyenMai()` (Bước 9) và `trangThaiBuoi()`
-    (Bước 10): hợp đồng hết hạn ba tháng mà bản ghi vẫn ghi "đang hiệu lực" là
-    lỗi kinh điển của hệ cũ. */
+/** Trạng thái để hiển thị — thêm het-han suy ra từ ngày kết thúc, không lưu.
+    Cùng nguyên lý với trangThaiKhuyenMai() và trangThaiBuoi(): hợp đồng hết hạn
+    ba tháng mà bản ghi vẫn ghi "đang hiệu lực" là lỗi kinh điển của hệ cũ. */
 export type TrangThaiHienThi = TrangThaiHopDong | 'het-han';
 
 export const TRANG_THAI_HIEN_THI_KHOA: Record<TrangThaiHienThi, string> = {
@@ -62,12 +60,11 @@ export const TRANG_THAI_HIEN_THI_KHOA: Record<TrangThaiHienThi, string> = {
   'het-han': 'hopDong.trangThai.het-han',
 };
 
-/** KHOÁ nhãn NÚT cho từng bước chuyển — đọc theo góc nhìn người bấm.
+/** Khoá nhãn nút cho từng bước chuyển, đọc theo góc nhìn người bấm.
 
-    ⚠ Hai bảng khác nhau cho cùng một tập trạng thái, và đó là cố ý: bảng trên
-    MÔ TẢ hợp đồng đang ở đâu ("Đã huỷ"), bảng này SAI KHIẾN ("Huỷ hợp đồng").
-    Cùng họ với "Ngừng bán" pill / "Ngừng bán" nút ở nhóm Sản phẩm. Riêng
-    `tam-dung` thì hai bảng trùng chữ ("Tạm dừng") và vẫn phải là hai khoá. */
+    Hai bảng khác nhau cho cùng một tập trạng thái là cố ý: bảng trên mô tả hợp
+    đồng đang ở đâu ("Đã huỷ"), bảng này sai khiến ("Huỷ hợp đồng"). Riêng
+    tam-dung thì hai bảng trùng chữ và vẫn phải là hai khoá. */
 export const HANH_DONG_KHOA: Record<TrangThaiHopDong, string> = {
   'bao-gia': 'hopDong.hanhDong.bao-gia',
   'cho-thu-tien': 'hopDong.hanhDong.cho-thu-tien',
@@ -79,7 +76,7 @@ export const HANH_DONG_KHOA: Record<TrangThaiHopDong, string> = {
   'tam-dung': 'hopDong.hanhDong.tam-dung',
 };
 
-/** Một dòng sản phẩm trong hợp đồng. `giaNiemYet` và `giaSan` là ảnh chụp tại
+/** Một dòng sản phẩm trong hợp đồng. giaNiemYet và giaSan là ảnh chụp tại
     thời điểm lập — xem nguyên tắc 2 ở đầu tệp. */
 export interface DongHopDong {
   sanPhamId: string;
@@ -109,21 +106,20 @@ export interface ThanhToanHopDong {
   nguoiThuId: string;
   nguoiThuTen: string;
   ghiChu?: string;
-  /** Huỷ phiếu thu = ghi cờ, KHÔNG xoá dòng. */
+  /** Huỷ phiếu thu là ghi cờ, không xoá dòng. */
   daHuy: boolean;
   lyDoHuy?: string;
 }
 
 /** Chữ ký tay của hội viên, chụp ở bước "ký".
 
-    `anh` là ảnh PNG dạng data URL, nền đã đục trong nên đè thẳng lên bản hợp
-    đồng khi in. CỐ Ý nhúng ảnh chứ không lưu đường dẫn: hợp đồng là chứng từ,
-    một đường dẫn có thể chết hoặc bị thay tệp mà không ai biết. Điều kiện hợp
-    lệ nằm ở `viSaoKhongLuuDuocChuKy()` trong `@/packages/signature-pad/chu-ky`,
-    có test riêng.
+    anh là ảnh PNG dạng data URL, nền đã đục trong nên đè thẳng lên bản hợp đồng
+    khi in. Cố ý nhúng ảnh chứ không lưu đường dẫn: hợp đồng là chứng từ, một
+    đường dẫn có thể chết hoặc bị thay tệp mà không ai biết. Điều kiện hợp lệ
+    nằm ở viSaoKhongLuuDuocChuKy() trong @/packages/signature-pad/chu-ky.
 
-    ⚠ Bước 12a chỉ giữ chữ ký của BÊN B (hội viên). Chữ ký đại diện CLB bên A ở
-    hệ cũ lấy sẵn từ cấu hình thương hiệu của CLB — phần đó chưa port. */
+    Mới giữ chữ ký của bên B (hội viên). Chữ ký đại diện CLB bên A ở hệ cũ lấy
+    sẵn từ cấu hình thương hiệu của CLB, phần đó chưa port. */
 export interface ChuKyHopDong {
   anh: string;
   luc: IsoDateTime;
@@ -148,7 +144,7 @@ export interface HopDong {
   hoiVienSdt?: string;
   locationId: string;
   locationName?: string;
-  /** Người lập — KHÔNG được tự xác minh hợp đồng của chính mình. */
+  /** Người lập — không được tự xác minh hợp đồng của chính mình. */
   nguoiLapId: string;
   nguoiLapTen: string;
   dong: DongHopDong[];
@@ -161,7 +157,7 @@ export interface HopDong {
   ngayKetThuc?: IsoDate;
   ngayPhatHanh?: IsoDate;
   ngayKy?: IsoDate;
-  /** Có khi hội viên ký trên màn. Ký giấy thì trống — hệ vẫn ghi nhận `ngayKy`. */
+  /** Có khi hội viên ký trên màn. Ký giấy thì trống, hệ vẫn ghi ngayKy. */
   chuKy?: ChuKyHopDong;
   nguoiXacMinhId?: string;
   nguoiXacMinhTen?: string;
@@ -191,8 +187,8 @@ export interface HopDongInput {
 export interface ChuyenTrangThaiInput {
   den: TrangThaiHopDong;
   ghiChu?: string;
-  /** Chỉ có nghĩa khi `den === 'da-ky'`: ảnh PNG data URL của chữ ký hội viên.
-      Bỏ trống = ký giấy, hệ chỉ ghi nhận trạng thái + ngày như trước Bước 12a. */
+  /** Chỉ có nghĩa khi den === 'da-ky': ảnh PNG data URL của chữ ký hội viên.
+      Bỏ trống là ký giấy, hệ chỉ ghi nhận trạng thái và ngày. */
   chuKy?: string;
 }
 
@@ -202,16 +198,14 @@ export interface ThanhToanInput {
   ghiChu?: string;
 }
 
-/** Lý do chặn một thao tác: KHOÁ i18n + tham số, để MÀN dịch ra chữ.
+/** Lý do chặn một thao tác: khoá i18n + tham số, để màn dịch ra chữ.
 
-    Vì sao không trả thẳng câu tiếng Việt như trước: hàm thuần không biết ngôn
-    ngữ hiện hành, gọi `t()` ở tầng đó là đóng băng chuỗi theo ngôn ngữ lúc nạp
-    tệp. Vì sao không trả mỗi khoá: phần lớn lý do có SỐ hoặc TÊN kèm theo, mà
-    chỉ hàm thuần mới biết chúng — bắt màn tự tính lại là chép logic phân nhánh
-    ra hai chỗ.
+    Không trả thẳng câu tiếng Việt vì hàm thuần không biết ngôn ngữ hiện hành.
+    Không trả mỗi khoá vì phần lớn lý do có số hoặc tên kèm theo mà chỉ hàm
+    thuần mới biết; bắt màn tự tính lại là chép logic phân nhánh ra hai chỗ.
 
-    `dongViPham` chỉ có ở lý do "dưới giá sàn": danh sách dòng để màn liệt kê
-    chi tiết. Ghép câu bằng `lyDoThanhChu()` trong `lyDo.ts`. */
+    dongViPham chỉ có ở lý do dưới giá sàn: danh sách dòng để màn liệt kê chi
+    tiết. Ghép câu bằng lyDoThanhChu() trong lyDo.ts. */
 export interface LyDoChan {
   khoa: string;
   thamSo?: Record<string, string | number>;

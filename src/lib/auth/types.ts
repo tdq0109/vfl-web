@@ -2,7 +2,7 @@ import type { Location } from '@/lib/api/types';
 
 /* Hồ sơ người dùng và hình dạng phản hồi đăng nhập từ .NET.
 
-   ⚠ Đây là GIẢ ĐỊNH hợp đồng API — đội backend .NET chưa chốt. Khi có hợp đồng
+   Đây là giả định hợp đồng API, đội backend .NET chưa chốt. Khi có hợp đồng
    thật, sửa ở đây, ở 4 route handler trong `app/api/auth/`, và ở
    `lib/auth/server.ts`. */
 

@@ -10,20 +10,20 @@ import { tongKetNgay, viSaoKhongChotDuocNgay } from '../chuyenCa';
 import type { KhungCa, NgayCuaClb } from '../khungCa';
 import type { ChotNgay } from '../types';
 
-/* CHỐT NGÀY — bản tổng kết cả ngày để NHÂN VIÊN XÁC NHẬN rồi mới khoá lại.
+/* Chốt ngày — bản tổng kết cả ngày để nhân viên xác nhận rồi mới khoá lại.
 
-   Đây không phải một nút bấm cho xong. Nó là tờ giấy mà người trực quầy ký vào,
-   nên nó phải nói đủ để người ấy dám ký:
+   Đây không phải một nút bấm cho xong; nó là tờ giấy mà người trực quầy ký vào,
+   nên phải nói đủ để người ấy dám ký:
 
-     · tiền mặt đầu ngày → tiền mặt cuối ngày lẽ ra phải có → đếm được bao nhiêu;
-     · doanh thu tách theo phương thức (chỉ tiền mặt mới vào két);
-     · CÓ GÌ BẤT THƯỜNG KHÔNG — lệch két, lệch bàn giao, phiếu huỷ, ca mở muộn,
-       khung không ai trực. Giấu mấy dòng này đi thì chữ ký thành vô nghĩa.
+   - tiền mặt đầu ngày → cuối ngày lẽ ra phải có → đếm được bao nhiêu;
+   - doanh thu tách theo phương thức (chỉ tiền mặt mới vào két);
+   - có gì bất thường không: lệch két, lệch bàn giao, phiếu huỷ, ca mở muộn,
+     khung không ai trực. Giấu mấy dòng này đi thì chữ ký thành vô nghĩa.
 
-   ⚠ Chốt xong là KHOÁ: không mở thêm ca cho ngày đó. Nút phải nói rõ điều ấy
-   trước khi bấm, không phải sau.
+   Chốt xong là khoá, không mở thêm ca cho ngày đó, và nút phải nói rõ điều ấy
+   trước khi bấm.
 
-   Thuần trình bày: mọi con số do `chuyenCa.ts::tongKetNgay()` tính sẵn. */
+   Thuần trình bày: mọi con số do chuyenCa.ts::tongKetNgay() tính sẵn. */
 
 interface Props {
   ngay: string;
@@ -80,7 +80,7 @@ export function ChotNgayPanel({
   const lyDo = viSaoKhongChotDuocNgay(cacCa, daChot !== null);
   const tk = chuoi ? tongKetNgay(chuoi, khung) : null;
 
-  /* Những dòng CHỈ hiện khi có vấn đề. Ngày sạch thì không bày ra để người ta
+  /* Những dòng chỉ hiện khi có vấn đề. Ngày sạch thì không bày ra để người ta
      phải đọc lướt qua bốn số 0 rồi mới tới nút. */
   const batThuong: { nhan: string; giaTri: string }[] = [];
   if (tk) {

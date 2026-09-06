@@ -6,11 +6,11 @@ import type { DongDoiSoatTrongChuoi } from '../giamSat';
 import { TRANG_THAI_CA_KHOA } from '../types';
 import { ChuYPill } from './ChuYPill';
 
-/* Bảng ca cho người giám sát. Thuần trình bày: nhận các dòng ĐÃ TÍNH SẴN từ
-   `giamSat.ts::doiSoatMotCa()`, không tự tính lấy con số nào.
+/* Bảng ca cho người giám sát. Thuần trình bày: nhận các dòng đã tính sẵn từ
+   giamSat.ts::doiSoatMotCa(), không tự tính lấy con số nào.
 
-   ⚠ CỘT "LỆCH" CÓ BA TRẠNG THÁI, không phải hai: lệch dương, lệch âm, và CHƯA
-   BIẾT (ca chưa đóng). Hiện "0 ₫" cho ca chưa đóng là nói dối — nó gợi ý đã đếm
+   Cột "lệch" có ba trạng thái chứ không phải hai: lệch dương, lệch âm, và chưa
+   biết (ca chưa đóng). Hiện "0 ₫" cho ca chưa đóng là nói dối — nó gợi ý đã đếm
    và khớp, trong khi chưa ai đếm cả. Dấu "—" mới đúng. */
 
 interface Props {

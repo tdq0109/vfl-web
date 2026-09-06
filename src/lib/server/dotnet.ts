@@ -1,11 +1,11 @@
 import 'server-only';
 
-/* NƠI DUY NHẤT biết địa chỉ backend .NET. Không tệp nào khác được đọc
-   `DOTNET_API_URL` hay gọi thẳng ra .NET — mọi thứ đi qua đây (route handler
-   trong `app/api/`).
+/* Nơi duy nhất biết địa chỉ backend .NET. Không tệp nào khác được đọc
+   DOTNET_API_URL hay gọi thẳng ra .NET — mọi thứ đi qua đây, từ route handler
+   trong app/api/.
 
-   Đây là tầng vận chuyển thô: nó KHÔNG gắn Authorization, KHÔNG refresh, KHÔNG
-   hiểu nghiệp vụ. Route handler chịu trách nhiệm gắn `Authorization: Bearer`. */
+   Đây là tầng vận chuyển thô: nó không gắn Authorization, không refresh, không
+   hiểu nghiệp vụ. Route handler chịu trách nhiệm gắn Authorization: Bearer. */
 
 function baseUrl(): string {
   const url = process.env.DOTNET_API_URL;

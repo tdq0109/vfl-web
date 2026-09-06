@@ -1,13 +1,13 @@
-/* Hai phần XML CỐ ĐỊNH của workbook, CHÉP NGUYÊN VĂN từ
-   `commercial-console.html` (~3448–3514).
+/* Hai phần XML cố định của workbook, chép nguyên văn từ
+   commercial-console.html.
 
-   Đây là DỮ LIỆU, không phải mã: bảng font / màu / định dạng số đã khớp đúng tệp
-   mẫu mà kế toán đang dùng, và bộ màu chủ đề là màu thương hiệu. Sửa một mã màu ở
-   đây là đổi diện mạo mọi tệp xuất ra — đừng "dọn cho gọn".
+   Đây là dữ liệu chứ không phải mã: bảng font / màu / định dạng số đã khớp đúng
+   tệp mẫu mà kế toán đang dùng, và bộ màu chủ đề là màu thương hiệu. Sửa một mã
+   màu ở đây là đổi diện mạo mọi tệp xuất ra, đừng dọn cho gọn.
 
-   ⚠ Bảng `STYLE` bên dưới ánh xạ TÊN sang chỉ số `cellXfs` trong `STYLES_XML`.
-   Hai thứ phải đi cùng nhau: chèn một `<xf>` vào giữa là mọi chỉ số sau nó lệch,
-   mà tệp vẫn mở được — chỉ là cột tiền hiện ra phần trăm. Có test canh. */
+   Bảng STYLE bên dưới ánh xạ tên sang chỉ số cellXfs trong STYLES_XML. Hai thứ
+   phải đi cùng nhau: chèn một <xf> vào giữa là mọi chỉ số sau nó lệch, mà tệp
+   vẫn mở được — chỉ là cột tiền hiện ra phần trăm. */
 
 export const STYLES_XML = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">

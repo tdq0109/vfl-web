@@ -6,12 +6,13 @@ import { internalPath } from '@/lib/auth/paths';
 
 /* Làm mới phiên rồi quay lại trang người dùng đang muốn vào.
 
-   Cần route GET riêng (ngoài `/auth/refresh` dạng POST) vì đây là ĐIỀU HƯỚNG
+   Cần route GET riêng (ngoài /auth/refresh dạng POST) vì đây là điều hướng
    trình duyệt: server component không đặt được cookie, nên khi access token hết
-   hạn, middleware đá sang đây; route handler làm mới cookie rồi 307 về chỗ cũ.
+   hạn thì middleware đá sang đây, route handler làm mới cookie rồi 307 về chỗ
+   cũ.
 
    Luôn kết thúc: hoặc đặt được access token mới, hoặc xoá sạch phiên và về
-   `/dang-nhap`. Không có nhánh nào quay lại chính nó. */
+   /dang-nhap. Không có nhánh nào quay lại chính nó. */
 export async function GET(req: NextRequest): Promise<NextResponse> {
   const back = internalPath(req.nextUrl.searchParams.get('tu'));
   const refreshToken = await getRefreshToken();

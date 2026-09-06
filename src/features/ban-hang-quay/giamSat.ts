@@ -3,32 +3,28 @@ import { doanhThuCa, giaoDichConHieuLuc, tienMatKyVong, tomTatCa, type TomTatCa 
 import { chuYCuaMatXich, gomTheoNgayVaClb, type KhungCa, type MatXichCa } from './khungCa';
 import type { BoLocGiamSat, CaThuNgan, DongSoGiaoDich, GiaoDich } from './types';
 
-/* GIÁM SÁT CA — HÀM THUẦN, không import React.
+/* Giám sát ca — hàm thuần, không import React.
 
-   `quay.ts` trả lời câu hỏi của THU NGÂN đang đứng ở quầy ("ca của tôi thu được
-   bao nhiêu, két phải có bao nhiêu"). Tệp này trả lời câu hỏi của NGƯỜI GIÁM
-   SÁT, đứng sau và nhìn nhiều ca của nhiều người: ca nào lệch, lệch có giải
-   thích không, ai đang để ca mở qua đêm, ca nào huỷ nhiều bất thường.
+   quay.ts trả lời câu hỏi của thu ngân đang đứng ở quầy: ca của tôi thu được
+   bao nhiêu, két phải có bao nhiêu. Tệp này trả lời câu hỏi của người giám sát
+   nhìn nhiều ca của nhiều người: ca nào lệch, lệch có ai giải thích không, ai
+   để ca mở qua đêm, ca nào huỷ nhiều bất thường.
 
-   ⚠ BỐN CÁI BẪY, đừng gỡ cái nào khi sửa hàm này:
+   Bốn quy ước ở đây đều có lý do, đừng gỡ:
+   - Ca chưa đóng thì chênh lệch là null, không phải 0. Chưa đếm tiền thì chưa
+     biết gì; coi là khớp thì bảng tổng hợp báo "mọi ca đều khớp" trong khi nửa
+     số ca chưa đối soát.
+   - Thừa cũng đáng ngờ như thiếu (thường là thu tiền mà chưa bấm máy), nên xếp
+     hạng đều lấy trị tuyệt đối.
+   - Lệch có ghi lý do khác với lệch không ai giải thích; chỉ cái sau mới là
+     việc của giám sát.
+   - Giao dịch đã huỷ không tính vào doanh thu nhưng phải giữ trong sổ. Ngược
+     với quay.ts: bán hàng thì lọc huỷ đi, đối chiếu thì huỷ chính là thứ cần
+     soi.
 
-   1. CA CHƯA ĐÓNG KHÔNG CÓ CHÊNH LỆCH — không phải "lệch 0". Chưa đếm tiền thì
-      chưa biết gì cả. Coi nó là khớp là cả bảng tổng hợp báo "mọi ca đều khớp"
-      trong khi nửa số ca còn chưa đối soát.
-   2. THỪA CŨNG ĐÁNG NGỜ NHƯ THIẾU. Thừa 300k không phải "may", nó thường là một
-      giao dịch thu tiền mà chưa bấm máy. Nên mọi phép xếp hạng đều lấy TRỊ
-      TUYỆT ĐỐI.
-   3. LỆCH CÓ GHI LÝ DO ≠ LỆCH KHÔNG AI GIẢI THÍCH. Chỉ cái sau mới là việc của
-      giám sát; lẫn hai thứ là hoặc bỏ sót, hoặc ngày nào cũng báo động.
-   4. GIAO DỊCH ĐÃ HUỶ KHÔNG TÍNH VÀO DOANH THU, NHƯNG PHẢI GIỮ TRONG SỔ. Đây là
-      chỗ ngược với `quay.ts`: bán hàng thì lọc huỷ đi, còn đối chiếu thì huỷ
-      chính là thứ cần soi. Xoá khỏi sổ là mất luôn dấu vết của mẫu gian lận cổ
-      điển nhất ở quầy: bấm bán, thu tiền, rồi huỷ phiếu.
+   Ba ngưỡng dưới đây là giả định, chờ vận hành chốt. */
 
-   ⚠ BA NGƯỠNG DƯỚI ĐÂY LÀ GIẢ ĐỊNH, cần vận hành chốt. Đặt thành hằng có tên để
-   sửa một chỗ, và để test nói rõ con số nào đang có hiệu lực. */
-
-/** Lệch từ mức này trở lên là NẶNG (trị tuyệt đối). */
+/** Lệch từ mức này trở lên là nặng (trị tuyệt đối). */
 export const NGUONG_LECH_NANG: Vnd = 50_000;
 
 /** Ca mở quá số giờ này mà chưa đóng là bất thường — thu ngân quên giao ca. */
@@ -39,16 +35,16 @@ export const SO_HUY_DANG_NGO = 3;
 
 export type CapLech = 'khop' | 'nhe' | 'nang';
 
-/** Xếp mức nghiêm trọng của chênh lệch. Lấy TRỊ TUYỆT ĐỐI — thừa cũng như thiếu. */
+/** Xếp mức nghiêm trọng của chênh lệch, lấy trị tuyệt đối. */
 export function capLech(lech: number, nguong: Vnd = NGUONG_LECH_NANG): CapLech {
   if (lech === 0) return 'khop';
   return Math.abs(lech) >= nguong ? 'nang' : 'nhe';
 }
 
-/** Số giờ ca đã mở. Ca đã đóng tính tới lúc đóng, ca đang mở tính tới `bayGio`.
+/** Số giờ ca đã mở. Ca đã đóng tính tới lúc đóng, ca đang mở tính tới bayGio.
 
-    `bayGio` là THAM SỐ chứ không đọc `Date.now()` bên trong: hàm thuần phải cho
-    cùng kết quả với cùng đầu vào, và test phải cố định được thời điểm. */
+    bayGio là tham số chứ không đọc Date.now() bên trong, để hàm cho cùng kết
+    quả với cùng đầu vào. */
 export function soGioMoCa(
   ca: Pick<CaThuNgan, 'moLuc' | 'dongLuc'>,
   bayGio: Date,
@@ -59,15 +55,15 @@ export function soGioMoCa(
   return (den - mo) / 3_600_000;
 }
 
-/** Tổng tiền của các giao dịch ĐÃ HUỶ — số không nằm trong doanh thu nào. */
+/** Tổng tiền của các giao dịch đã huỷ — không nằm trong doanh thu nào. */
 export function tienDaHuy(giaoDich: readonly GiaoDich[]): Vnd {
   return giaoDich.filter((g) => g.daHuy).reduce((tong, g) => tong + g.tongTien, 0);
 }
 
-/** Dấu hiệu cần chú ý của MỘT ca — mảng KHOÁ i18n, rỗng nghĩa là không có gì.
+/** Dấu hiệu cần chú ý của một ca — mảng khoá i18n, rỗng là không có gì.
 
-    Trả khoá chứ không trả câu: hàm thuần không biết người đang xem dùng ngôn ngữ
-    nào. Cùng cách với `quay.ts::moTaChenhLech()`. */
+    Trả khoá chứ không trả câu, vì hàm thuần không biết người xem đang dùng
+    ngôn ngữ nào. Cùng cách với quay.ts::moTaChenhLech(). */
 export function chuYCuaCa(
   ca: CaThuNgan,
   bayGio: Date,
@@ -85,8 +81,8 @@ export function chuYCuaCa(
       ra.push('quay.giamSat.chuY.lechNang');
     }
   } else if (soGioMoCa(ca, bayGio) >= GIO_CA_QUA_LAU) {
-    /* Chỉ ca CHƯA đóng mới bị soi về thời lượng. Ca đã đóng kéo dài 14 tiếng là
-       ca dài, không phải ca bỏ quên — và nó đã được đối soát rồi. */
+    /* Chỉ ca chưa đóng mới bị soi về thời lượng. Ca đã đóng kéo dài 14 tiếng
+       là ca dài, không phải ca bỏ quên — nó đã được đối soát rồi. */
     ra.push('quay.giamSat.chuY.caQuaLau');
   }
 
@@ -105,7 +101,7 @@ export interface DongDoiSoat {
   soGio: number;
   /** Tiền đếm được — `null` khi ca chưa đóng. */
   tienDem: Vnd | null;
-  /** Chênh lệch — `null` khi ca CHƯA ĐÓNG (chưa đếm thì chưa biết, xem BẪY 1). */
+  /** Chênh lệch — null khi ca chưa đóng, vì chưa đếm thì chưa biết. */
   lech: number | null;
   /** `null` khi chưa đóng. */
   cap: CapLech | null;
@@ -146,9 +142,9 @@ export interface TongHopGiamSat {
   soGiaoDich: number;
   soGiaoDichHuy: number;
   tienHuy: Vnd;
-  /** Tổng chênh lệch CÓ DẤU của các ca ĐÃ ĐÓNG — thừa và thiếu bù trừ nhau. */
+  /** Tổng chênh lệch có dấu của các ca đã đóng — thừa và thiếu bù trừ nhau. */
   tongLech: number;
-  /** Tổng TRỊ TUYỆT ĐỐI của chênh lệch: quy mô sai sót thật, không bù trừ. */
+  /** Tổng trị tuyệt đối của chênh lệch: quy mô sai sót thật, không bù trừ. */
   tongLechTuyetDoi: Vnd;
   /** Số ca đã đóng mà không khớp két. */
   soCaLech: number;
@@ -156,9 +152,8 @@ export interface TongHopGiamSat {
 
 /** Cộng dồn nhiều dòng đối soát.
 
-    ⚠ `tongLech` và `tongLechTuyetDoi` PHẢI có cả hai. Một ca thừa 100k và một ca
-    thiếu 100k thì `tongLech` = 0 — đọc một mình nó sẽ tưởng "cả ngày không lệch
-    đồng nào", trong khi thực tế có hai ca sai. */
+    Giữ cả tongLech lẫn tongLechTuyetDoi. Một ca thừa 100k và một ca thiếu 100k
+    thì tongLech = 0, đọc một mình nó sẽ tưởng cả ngày không lệch đồng nào. */
 export function tongHopGiamSat(dong: readonly DongDoiSoat[]): TongHopGiamSat {
   const ra: TongHopGiamSat = {
     soCa: dong.length,
@@ -186,7 +181,7 @@ export function tongHopGiamSat(dong: readonly DongDoiSoat[]): TongHopGiamSat {
     ra.soGiaoDich += d.tomTat.soGiaoDich;
     ra.soGiaoDichHuy += d.tomTat.soGiaoDichHuy;
     ra.tienHuy += d.tienHuy;
-    /* Ca chưa đóng KHÔNG đóng góp gì vào phần chênh lệch — xem BẪY 1. */
+    /* Ca chưa đóng không đóng góp gì vào phần chênh lệch. */
     if (d.lech !== null) {
       ra.tongLech += d.lech;
       ra.tongLechTuyetDoi += Math.abs(d.lech);
@@ -197,10 +192,8 @@ export function tongHopGiamSat(dong: readonly DongDoiSoat[]): TongHopGiamSat {
   return ra;
 }
 
-/** Trải mọi giao dịch của nhiều ca thành SỔ GIAO DỊCH, mới nhất lên trước.
-
-    GIỮ CẢ GIAO DỊCH ĐÃ HUỶ — xem BẪY 4. Màn tự đánh dấu chúng, việc của nó là
-    hiện, không phải giấu. */
+/** Trải mọi giao dịch của nhiều ca thành sổ giao dịch, mới nhất lên trước.
+    Giữ cả giao dịch đã huỷ; màn tự đánh dấu chúng. */
 export function soGiaoDich(dsCa: readonly CaThuNgan[]): DongSoGiaoDich[] {
   const ra: DongSoGiaoDich[] = [];
   for (const ca of dsCa) {
@@ -221,8 +214,8 @@ export function soGiaoDich(dsCa: readonly CaThuNgan[]): DongSoGiaoDich[] {
 
 /** Lọc danh sách ca theo bộ lọc của màn.
 
-    Lọc theo NGÀY MỞ ca (`moLuc`), không phải ngày đóng — ca đêm mở 22h hôm trước
-    vẫn thuộc về ca của hôm trước, đúng như cách thu ngân giao ca cho nhau. */
+    Lọc theo ngày mở ca (moLuc) chứ không phải ngày đóng — ca đêm mở 22h hôm
+    trước vẫn thuộc về hôm trước, đúng như cách thu ngân giao ca cho nhau. */
 export function locCa(
   dsCa: readonly CaThuNgan[],
   boLoc: BoLocGiamSat,
@@ -241,11 +234,10 @@ export function locCa(
   });
 }
 
-/** Doanh thu gộp của nhiều ca — dùng để đối chiếu nhanh với báo cáo Tổng quan.
+/** Doanh thu gộp của nhiều ca, để đối chiếu nhanh với báo cáo Tổng quan.
 
-    Cố ý KHÔNG dùng `tongHopGiamSat()`: đây là đường tính ĐỘC LẬP, cộng thẳng từ
-    giao dịch còn hiệu lực. Hai đường ra hai số khác nhau nghĩa là có chỗ sai, và
-    test canh đúng điều đó. */
+    Cố ý không dùng tongHopGiamSat(): đây là đường tính độc lập, cộng thẳng từ
+    giao dịch còn hiệu lực. Hai đường ra hai số khác nhau nghĩa là có chỗ sai. */
 export function doanhThuGop(dsCa: readonly CaThuNgan[]): Vnd {
   return dsCa.reduce((tong, ca) => tong + doanhThuCa(ca), 0);
 }
@@ -255,23 +247,19 @@ export function soGiaoDichConHieuLuc(dsCa: readonly CaThuNgan[]): number {
   return dsCa.reduce((n, ca) => n + giaoDichConHieuLuc(ca.giaoDich).length, 0);
 }
 
-/* ── GỘP HAI TẦNG DẤU HIỆU ────────────────────────────────────────────────
+/* Gộp hai tầng dấu hiệu.
 
-   Một ca có thể "sai" ở hai tầng khác nhau, và chúng trả lời hai câu khác nhau:
+   Một ca có thể sai ở hai tầng, trả lời hai câu khác nhau: chuYCuaCa hỏi ca này
+   tự nó có ổn không (lệch két, huỷ nhiều phiếu), còn chuYCuaMatXich hỏi ca này
+   đặt cạnh ca trước có ổn không (bàn giao lệch, chồng giờ, chạy quá khung).
 
-     · tầng CA     (`chuYCuaCa`)      — ca này tự nó có ổn không: lệch két, huỷ
-                                        nhiều phiếu;
-     · tầng CHUỖI  (`chuYCuaMatXich`) — ca này đặt cạnh ca trước có ổn không:
-                                        bàn giao lệch, chồng giờ, chạy quá khung.
-
-   Ghép lại phải KHỬ TRÙNG và bỏ cái chung chung khi đã có cái cụ thể: "ca mở
-   quá lâu" (12 tiếng, đo tuyệt đối) chỉ còn nghĩa khi ca nằm NGOÀI mọi khung.
-   Ca sáng chạy 13 tiếng thì "chạy quá khung 5 giờ" nói đúng vấn đề hơn, và hiện
-   cả hai chỉ làm loãng bảng. */
+   Ghép lại thì khử trùng, và bỏ cái chung chung khi đã có cái cụ thể: "ca mở
+   quá lâu" chỉ còn nghĩa khi ca nằm ngoài mọi khung. Ca sáng chạy 13 tiếng thì
+   "chạy quá khung 5 giờ" nói đúng vấn đề hơn. */
 
 export interface DongDoiSoatTrongChuoi extends DongDoiSoat {
   matXich: MatXichCa;
-  /** Dấu hiệu của CẢ HAI tầng, đã khử trùng. */
+  /** Dấu hiệu của cả hai tầng, đã khử trùng. */
   chuYGop: string[];
 }
 
@@ -283,7 +271,7 @@ export function gopChuY(dong: DongDoiSoat, matXich: MatXichCa): string[] {
   return [...new Set([...ca, ...chuoi])];
 }
 
-/** Dựng danh sách theo NGÀY × CLB, mỗi ca kèm đối soát và dấu hiệu hai tầng. */
+/** Dựng danh sách theo ngày × CLB, mỗi ca kèm đối soát và dấu hiệu hai tầng. */
 export function doiSoatTheoChuoi(
   dsCa: readonly CaThuNgan[],
   khung: readonly KhungCa[],
@@ -299,16 +287,12 @@ export function doiSoatTheoChuoi(
   }));
 }
 
-/** Một NGÀY của một CLB có gì đáng soi không.
+/** Một ngày của một CLB có gì đáng soi không.
 
-    🐞 Hàm này sinh ra từ một lỗi thật, do test tương tác lôi ra: bộ lọc "chỉ ca
-    cần chú ý" ban đầu chỉ xét dấu hiệu TẦNG CA (`chuYCuaCa`), nên nó GIẤU MẤT
-    đúng ca lệch bàn giao — ca ấy tự nó khớp két hoàn hảo, dấu hiệu nằm ở khớp
-    nối với ca trước. Nói cách khác, cái nút "chỉ hiện thứ đáng ngờ" lại lọc
-    chính xác thứ đáng ngờ nhất ra khỏi màn.
-
-    Nên điều kiện phải xét CẢ HAI TẦNG, cộng thêm khung không ai trực — khung
-    trống không thuộc ca nào cả, nên không có dấu hiệu nào mang nó. */
+    Điều kiện phải xét cả hai tầng, cộng thêm khung không ai trực. Bản đầu chỉ
+    xét chuYCuaCa nên bộ lọc "chỉ ca cần chú ý" giấu mất đúng ca lệch bàn giao:
+    ca ấy tự nó khớp két, dấu hiệu nằm ở khớp nối với ca trước. Khung trống thì
+    không thuộc ca nào nên cũng không có dấu hiệu nào mang nó. */
 export function ngayCanChuY(ngay: {
   khungTrong: readonly unknown[];
   dong: readonly DongDoiSoatTrongChuoi[];

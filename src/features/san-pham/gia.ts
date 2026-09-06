@@ -1,21 +1,18 @@
 import { toIsoDate } from '@/lib/format';
 import type { KhuyenMai, KhuyenMaiStatus, SanPham } from './types';
 
-/* Quy tắc giá — HÀM THUẦN, không import React.
+/* Quy tắc giá — hàm thuần, không import React.
 
-   Đây là chỗ tiền chạy qua nên tách riêng khỏi component: sai một phép tính ở
-   đây là bán dưới giá vốn hàng loạt. Backend .NET vẫn phải kiểm tra lại — phần
-   này chỉ để chặn sớm và cảnh báo cho người nhập.
+   Đây là chỗ tiền chạy qua nên tách riêng khỏi component: sai một phép tính là
+   bán dưới giá vốn hàng loạt. Backend .NET vẫn phải kiểm tra lại, phần này chỉ
+   để chặn sớm và cảnh báo cho người nhập.
 
-   ⚠ BA HÀM KIỂM TRA TRẢ VỀ KHOÁ i18n, KHÔNG PHẢI CÂU TIẾNG VIỆT. Màn gọi
-   `t(loi)` để lấy chữ. Không gọi `t()` ngay tại đây: hàm thuần không có ngôn ngữ
-   hiện hành để mà tra — gọi `t()` ở tầng này là đóng băng chuỗi theo ngôn ngữ
-   lúc nạp tệp, đúng cái bẫy đã ghi ở phần toast của nhóm Hội viên.
+   Ba hàm kiểm tra trả về khoá i18n chứ không phải câu tiếng Việt; màn gọi
+   t(loi). Hàm thuần không có ngôn ngữ hiện hành để mà tra, gọi t() ở tầng này
+   là đóng băng chuỗi theo ngôn ngữ lúc nạp tệp. null vẫn giữ nghĩa "không có
+   lỗi" nên chỗ gọi không phải đổi cách kiểm. */
 
-   `null` vẫn giữ nguyên nghĩa "không có lỗi", nên chỗ gọi không phải đổi cách
-   kiểm. Mọi khoá trả ra phải có thật trong `lib/i18n` — tự đối chiếu. */
-
-/** Giá sàn không được cao hơn giá niêm yết. Trả KHOÁ i18n của lỗi, hoặc null. */
+/** Giá sàn không được cao hơn giá niêm yết. Trả khoá i18n hoặc null. */
 export function kiemTraGiaSan(giaNiemYet: number, giaSan: number): string | null {
   if (giaSan < 0) return 'sanPham.loi.giaSanAm';
   if (giaSan > giaNiemYet) {
@@ -24,7 +21,8 @@ export function kiemTraGiaSan(giaNiemYet: number, giaSan: number): string | null
   return null;
 }
 
-/** Kiểm tra giá trị khuyến mãi hợp lệ theo loại giảm. Trả KHOÁ i18n, hoặc null. */
+/** Kiểm tra giá trị khuyến mãi hợp lệ theo loại giảm. Trả khoá i18n hoặc
+    null. */
 export function kiemTraGiaTriGiam(loaiGiam: KhuyenMai['loaiGiam'], giaTri: number): string | null {
   if (giaTri <= 0) return 'sanPham.loi.giamPhaiLonHon0';
   if (loaiGiam === 'phan-tram' && giaTri > 100) return 'sanPham.loi.phanTramQua100';
@@ -40,7 +38,7 @@ export function giaSauGiam(giaGoc: number, khuyenMai: Pick<KhuyenMai, 'loaiGiam'
   return Math.max(0, giaGoc - giam);
 }
 
-/** Khuyến mãi có kéo giá sản phẩm xuống DƯỚI giá sàn không. */
+/** Khuyến mãi có kéo giá sản phẩm xuống dưới giá sàn không. */
 export function viPhamGiaSan(
   sanPham: Pick<SanPham, 'giaNiemYet' | 'giaSan'>,
   khuyenMai: Pick<KhuyenMai, 'loaiGiam' | 'giaTri'>,
@@ -61,7 +59,8 @@ export function trangThaiKhuyenMai(
   return 'dang-chay';
 }
 
-/** Khoảng ngày hợp lệ: từ ngày không được sau đến ngày. Trả KHOÁ i18n, hoặc null. */
+/** Khoảng ngày hợp lệ: từ ngày không được sau đến ngày. Trả khoá i18n hoặc
+    null. */
 export function kiemTraKhoangNgay(tuNgay: string, denNgay: string): string | null {
   if (!tuNgay || !denNgay) return null;
   return tuNgay > denNgay ? 'sanPham.loi.ngayNguoc' : null;

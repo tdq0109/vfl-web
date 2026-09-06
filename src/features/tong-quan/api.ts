@@ -1,12 +1,11 @@
 import { api } from '@/lib/api';
 import type { DiemDoanhThu, HomNay, TomTatTongQuan, TongQuanParams, TopSanPham } from './types';
 
-/* NƠI DUY NHẤT biết đường dẫn endpoint của Dashboard.
+/* Nơi duy nhất biết đường dẫn endpoint của Dashboard.
 
-   ⚠ Không có endpoint "so sánh hai kỳ". Màn gọi `tomTat` HAI LẦN — một cho kỳ
-   đang xem, một cho `kyTruoc()` — rồi so ở frontend. Backend nhờ vậy chỉ phải
-   biết một phép cộng theo khoảng ngày, và cách chọn kỳ so sánh nằm trong module
-   hàm thuần đã có test. */
+   Không có endpoint so sánh hai kỳ: màn gọi tomTat hai lần, một cho kỳ đang xem
+   và một cho kyTruoc(), rồi so ở frontend. Backend nhờ vậy chỉ phải biết một
+   phép cộng theo khoảng ngày. */
 
 const BASE = '/tong-quan';
 
@@ -23,8 +22,8 @@ export const tongQuanApi = {
     return api.get<TomTatTongQuan>(`${BASE}/tom-tat`, { query: query(params) });
   },
 
-  /** Doanh thu theo ngày. Backend có quyền trả THƯA (bỏ ngày không phát sinh) —
-      `dienDayChuoiNgay()` lo phần điền 0. */
+  /** Doanh thu theo ngày. Backend có quyền trả thưa (bỏ ngày không phát
+      sinh), dienDayChuoiNgay() lo phần điền 0. */
   doanhThuTheoNgay(params: TongQuanParams): Promise<DiemDoanhThu[]> {
     return api.get<DiemDoanhThu[]>(`${BASE}/doanh-thu`, { query: query(params) });
   },

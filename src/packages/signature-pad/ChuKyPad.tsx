@@ -24,25 +24,25 @@ import {
   type Net,
 } from './chu-ky';
 
-/* Khung ký tay — phần CHẠM DOM của gói chữ ký. Mọi phép tính nằm ở `chu-ky.ts`
-   và có test riêng; ở đây chỉ còn nối canvas với chuột/ngón tay.
+/* Khung ký tay — phần chạm DOM của gói chữ ký. Mọi phép tính nằm ở chu-ky.ts;
+   ở đây chỉ còn nối canvas với chuột/ngón tay.
 
-   Ba chỗ CỐ Ý khác bản cũ (`commercial-console.html` ~11993–12022), vì bản cũ
-   sai thật chứ không phải khác gu:
+   Ba chỗ cố ý khác bản cũ (commercial-console.html), vì bản cũ sai thật chứ
+   không phải khác gu:
 
-   1. BẢN CŨ MẤT NÉT KHI KHUNG ĐỔI CỠ. Nó vẽ thẳng lên canvas và không giữ lại
-      gì; xoay ngang điện thoại là `cv.width = r.width` xoá sạch chữ ký vừa ký.
-      Ở đây nét được giữ trong `netsRef` và vẽ lại sau mỗi lần đổi cỡ.
-   2. BẢN CŨ MỜ TRÊN MÀN MẬT ĐỘ CAO. `cv.width = r.width` là 1 điểm ảnh CSS ăn
-      1 điểm ảnh thật. Nay nhân theo `devicePixelRatio` (chặn trên ở 3) rồi
-      `ctx.scale()`, nên vẫn vẽ bằng toạ độ CSS.
-   3. BẢN CŨ ĐẶT `pointerup` TRÊN `window` VÀ KHÔNG BAO GIỜ GỠ. Mỗi lần mở lại
-      khung ký là thêm một trình nghe nữa. Nay dùng `setPointerCapture`.
+   1. Bản cũ mất nét khi khung đổi cỡ: nó vẽ thẳng lên canvas và không giữ lại
+      gì, xoay ngang điện thoại là cv.width = r.width xoá sạch chữ ký vừa ký. Ở
+      đây nét được giữ trong netsRef và vẽ lại sau mỗi lần đổi cỡ.
+   2. Bản cũ mờ trên màn mật độ cao: cv.width = r.width là 1 điểm ảnh CSS ăn 1
+      điểm ảnh thật. Nay nhân theo devicePixelRatio (chặn trên ở 3) rồi
+      ctx.scale(), nên vẫn vẽ bằng toạ độ CSS.
+   3. Bản cũ đặt pointerup trên window và không bao giờ gỡ, mỗi lần mở lại khung
+      ký là thêm một trình nghe nữa. Nay dùng setPointerCapture.
 
-   Giữ nguyên của bản cũ: nét dày 2, đầu nét tròn, mực #0F2733 (token `ink`),
-   nạp được ảnh chữ ký có sẵn, và một chấm không tính là đã ký. */
+   Giữ nguyên của bản cũ: nét dày 2, đầu nét tròn, mực #0F2733 (token ink), nạp
+   được ảnh chữ ký có sẵn, và một chấm không tính là đã ký. */
 
-/** Mực ký — đúng màu `ink` của bộ token. Canvas không đọc được biến Tailwind
+/** Mực ký — đúng màu ink của bộ token. Canvas không đọc được biến Tailwind
     nên phải viết số ở đây; đổi token thì đổi cả dòng này. */
 const MAU_MUC = '#0F2733';
 const DAY_NET = 2;
@@ -68,10 +68,11 @@ export const ChuKyPad = forwardRef<ChuKyPadHandle, Props>(function ChuKyPad(
 ) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const netsRef = useRef<Diem[][]>([]);
-  /* "Đang đặt bút" giữ ở đây, KHÔNG suy từ `hasPointerCapture()` — xem `datBut`. */
+  /* "Đang đặt bút" giữ ở đây chứ không suy từ hasPointerCapture() — xem
+     datBut. */
   const dangVeRef = useRef(false);
-  /* Ảnh chữ ký nạp từ tệp — giữ nguyên đối tượng ảnh để vẽ lại được khi đổi cỡ
-     khung, thay vì chụp một lần rồi thôi như bản cũ. */
+  /* Ảnh chữ ký nạp từ tệp — giữ nguyên đối tượng ảnh để vẽ lại được khi đổi
+     cỡ khung, thay vì chụp một lần rồi thôi như bản cũ. */
   const anhRef = useRef<HTMLImageElement | null>(null);
   const [coChuKy, setCoChuKy] = useState(false);
   const [loiTep, setLoiTep] = useState<string | null>(null);
@@ -123,7 +124,7 @@ export const ChuKyPad = forwardRef<ChuKyPadHandle, Props>(function ChuKyPad(
     }
   }, []);
 
-  /* Đổi cỡ khung thì vẽ lại — KHÔNG đặt state ở đây, chỉ vẽ. */
+  /* Đổi cỡ khung thì vẽ lại, không đặt state ở đây. */
   useEffect(() => {
     const cv = canvasRef.current;
     if (!cv) return;
@@ -142,10 +143,10 @@ export const ChuKyPad = forwardRef<ChuKyPadHandle, Props>(function ChuKyPad(
     if (disabled) return;
     dangVeRef.current = true;
     netsRef.current.push([toaDo(e)]);
-    /* Bắt con trỏ để nét không đứt khi tay đi ra ngoài khung. Chỉ là phần THÊM:
-       `setPointerCapture` ném lỗi nếu con trỏ đã bị thành phần khác bắt, và lấy
-       nó làm điều kiện "đang vẽ" thì một lần ném là khung ký chết hẳn — bấm gì
-       cũng không ra nét, không báo gì. Trạng thái vẽ giữ ở `dangVeRef`. */
+    /* Bắt con trỏ để nét không đứt khi tay đi ra ngoài khung. Chỉ là phần
+       thêm: setPointerCapture ném lỗi nếu con trỏ đã bị thành phần khác bắt, và
+       lấy nó làm điều kiện "đang vẽ" thì một lần ném là khung ký chết hẳn.
+       Trạng thái vẽ giữ ở dangVeRef. */
     try {
       e.currentTarget.setPointerCapture(e.pointerId);
     } catch {
@@ -171,7 +172,7 @@ export const ChuKyPad = forwardRef<ChuKyPadHandle, Props>(function ChuKyPad(
     } catch {
       /* Con trỏ đã tự nhả — không có gì phải làm. */
     }
-    /* Một chấm không phải chữ ký — bỏ luôn nét 1 điểm cho `layAnh()` sạch. */
+    /* Một chấm không phải chữ ký — bỏ luôn nét 1 điểm cho layAnh() sạch. */
     const net = netsRef.current[netsRef.current.length - 1];
     if (net && net.length < 2) netsRef.current.pop();
     capNhat();
@@ -225,8 +226,8 @@ export const ChuKyPad = forwardRef<ChuKyPadHandle, Props>(function ChuKyPad(
       layAnh: () => {
         const cv = canvasRef.current;
         if (!cv || !(daVe(netsRef.current as readonly Net[]) || anhRef.current)) return null;
-        /* Canvas có thể bị "nhiễm" nếu ảnh nạp vào từ nguồn khác — bản cũ trả
-           chuỗi 'sig:err' cho ca này; ở đây trả null để chỗ gọi coi như chưa ký. */
+        /* Canvas có thể bị nhiễm nếu ảnh nạp vào từ nguồn khác; bản cũ trả
+           chuỗi 'sig:err', ở đây trả null để chỗ gọi coi như chưa ký. */
         try {
           return cv.toDataURL('image/png');
         } catch {
@@ -294,9 +295,9 @@ export const ChuKyPad = forwardRef<ChuKyPadHandle, Props>(function ChuKyPad(
 
 /** Đục trong nền giấy của ảnh chữ ký chụp/scan, một lần lúc nạp.
 
-    Bản cũ làm việc này muộn hơn — lúc dựng bản hợp đồng để in (`stripBg`) — nên
-    ảnh lưu lại vẫn còn nguyên miếng giấy trắng đè lên khung ký. Làm ngay tại
-    đây thì thứ gửi lên backend đã sạch. Phép tính ở `xoaNenTrang()`, có test. */
+    Bản cũ làm việc này muộn hơn, lúc dựng bản hợp đồng để in (stripBg), nên ảnh
+    lưu lại vẫn còn nguyên miếng giấy trắng đè lên khung ký. Làm ngay tại đây
+    thì thứ gửi lên backend đã sạch. Phép tính ở xoaNenTrang(). */
 function docNenGiay(img: HTMLImageElement): HTMLImageElement {
   try {
     const cv = document.createElement('canvas');

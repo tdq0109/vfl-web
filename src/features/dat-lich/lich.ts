@@ -7,32 +7,29 @@ import type {
   TrangThaiBuoi,
 } from './types';
 
-/* Logic lịch — HÀM THUẦN, không import React.
+/* Logic lịch — hàm thuần, không import React.
 
-   ⚠ BỐN HÀM KIỂM TRA TRẢ VỀ KHOÁ i18n, KHÔNG PHẢI CÂU TIẾNG VIỆT —
-   `kiemTraKhoangGio` · `kiemTraSucChua` · `viSaoKhongDatDuoc` · `moTaTrungLich`.
-   Màn gọi `t(khoa)` để lấy chữ. Không gọi `t()` ngay tại đây: hàm thuần không có
-   ngôn ngữ hiện hành để mà tra, gọi ở tầng này là đóng băng chuỗi theo ngôn ngữ
-   lúc nạp tệp. Cùng cách làm với `san-pham/gia.ts`, xem mục 3 tài liệu bàn giao.
+   Bốn hàm kiểm tra (kiemTraKhoangGio, kiemTraSucChua, viSaoKhongDatDuoc,
+   moTaTrungLich) trả khoá i18n chứ không trả câu tiếng Việt; màn gọi t(khoa).
+   Hàm thuần không có ngôn ngữ hiện hành để mà tra, gọi t() ở tầng này là đóng
+   băng chuỗi theo ngôn ngữ lúc nạp tệp. Cùng cách với san-pham/gia.ts. null vẫn
+   giữ nghĩa "không có lỗi" nên chỗ gọi không phải đổi cách kiểm.
 
-   `null` vẫn giữ nghĩa "không có lỗi" nên chỗ gọi không phải đổi cách kiểm;
-   Mọi khoá trả ra phải có thật trong `lib/i18n` — tự đối chiếu khi thêm khoá.
-
-   Trọng tâm là CHỐNG TRÙNG LỊCH HLV. Không kiểm tay được: số tổ hợp ngày × giờ
+   Trọng tâm là chống trùng lịch HLV. Không kiểm tay được: số tổ hợp ngày × giờ
    × HLV × CLB quá lớn, và lỗi chỉ lộ ra khi hai buổi thật sự chồng nhau ngoài
-   đời — lúc đó có một khách bị bỏ rơi.
+   đời, lúc đó đã có một khách bị bỏ rơi.
 
-   ⚠ BA CÁI BẪY, mỗi cái là một lần đã trả giá:
+   Ba chỗ đừng gỡ khi sửa:
 
-   1. XUYÊN CLB. HLV không thể có mặt ở hai CLB cùng lúc. Nếu lọc theo CLB trước
-      rồi mới dò trùng thì sẽ cho xếp trùng — `timTrungLichHlv` CỐ Ý không nhận
-      tham số locationId.
-   2. LIỀN KỀ KHÔNG PHẢI TRÙNG. Buổi 8–9h và 9–10h là hợp lệ. Dùng khoảng nửa mở
+   1. Xuyên CLB: HLV không thể có mặt ở hai CLB cùng lúc, nên lọc theo CLB trước
+      rồi mới dò trùng là cho xếp trùng. timTrungLichHlv cố ý không nhận
+      locationId.
+   2. Liền kề không phải trùng: buổi 8–9h và 9–10h là hợp lệ. Dùng khoảng nửa mở
       [batDau, ketThuc) nên chạm biên không tính là chồng.
-   3. TỰ TRÙNG CHÍNH MÌNH. Khi SỬA một buổi, phải bỏ chính nó ra khỏi danh sách
-      đối chiếu, nếu không buổi nào cũng báo trùng với bản thân. */
+   3. Khi sửa một buổi, phải bỏ chính nó ra khỏi danh sách đối chiếu, nếu không
+      buổi nào cũng báo trùng với bản thân. */
 
-/** Hai khoảng thời gian có chồng nhau không. Khoảng nửa mở: chạm biên KHÔNG tính. */
+/** Hai khoảng thời gian có chồng nhau không. Nửa mở: chạm biên không tính. */
 export function chongLan(
   aBatDau: IsoDateTime,
   aKetThuc: IsoDateTime,
@@ -42,7 +39,8 @@ export function chongLan(
   return aBatDau < bKetThuc && bBatDau < aKetThuc;
 }
 
-/** Khoảng thời gian hợp lệ: kết thúc phải sau bắt đầu. Trả KHOÁ i18n, hoặc null. */
+/** Khoảng thời gian hợp lệ: kết thúc phải sau bắt đầu. Trả khoá i18n hoặc
+    null. */
 export function kiemTraKhoangGio(batDau: IsoDateTime, ketThuc: IsoDateTime): string | null {
   if (!batDau || !ketThuc) return null;
   if (ketThuc <= batDau) return 'datLich.loi.gioKetThuc';
@@ -57,10 +55,10 @@ interface TimTrungInput {
   boQuaId?: string;
 }
 
-/** Các buổi khác của CÙNG HLV bị chồng giờ với buổi đang xếp.
+/** Các buổi khác của cùng HLV bị chồng giờ với buổi đang xếp.
 
-    KHÔNG nhận locationId: HLV chỉ có một người, không thể đứng lớp ở hai CLB
-    cùng lúc. Truyền vào đây TOÀN BỘ buổi trong khoảng thời gian đó, mọi CLB. */
+    Không nhận locationId: HLV chỉ có một người, không thể đứng lớp ở hai CLB
+    cùng lúc. Truyền vào đây toàn bộ buổi trong khoảng thời gian đó, mọi CLB. */
 export function timTrungLichHlv(
   buoiMoi: TimTrungInput,
   cacBuoi: readonly KhoangBuoi[],
@@ -84,15 +82,16 @@ export function timTrungLichHlv(
 /** Thông điệp lỗi trùng lịch, hoặc null nếu không trùng. */
 export function moTaTrungLich(trung: readonly KhoangBuoi[]): string | null {
   if (trung.length === 0) return null;
-  /* Trả KHOÁ, còn số buổi thì màn tự truyền: `t(khoa, { so: trung.length })`.
-     Phép chọn ít/nhiều VẪN Ở ĐÂY vì nó là quy tắc có test, chỉ có chữ là đi ra
-     ngoài. Khoá số ít không có chỗ trống nên truyền thừa `so` cũng vô hại. */
+  /* Trả khoá, còn số buổi thì màn tự truyền: t(khoa, { so: trung.length }).
+     Phép chọn ít/nhiều ở lại đây vì nó là quy tắc, chỉ có chữ là đi ra ngoài.
+     Khoá số ít không có chỗ trống nên truyền thừa so cũng vô hại. */
   return trung.length === 1 ? 'datLich.trungLichMot' : 'datLich.trungLichNhieu';
 }
 
-/* ── Sức chứa, giữ chỗ, hàng chờ ─────────────────────────────────────────── */
+// Sức chứa, giữ chỗ, hàng chờ
 
-/** Chỗ đã đặt còn hiệu lực: chỗ chốt luôn tính, chỗ GIỮ chỉ tính khi chưa hết hạn. */
+/** Chỗ đã đặt còn hiệu lực: chỗ chốt luôn tính, chỗ giữ chỉ tính khi chưa
+    hết hạn. */
 export function choDatConHieuLuc(daDat: readonly ChoDat[], bayGio: Date = new Date()): ChoDat[] {
   const moc = thoiDiem(bayGio);
   return daDat.filter((c) => !c.giuCho || (c.giuChoDenLuc ?? '') > moc);
@@ -123,10 +122,10 @@ export function daCoCho(
   return choDatConHieuLuc(buoi.daDat, bayGio).some((c) => c.hoiVienId === hoiVienId);
 }
 
-/** Vì sao không đặt được chỗ — KHOÁ i18n, null nghĩa là đặt được.
+/** Vì sao không đặt được chỗ — khoá i18n, null nghĩa là đặt được.
 
-    Thứ tự bốn nhánh là CÓ Ý và có test riêng: buổi huỷ / đã xong nói trước, rồi
-    mới tới lý do của riêng hội viên này. Đổi thứ tự là đổi câu người dùng đọc. */
+    Thứ tự bốn nhánh là có ý: buổi huỷ hoặc đã xong nói trước, rồi mới tới lý do
+    của riêng hội viên này. Đổi thứ tự là đổi câu người dùng đọc. */
 export function viSaoKhongDatDuoc(
   buoi: Pick<Buoi, 'sucChua' | 'daDat' | 'daHuy' | 'ketThuc'>,
   hoiVienId: string,
@@ -139,7 +138,7 @@ export function viSaoKhongDatDuoc(
   return null;
 }
 
-/** Trạng thái hiển thị của buổi — SUY RA, không lưu. */
+/** Trạng thái hiển thị của buổi — suy ra, không lưu. */
 export function trangThaiBuoi(
   buoi: Pick<Buoi, 'sucChua' | 'daDat' | 'daHuy' | 'ketThuc'>,
   bayGio: Date = new Date(),
@@ -149,11 +148,11 @@ export function trangThaiBuoi(
   return conCho(buoi, bayGio) ? 'mo' : 'day';
 }
 
-/* ── Tiện ích thời gian ──────────────────────────────────────────────────── */
+// Tiện ích thời gian
 
 const pad2 = (n: number): string => String(n).padStart(2, '0');
 
-/** `Date` → 'YYYY-MM-DDTHH:mm' theo GIỜ ĐỊA PHƯƠNG. */
+/** Date → 'YYYY-MM-DDTHH:mm' theo giờ địa phương. */
 export function thoiDiem(d: Date): IsoDateTime {
   return `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}T${pad2(d.getHours())}:${pad2(d.getMinutes())}`;
 }
@@ -188,7 +187,8 @@ export function gomTheoNgay(cacBuoi: readonly Buoi[]): Map<string, Buoi[]> {
   return theoNgay;
 }
 
-/** Sức chứa hợp lệ theo loại buổi. PT bắt buộc 1 kèm 1. Trả KHOÁ i18n, hoặc null. */
+/** Sức chứa hợp lệ theo loại buổi. PT bắt buộc 1 kèm 1. Trả khoá i18n hoặc
+    null. */
 export function kiemTraSucChua(loai: LoaiBuoi, sucChua: number): string | null {
   if (!Number.isInteger(sucChua) || sucChua < 1) return 'datLich.loi.sucChuaNguyen';
   if (loai === 'pt' && sucChua !== 1) return 'datLich.loi.ptMotKemMot';

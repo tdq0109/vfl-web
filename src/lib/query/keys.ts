@@ -1,13 +1,14 @@
 import type { QueryClient } from '@tanstack/react-query';
 
-/* NƠI DUY NHẤT khai báo khoá cache. Rải chuỗi khắp nơi thì luôn sót một chỗ khi
-   invalidate.
+/* Nơi duy nhất khai báo khoá cache. Rải chuỗi khắp nơi thì luôn sót một chỗ
+   khi invalidate.
 
-   `keys` — cây khoá phân cấp. `keys.hoiVien.all` khớp mọi truy vấn hội viên;
-   `keys.hoiVien.list(params)` là một trang cụ thể.
+   keys là cây khoá phân cấp: keys.hoiVien.all khớp mọi truy vấn hội viên,
+   keys.hoiVien.list(params) là một trang cụ thể.
 
-   `AFFECTED_BY` — một sự kiện nghiệp vụ ảnh hưởng nhiều nhánh. Bán một hợp đồng
-   đụng tới hội viên, công nợ và tổng quan cùng lúc → khai ở đây, sửa một chỗ. */
+   AFFECTED_BY gom những nhánh mà một sự kiện nghiệp vụ ảnh hưởng tới. Bán một
+   hợp đồng đụng tới hội viên, công nợ và tổng quan cùng lúc, khai ở đây thì sửa
+   một chỗ. */
 
 export const keys = {
   session: ['session'] as const,

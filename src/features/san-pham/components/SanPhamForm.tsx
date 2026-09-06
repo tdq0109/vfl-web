@@ -12,8 +12,8 @@ import {
   type SanPhamInput,
 } from '../types';
 
-/* Form thêm / sửa sản phẩm. GIÁ SÀN KHÔNG ở đây — nó có khối riêng
-   (`GiaSanPanel`) vì chỉ Giám đốc trở lên đặt được. */
+/* Form thêm / sửa sản phẩm. Giá sàn không ở đây — nó có khối riêng
+   (GiaSanPanel) vì chỉ Giám đốc trở lên đặt được. */
 
 interface Props {
   defaultValue?: Partial<SanPhamInput>;

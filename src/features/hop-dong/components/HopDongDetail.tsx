@@ -33,8 +33,8 @@ import { TrangThaiPill } from './TrangThaiPill';
 /* Chi tiết hợp đồng + nút đi tiếp trong máy trạng thái.
 
    Thuần trình bày: mọi quyết định "được đi tiếp hay không" lấy từ
-   `viSaoKhongChuyenDuoc()`, KHÔNG viết lại điều kiện ở đây. Nút bị chặn thì hiện
-   luôn CÂU LÝ DO bên dưới — nút xám không giải thích là thứ khiến người vận
+   viSaoKhongChuyenDuoc(), đừng viết lại điều kiện ở đây. Nút bị chặn thì hiện
+   luôn câu lý do bên dưới — nút xám không giải thích là thứ khiến người vận
    hành gọi điện cho kỹ thuật. */
 
 interface Props {

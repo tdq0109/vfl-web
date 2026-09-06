@@ -49,7 +49,8 @@ export function TongQuanScreen() {
   const top = useTopSanPham(ky, locationId, xemBaoCao);
   const homNay = useHomNay(locationId);
 
-  /* Điền 0 cho ngày không phát sinh TRƯỚC KHI vẽ — biểu đồ không tự vá dữ liệu. */
+  /* Điền 0 cho ngày không phát sinh trước khi vẽ; biểu đồ không tự vá dữ
+     liệu. */
   const diem = useMemo(
     () => dienDayChuoiNgay(doanhThu.data ?? [], ky),
     [doanhThu.data, ky],

@@ -1,13 +1,13 @@
-/* CLB đang chọn — kho ngoài React, để `useSyncExternalStore` đọc.
+/* CLB đang chọn — kho ngoài React, để useSyncExternalStore đọc.
 
-   Vì sao tách khỏi component: `sessionStorage` là một hệ thống BÊN NGOÀI React.
-   Trước đây `LocationProvider` khởi tạo state rồi mới đọc kho trong `useEffect`
-   (tránh lệch hydration), nhưng cách đó gọi `setState` trong effect — React 19 /
+   Tách khỏi component vì sessionStorage là một hệ thống bên ngoài React. Trước
+   đây LocationProvider khởi tạo state rồi mới đọc kho trong useEffect để tránh
+   lệch hydration, nhưng cách đó gọi setState trong effect — React 19 và
    eslint-config-next 16 gắn cờ đúng lý do: một lần render thừa mỗi lần gắn.
 
-   `useSyncExternalStore` giải đúng bài này: server và lần render hydrate đầu
-   tiên dùng ảnh chụp SERVER (`docTrenServer`), sau khi hydrate xong React tự đọc
-   ảnh chụp CLIENT. Không effect, không setState, không lệch hydration.
+   useSyncExternalStore giải đúng bài này: server và lần render hydrate đầu tiên
+   dùng ảnh chụp server (docTrenServer), hydrate xong React tự đọc ảnh chụp
+   client. Không effect, không setState, không lệch hydration.
 
    Toàn bộ tệp này là hàm thuần hoặc chạm kho, không import React. */
 
@@ -19,9 +19,9 @@ type Listener = () => void;
 
 const listeners = new Set<Listener>();
 
-/** `sessionStorage` khi có, `null` khi chạy ở server hoặc khi trình duyệt chặn
-    (chế độ riêng tư, cookie/site data bị khoá). KHÔNG ném — mất chỗ nhớ thì màn
-    vẫn phải chạy. */
+/** sessionStorage khi có, null khi chạy ở server hoặc khi trình duyệt chặn
+    (chế độ riêng tư, cookie bị khoá). Không ném: mất chỗ nhớ thì màn vẫn phải
+    chạy. */
 function kho(): Storage | null {
   try {
     return typeof window === 'undefined' ? null : window.sessionStorage;
@@ -38,18 +38,15 @@ export function dangKy(listener: Listener): () => void {
   };
 }
 
-/* Bản lưu tạm trong bộ nhớ, CHỈ dùng khi trình duyệt chặn ghi.
+/* Bản lưu tạm trong bộ nhớ, chỉ dùng khi trình duyệt chặn ghi.
 
-   Vì sao cần: với `useSyncExternalStore`, KHO LÀ NGUỒN SỰ THẬT — màn hình không
-   giữ bản sao nào của lựa chọn. Ghi hỏng mà không có bản tạm này thì lần render
-   ngay sau đó đọc lại kho và thấy giá trị cũ, nên ô chọn CLB BẬT NGƯỢC về chỗ
-   cũ ngay khi vừa chọn: người dùng bấm mãi không đổi được và không có lời báo
-   nào. Lỗi này chỉ lộ ra khi bấm thật vào ô chọn CLB trong lúc trình duyệt chặn
-   ghi — đọc mã suông thì thấy hợp lý.
+   Với useSyncExternalStore thì kho là nguồn sự thật, màn hình không giữ bản sao
+   nào của lựa chọn. Ghi hỏng mà không có bản tạm này thì lần render ngay sau đó
+   đọc lại kho và thấy giá trị cũ, nên ô chọn CLB bật ngược về chỗ cũ ngay khi
+   vừa chọn: người dùng bấm mãi không đổi được và không có lời báo nào.
 
-   `ghiDuoc` bắt đầu bằng `true` và chỉ thành `false` sau một lần ghi hỏng thật,
-   nên đường chạy bình thường không đụng tới `banTam` — kho vẫn là nguồn sự thật
-   duy nhất, không sinh ra hai chỗ nhớ song song lệch nhau. */
+   ghiDuoc bắt đầu bằng true và chỉ thành false sau một lần ghi hỏng thật, nên
+   đường chạy bình thường không đụng tới banTam. */
 let banTam: string | null = null;
 let ghiDuoc = true;
 
@@ -63,7 +60,7 @@ export function docDaLuu(): string | null {
   }
 }
 
-/** Ảnh chụp phía server — LUÔN `null`. Server không biết người này đã chọn CLB
+/** Ảnh chụp phía server — luôn null. Server không biết người này đã chọn CLB
     nào, và đoán bừa chính là nguồn gốc lệch hydration. */
 export function docTrenServer(): null {
   return null;
@@ -76,8 +73,8 @@ export function luu(id: string): void {
     kho()?.setItem(STORAGE_KEY, id);
     ghiDuoc = true;
   } catch {
-    /* Không ghi được vào kho: lựa chọn chỉ sống trong lần tải trang này, nhưng
-       PHẢI có hiệu lực ngay — xem ghi chú ở `banTam`. F5 là mất. */
+    /* Không ghi được vào kho: lựa chọn chỉ sống trong lần tải trang này
+       nhưng phải có hiệu lực ngay — xem ghi chú ở banTam. F5 là mất. */
     ghiDuoc = false;
   }
   for (const listener of [...listeners]) listener();
@@ -86,10 +83,8 @@ export function luu(id: string): void {
 /** Quên lựa chọn đã nhớ, đưa kho về đúng trạng thái chưa ai chọn gì.
 
     Dùng khi đăng xuất — người tiếp theo dùng chung máy ở quầy không nên thừa
-    hưởng CLB của người trước. ĐỪNG gọi thẳng hàm này từ màn: đường đăng xuất đi
-    qua `lib/storage/quenPhien.ts`, cửa duy nhất dọn mọi kho theo người dùng, và
-    có test bắt buộc mọi `quen()` phải nối vào đó. Test tương tác vẫn gọi thẳng
-    để mỗi ca bắt đầu sạch. */
+    hưởng CLB của người trước. Đừng gọi thẳng hàm này từ màn: đường đăng xuất đi
+    qua lib/storage/quenPhien.ts, cửa duy nhất dọn mọi kho theo người dùng. */
 export function quen(): void {
   banTam = null;
   ghiDuoc = true;
@@ -103,10 +98,9 @@ export function quen(): void {
 
 /** CLB có hiệu lực: lấy giá trị đã lưu nếu còn hợp lệ, không thì về mặc định.
 
-   Hai lý do một giá trị đã lưu trở nên không hợp lệ:
-     · người dùng bị rút quyền ở CLB đó (không còn trong `options`);
-     · người dùng mất cờ "toàn hệ thống" nhưng kho vẫn nhớ 'all'.
-   Cả hai đều là chuyện có thật khi quản lý đổi vai trò giữa hai phiên làm việc. */
+   Một giá trị đã lưu trở nên không hợp lệ khi người dùng bị rút quyền ở CLB đó
+   (không còn trong options), hoặc mất cờ toàn hệ thống nhưng kho vẫn nhớ 'all'.
+   Cả hai đều là chuyện có thật khi quản lý đổi vai trò giữa hai phiên. */
 export function clbHieuLuc(
   daLuu: string | null,
   options: readonly { id: string }[],

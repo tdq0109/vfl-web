@@ -4,13 +4,11 @@ import { Button } from '@/components/ui';
 import { ngonNguKia } from '@/lib/i18n/ngonNgu';
 import { useNgonNgu } from './NgonNguProvider';
 
-/* Nút lật ngôn ngữ, thay cho `langBtn` của hệ cũ (`commercial-console.html`
-   ~294–298).
+/* Nút lật ngôn ngữ, thay cho langBtn của hệ cũ.
 
-   ⚠ Nút hiện ngôn ngữ SẼ CHUYỂN SANG, không phải ngôn ngữ đang dùng — đang ở
-   tiếng Việt thì nút ghi "EN". Hệ cũ cũng làm vậy và đó là cách đúng: nút là
-   một hành động, nhãn nói nó sẽ làm gì. Ghi ngôn ngữ hiện tại thì người dùng
-   bấm vào tưởng để xác nhận.
+   Nút hiện ngôn ngữ sẽ chuyển sang chứ không phải ngôn ngữ đang dùng: đang ở
+   tiếng Việt thì nút ghi "EN". Hệ cũ cũng làm vậy và đó là cách đúng — nút là
+   một hành động, nhãn nói nó sẽ làm gì.
 
    Nhãn phụ cho trình đọc màn hình nói rõ cả hai vế, vì hai chữ "EN" đứng một
    mình thì không đủ nghĩa. */

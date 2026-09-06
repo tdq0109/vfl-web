@@ -52,9 +52,7 @@ function dismiss(id: number): void {
 
 /** Dọn sạch hàng đợi.
 
-    Hàng đợi sống ở module scope nên nó SỐNG QUA cả lần gắn lại `<Toaster />` —
-    tiện lúc chạy thật, nhưng trong test thì toast của ca trước đọng lại sang ca
-    sau và làm ca sau đỏ vì một lý do chẳng liên quan. Đã dính thật một lần. */
+    Hàng đợi sống ở module scope nên nó sống qua cả lần gắn lại <Toaster />. */
 function dismissAll(): void {
   queue = [];
   emit();

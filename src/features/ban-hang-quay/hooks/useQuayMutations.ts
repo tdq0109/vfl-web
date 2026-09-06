@@ -22,9 +22,8 @@ import type {
    Mọi thao tác đều làm mới ca đang mở: bán một vé xong thì tiền mặt kỳ vọng
    cuối ca đổi ngay, thu ngân phải thấy con số mới trước khi đếm két.
 
-   ⚠ Chữ của toast lấy qua `useT()` BÊN TRONG từng hook, không đặt ở
-   `useLamMoiCa` (nó không hiện chữ nào) và không gọi `t()` ở module scope —
-   xem ghi chú cùng loại ở `useNhanVienMutations.ts`. */
+   Chữ của toast lấy qua useT() bên trong từng hook, không đặt ở useLamMoiCa (nó
+   không hiện chữ nào) và không gọi t() ở module scope. */
 
 function useLamMoiCa() {
   const qc = useQueryClient();
@@ -102,11 +101,11 @@ export function useHuyGiaoDich(locationId: string) {
   );
 }
 
-/** CHUYỂN CA — chốt ca đang chạy rồi mở ngay ca kế tiếp.
+/** Chuyển ca: chốt ca đang chạy rồi mở ngay ca kế tiếp.
 
-    Toast nói rõ CẢ HAI vế: ca nào vừa chốt, ca nào vừa mở, và tiền bàn giao là
-    bao nhiêu. Chỉ báo "đã chuyển ca" thì người trực không biết mình đang đứng
-    trên ca nào và két đang được tính từ con số nào. */
+    Toast nói rõ cả hai vế — ca nào vừa chốt, ca nào vừa mở, tiền bàn giao bao
+    nhiêu. Chỉ báo "đã chuyển ca" thì người trực không biết mình đang đứng trên
+    ca nào và két đang được tính từ con số nào. */
 export function useChuyenCa() {
   const lamMoi = useLamMoiCa();
   const t = useT();
@@ -130,7 +129,7 @@ export function useChuyenCa() {
   );
 }
 
-/** CHỐT NGÀY — khoá ngày làm việc sau khi nhân viên xác nhận bản tổng kết. */
+/** Chốt ngày: khoá ngày làm việc sau khi nhân viên xác nhận bản tổng kết. */
 export function useChotNgay() {
   const qc = useQueryClient();
   const t = useT();

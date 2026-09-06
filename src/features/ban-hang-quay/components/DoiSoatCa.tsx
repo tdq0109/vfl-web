@@ -13,13 +13,12 @@ import type { CaThuNgan } from '../types';
 
 /* Phiếu đối soát cuối ca.
 
-   Tách rõ ba khối để thu ngân đọc được mà không cần giải thích:
-     · doanh thu theo từng phương thức (chuyển khoản / thẻ KHÔNG vào két);
-     · tiền mặt kỳ vọng = đầu ca + tiền mặt bán được;
-     · đếm thực tế → chênh lệch.
+   Tách rõ ba khối để thu ngân đọc được mà không cần giải thích: doanh thu theo
+   từng phương thức (chuyển khoản và thẻ không vào két), tiền mặt kỳ vọng bằng
+   đầu ca cộng tiền mặt bán được, rồi đếm thực tế ra chênh lệch.
 
    Lệch thì vẫn cho đóng ca — bắt khớp tuyệt đối sẽ khiến thu ngân bù tiền túi
-   cho lệch vài nghìn thay vì báo cáo. Nhưng lệch thì BẮT BUỘC ghi lý do. */
+   cho lệch vài nghìn thay vì báo cáo. Nhưng lệch thì bắt buộc ghi lý do. */
 
 interface Props {
   ca: CaThuNgan;
@@ -64,22 +63,22 @@ export function DoiSoatCa({
   const [tienDem, setTienDem] = useState<number | null>(null);
   const [ghiChu, setGhiChu] = useState('');
 
-  /* Bản tóm tắt KHÔNG đặt tên `t` nữa — `t` nay là hàm dịch của `useT()`. */
+  /* Bản tóm tắt không đặt tên t nữa — t nay là hàm dịch của useT(). */
   const tt = tomTatCa(ca);
   const lech = tienDem === null ? 0 : chenhLech(tienDem, tt.tienMatKyVong);
   const loai = loaiChenhLech(lech);
   const daDem = tienDem !== null;
 
-  /* Luật "lệch thì bắt buộc ghi lý do" NAY NẰM TRONG HÀM THUẦN, không tính lại ở
-     đây nữa: trước kia màn tự giữ luật nên gọi thẳng API là lách được, mà màn
-     Giám sát ca lại dựa vào chính dữ liệu ấy. Xem `quay.ts`. */
+  /* Luật "lệch thì bắt buộc ghi lý do" nay nằm trong hàm thuần, không tính
+     lại ở đây: trước kia màn tự giữ luật nên gọi thẳng API là lách được, mà màn
+     Giám sát ca lại dựa vào chính dữ liệu ấy. Xem quay.ts. */
   const lyDo = viSaoKhongDongDuocCa(ca, tienDem, ghiChu);
   const thieuLyDo = lyDo === 'quay.lechThiGhiLyDo';
   const chanDong = lyDo !== null;
 
-  /* CHUYỂN CA — chốt ca này rồi mở ngay ca kế tiếp, tiền bàn giao chính là số
-     vừa đếm. Chỉ hiện khi trong ngày CÒN ca phía sau; ca cuối ngày đi đường
-     Chốt ngày, xem `ChotNgayPanel`. */
+  /* Chuyển ca: chốt ca này rồi mở ngay ca kế tiếp, tiền bàn giao chính là số
+     vừa đếm. Chỉ hiện khi trong ngày còn ca phía sau; ca cuối ngày đi đường
+     Chốt ngày, xem ChotNgayPanel. */
   const keTiep = khungKeTiep(khungCuaThoiDiem(ca.moLuc, khung), khung);
   const lyDoKhongChuyen = viSaoKhongChuyenDuocCa(ca, tienDem, ghiChu, khung);
   const hienNutChuyen = onChuyenCa !== undefined && keTiep !== null;

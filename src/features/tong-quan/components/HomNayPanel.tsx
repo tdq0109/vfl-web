@@ -5,10 +5,10 @@ import { useT } from '@/components/shell/NgonNguProvider';
 import { cn } from '@/lib/utils';
 import type { HomNay } from '../types';
 
-/* Khối “hôm nay” — việc đang chờ người vận hành, ai đăng nhập cũng xem được.
+/* Khối "hôm nay" — việc đang chờ người vận hành, ai đăng nhập cũng xem được.
 
    Đây là phần dashboard dùng nhiều nhất trong ngày: không phải để biết doanh
-   thu, mà để biết CÒN VIỆC GÌ CHƯA XONG. Mỗi ô dẫn thẳng tới màn xử lý. */
+   thu mà để biết còn việc gì chưa xong. Mỗi ô dẫn thẳng tới màn xử lý. */
 
 interface Props {
   data: HomNay;

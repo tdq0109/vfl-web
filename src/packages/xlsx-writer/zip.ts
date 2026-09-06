@@ -1,32 +1,27 @@
-/* Đóng gói ZIP (PKZIP, phương thức STORE = không nén) — HÀM THUẦN.
+/* Đóng gói ZIP (PKZIP, phương thức STORE = không nén) — hàm thuần.
 
-   Port từ `commercial-console.html` ~3684–3754 (`crc32`, `u16`, `u32`,
-   `buildZip`). Đây là nền của `xlsx-writer`: một tệp .xlsx chỉ là một ZIP chứa
-   mấy tệp XML.
+   Port từ commercial-console.html (crc32, u16, u32, buildZip). Đây là nền của
+   xlsx-writer: một tệp .xlsx chỉ là một ZIP chứa mấy tệp XML.
 
-   ⚠ VÌ SAO TỰ VIẾT thay vì dùng thư viện: giữ nguyên lý do của bản cũ — bỏ hẳn
-   phụ thuộc mạng lúc xuất tệp, và tự kiểm soát từng byte để tránh ca Excel báo
-   "found a problem with content" vì lệch chuẩn đóng gói. Dự án hiện có ĐÚNG MỘT
-   phụ thuộc lúc chạy (`qrcode-generator`); thêm một thư viện ZIP chỉ để ghép vài
-   tệp XML là đổi một hàm 40 dòng lấy vài trăm KB.
+   Tự viết thay vì dùng thư viện, giữ lý do của bản cũ: bỏ hẳn phụ thuộc mạng
+   lúc xuất tệp, và tự kiểm soát từng byte để tránh ca Excel báo "found a problem
+   with content". Dự án hiện có đúng một phụ thuộc lúc chạy (qrcode-generator).
 
-   ⚠ KHÁC BẢN CŨ MỘT CHỖ, CÓ CHỦ Ý: bản cũ trả về `Blob` — thứ chỉ có trong
-   trình duyệt, nên không test được ở node và cũng không dùng lại được phía
-   server. Ở đây trả `Uint8Array`; phần dựng `Blob` và tải về nằm ở `taiVe.ts`.
+   Khác bản cũ một chỗ: bản cũ trả Blob, thứ chỉ có trong trình duyệt nên không
+   dùng lại được phía server. Ở đây trả Uint8Array, phần dựng Blob và tải về nằm
+   ở taiVe.ts.
 
-   ⚠ BỐN CÁI BẪY, đừng gỡ cái nào khi sửa hàm này:
+   Bốn chỗ đừng gỡ khi sửa:
 
-   1. SAI BIẾN THỂ CRC. ZIP dùng CRC-32/ISO-HDLC (đa thức đảo 0xEDB88320, khởi
-      tạo 0xFFFFFFFF, XOR đầu ra 0xFFFFFFFF). Dùng nhầm biến thể vẫn ra 4 byte
-      trông rất hợp lệ, và Excel từ chối tệp với thông báo chung chung. Test đối
-      chiếu với `zlib.crc32` của Node — MỐC NGOÀI, không phải với chính hàm này.
-   2. TRÀN SỐ 32 BIT. `>>> 0` ở cuối là bắt buộc: thiếu nó thì CRC ra số ÂM và
-      ghi vào tệp thành 4 byte khác hẳn. JavaScript không báo gì.
-   3. ĐỘ DÀI TÍNH BẰNG BYTE, KHÔNG PHẢI KÝ TỰ. Tên tệp và nội dung đều có thể có
-      chữ tiếng Việt; `chuoi.length` đếm đơn vị mã UTF-16 nên "Hội viên" ra 8
-      trong khi UTF-8 tốn 10 byte. Lệch một byte là hỏng toàn bộ phần sau.
-   4. OFFSET TRONG BẢNG THƯ MỤC TRUNG TÂM. Mỗi mục trỏ tới vị trí local header
-      của nó; cộng thiếu phần dữ liệu là trình giải nén đọc vào giữa tệp. */
+   1. ZIP dùng CRC-32/ISO-HDLC (đa thức đảo 0xEDB88320, khởi tạo 0xFFFFFFFF, XOR
+      đầu ra 0xFFFFFFFF). Dùng nhầm biến thể vẫn ra 4 byte trông hợp lệ, và
+      Excel từ chối tệp với thông báo chung chung.
+   2. >>> 0 ở cuối là bắt buộc: thiếu nó thì CRC ra số âm và ghi vào tệp thành 4
+      byte khác hẳn, JavaScript không báo gì.
+   3. Độ dài tính bằng byte chứ không phải ký tự. "Hội viên" dài 8 theo JS nhưng
+      tốn 10 byte UTF-8; lệch một byte là hỏng toàn bộ phần sau.
+   4. Offset trong bảng thư mục trung tâm trỏ tới vị trí local header của chính
+      mục đó; cộng thiếu phần dữ liệu là trình giải nén đọc vào giữa tệp. */
 
 /** Một tệp trong gói. `noiDung` là văn bản — .xlsx chỉ gồm XML. */
 export interface TepZip {
@@ -35,9 +30,7 @@ export interface TepZip {
 }
 
 /** CRC-32/ISO-HDLC, đúng biến thể ZIP dùng. Trả số nguyên không dấu 32 bit.
-
-    BẪY 1 và 2 — tính trên BYTE (không phải ký tự), và `>>> 0` ở cuối để không
-    ra số âm. */
+    Tính trên byte chứ không phải ký tự, và >>> 0 ở cuối để không ra số âm. */
 export function crc32(bytes: Uint8Array): number {
   let crc = 0xffffffff;
   for (let i = 0; i < bytes.length; i += 1) {
@@ -62,9 +55,8 @@ function u32(n: number): number[] {
 
 /* 1980-01-01 — giá trị ngày/giờ DOS hợp lệ nhỏ nhất.
 
-   CỐ Ý dùng hằng thay cho thời gian thật, giữ đúng bản cũ: cùng một bộ dữ liệu
-   thì cho ra cùng một chuỗi byte, nên so được hai lần xuất với nhau. Đóng dấu
-   thời gian thật vào đây là mỗi lần xuất một tệp khác nhau dù nội dung y hệt. */
+   Cố ý dùng hằng thay cho thời gian thật, giữ đúng bản cũ: cùng một bộ dữ liệu
+   thì cho ra cùng một chuỗi byte, nên so được hai lần xuất với nhau. */
 const GIO_DOS = 0;
 const NGAY_DOS = 0x21;
 
@@ -83,7 +75,7 @@ export function dungZip(tep: readonly TepZip[]): Uint8Array {
   let viTri = 0;
 
   for (const t of tep) {
-    /* BẪY 3 — mã hoá ra BYTE trước, rồi mới lấy độ dài. */
+    /* Mã hoá ra byte trước, rồi mới lấy độ dài. */
     const tenBytes = enc.encode(t.ten);
     const duLieu = enc.encode(t.noiDung);
     const crc = crc32(duLieu);
@@ -131,7 +123,7 @@ export function dungZip(tep: readonly TepZip[]): Uint8Array {
     datCdh(u16(0)); // số đĩa
     datCdh(u16(0)); // thuộc tính nội bộ
     datCdh(u32(0)); // thuộc tính ngoài
-    /* BẪY 4 — vị trí local header CỦA CHÍNH mục này, tính trước khi cộng dồn. */
+    /* Vị trí local header của chính mục này, tính trước khi cộng dồn. */
     datCdh(u32(viTri));
     cdh.set(tenBytes, c);
     trungTam.push(cdh);

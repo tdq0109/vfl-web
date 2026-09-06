@@ -8,11 +8,10 @@ import type {
   ThanhToanInput,
 } from './types';
 
-/* NƠI DUY NHẤT biết đường dẫn endpoint của nhóm Hợp đồng. Backend .NET chốt hợp
-   đồng API thì sửa ở đây, không nơi nào khác.
+/* Nơi duy nhất biết đường dẫn endpoint của nhóm Hợp đồng.
 
-   ⚠ Bước 12a cố ý KHÔNG có endpoint sửa / huỷ phiếu thu đã ghi, huỷ hoá đơn đã
-   phát hành hay trả góp. Đó là Bước 12b và phải làm bằng bút toán đảo. */
+   Cố ý chưa có endpoint sửa hay huỷ phiếu thu đã ghi, huỷ hoá đơn đã phát hành
+   hay trả góp — những việc đó phải làm bằng bút toán đảo. */
 
 const BASE = '/hop-dong';
 

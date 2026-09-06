@@ -14,7 +14,7 @@ import {
   type SanPham,
 } from '../types';
 
-/* Form khuyến mãi. Điểm đáng giá nhất là khối XEM TRƯỚC ở cuối: nhập xong thấy
+/* Form khuyến mãi. Điểm đáng giá nhất là khối xem trước ở cuối: nhập xong thấy
    ngay chương trình này kéo sản phẩm nào xuống dưới giá sàn, trước khi lưu. */
 
 interface Props {

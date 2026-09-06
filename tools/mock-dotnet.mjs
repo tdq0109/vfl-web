@@ -2,12 +2,12 @@
 
    Chạy:  npm run mock      (cổng 5099, khớp DOTNET_API_URL trong .env.local)
 
-   ⚠ CHỈ DÙNG ĐỂ PHÁT TRIỂN VÀ DIỄN TẬP. Dữ liệu nằm trong RAM, mất khi tắt;
-   "token" là chuỗi `tok:<email>` không ký, không hạn — đừng bao giờ trỏ bản
-   dựng thật vào đây.
+   Chỉ dùng để phát triển và diễn tập. Dữ liệu nằm trong RAM và mất khi tắt;
+   "token" là chuỗi tok:<email> không ký, không hạn — đừng bao giờ trỏ bản dựng
+   thật vào đây.
 
-   Theo đúng mục 6.3 của tài liệu bàn giao, mock TỰ KIỂM các quy tắc quan trọng
-   để chứng minh frontend không phải nơi giữ luật:
+   Mock tự kiểm các quy tắc quan trọng, để chứng minh frontend không phải nơi
+   giữ luật:
      · chuyển trạng thái sai bảng           → 409
      · phát hành khi chưa thu đủ            → 409
      · người lập tự xác minh hợp đồng mình  → 403
@@ -19,9 +19,9 @@
      ketoan@vfl.vn  → accountant  (xác minh & phát hành)
      gd@vfl.vn      → director    (toàn hệ thống, xem báo cáo)
 
-   Phủ ĐỦ các endpoint của mục 5: auth · hội viên · sản phẩm + khuyến mãi · hợp
-   đồng · tổng quan · bán vé ngày tại quầy · nhân viên (kèm ba chiều phân quyền)
-   · đặt lịch (kèm chống trùng lịch HLV). Không còn màn nào chưa diễn tập được. */
+   Phủ đủ các endpoint của mục 5: auth, hội viên, sản phẩm và khuyến mãi, hợp
+   đồng, tổng quan, bán vé ngày tại quầy, nhân viên (kèm ba chiều phân quyền),
+   đặt lịch (kèm chống trùng lịch HLV). */
 
 import { createServer } from 'node:http';
 
@@ -32,7 +32,7 @@ const PORT = 5099;
    chỉ khi khác nhau mới thử được luật "mã QR lấy theo CLB của hợp đồng, không
    theo CLB đang chọn trên thanh trên".
 
-   ⚠ Số tài khoản ở đây là số bịa để diễn tập. Đừng chép sang bản thật. */
+   Số tài khoản ở đây là số bịa để diễn tập, đừng chép sang bản thật. */
 const LOCATIONS = [
   {
     id: 'q1',
@@ -270,11 +270,11 @@ function ngayLamViecCua(luc) {
   return kt <= bd && t < kt ? congNgay(luc.slice(0, 10), -1) : luc.slice(0, 10);
 }
 
-/* ── tiện ích ───────────────────────────────────────────────────────────── */
-/* ── Tiện ích thời gian cho phần Đặt lịch ────────────────────────────────────
-   Dùng chuỗi 'YYYY-MM-DDTHH:mm' giờ ĐỊA PHƯƠNG, giống hệt quy ước ở
-   `features/dat-lich/types.ts`. Đừng đổi sang `toISOString()`: ở múi +7 nó biến
-   0h ngày 1 thành ngày 31 tháng trước. */
+/* Tiện ích thời gian cho phần Đặt lịch.
+
+   Dùng chuỗi 'YYYY-MM-DDTHH:mm' giờ địa phương, giống quy ước ở
+   features/dat-lich/types.ts. Đừng đổi sang toISOString(): ở múi +7 nó biến 0h
+   ngày 1 thành ngày 31 tháng trước. */
 
 const hai = (n) => String(n).padStart(2, '0');
 
@@ -312,7 +312,7 @@ const chongLan = (a1, a2, b1, b2) => a1 < b2 && b1 < a2;
 
 /** Kiểm một buổi sắp lưu. Trả `null` nếu hợp lệ, hoặc mô tả lỗi để trả về.
 
-    ⚠ Đây mới là nơi giữ luật. Frontend có dò trùng lịch ngay lúc nhập, nhưng đó
+    Đây mới là nơi giữ luật. Frontend có dò trùng lịch ngay lúc nhập, nhưng đó
     chỉ để báo sớm: giữa lúc mở form và lúc bấm lưu, người khác có thể đã xếp mất
     chỗ đó. */
 function kiemBuoi(input, boQuaId) {
@@ -410,9 +410,9 @@ const tongHopDong = (hd) => {
 const daThu = (hd) => hd.thanhToan.filter((t) => !t.daHuy).reduce((t, x) => t + x.soTien, 0);
 const conPhaiThu = (hd) => Math.max(0, tongHopDong(hd) - daThu(hd));
 
-/* ⚠ GIỜ ĐỊA PHƯƠNG, KHÔNG `toISOString()`.
+/* Giờ địa phương, không dùng toISOString().
 
-   Bản đầu dùng `new Date().toISOString().slice(0, 16)`, tức giờ UTC. Ở múi +7,
+   Bản đầu dùng new Date().toISOString().slice(0, 16), tức giờ UTC. Ở múi +7,
    một giao dịch lúc 9h sáng được ghi là 02:00 — lệch đúng 7 tiếng so với mọi
    thứ frontend hiển thị (`fmtDateTime` đọc chuỗi không có múi giờ là giờ ĐỊA
    PHƯƠNG). Với màn Giám sát ca thì sai này không còn vô hại: "ca mở quá 12
@@ -421,7 +421,7 @@ const conPhaiThu = (hd) => Math.max(0, tongHopDong(hd) - daThu(hd));
 const nowIso = () => thoiDiemNay();
 const todayIso = () => thoiDiemNay().slice(0, 10);
 
-/* ── định tuyến ─────────────────────────────────────────────────────────── */
+// Định tuyến
 
 const server = createServer(async (req, res) => {
   const url = new URL(req.url, `http://localhost:${PORT}`);
@@ -526,10 +526,8 @@ const server = createServer(async (req, res) => {
     return json(res, 200, hv);
   }
 
-  /* ── Nhân viên ──────────────────────────────────────────────────────────
-     Mock TỰ KIỂM đủ ba chiều phân quyền, đúng tinh thần "frontend không phải
-     nơi giữ luật": frontend ẩn nút, còn đây mới là chỗ trả 403. Muốn thử thì
-     bỏ ẩn nút bằng devtools rồi bấm — vẫn không qua được. */
+  /* Nhân viên. Mock tự kiểm đủ ba chiều phân quyền: frontend ẩn nút, còn đây
+     mới là chỗ trả 403. Bỏ ẩn nút bằng devtools rồi bấm vẫn không qua được. */
   if (p === '/nhan-vien' && m === 'GET') {
     const q = (url.searchParams.get('search') ?? '').toLowerCase();
     const loc = url.searchParams.get('locationId');
@@ -642,9 +640,7 @@ const server = createServer(async (req, res) => {
     return json(res, 200, nv);
   }
 
-  /* ── Đặt lịch ───────────────────────────────────────────────────────────
-     Phần cuối cùng của mock (việc A2). Tự kiểm đúng những luật mà `lich.ts` chỉ
-     CẢNH BÁO sớm ở frontend — chứng minh lại rằng frontend không giữ luật:
+  /* Đặt lịch. Tự kiểm đúng những luật mà lich.ts chỉ cảnh báo sớm ở frontend:
        · HLV trùng lịch                      → 409
        · giờ kết thúc không sau giờ bắt đầu  → 400
        · PT mà sức chứa khác 1               → 400
@@ -812,9 +808,8 @@ const server = createServer(async (req, res) => {
   if (p === '/san-pham' && m === 'GET') return json(res, 200, paged(SAN_PHAM, url));
   if (p === '/khuyen-mai' && m === 'GET') return json(res, 200, KHUYEN_MAI);
 
-  /* ── Sản phẩm: chi tiết / thêm / sửa / giá sàn / trạng thái ──────────────
-     Thêm lúc chuyển i18n cho nhóm Sản phẩm — trước đó mock chỉ có danh sách nên
-     ngăn chi tiết LUÔN trả 404 mà không ai để ý, y hệt ca nhóm Hội viên. */
+  /* Sản phẩm: chi tiết, thêm, sửa, giá sàn, trạng thái. Trước đó mock chỉ có
+     danh sách nên ngăn chi tiết luôn trả 404 mà không ai để ý. */
   if (seg[0] === 'san-pham' && seg[1] && !seg[2] && m === 'GET') {
     const sp = SAN_PHAM.find((x) => x.id === seg[1]);
     return sp ? json(res, 200, sp) : problem(res, 404, 'Không tìm thấy sản phẩm.');
@@ -888,7 +883,7 @@ const server = createServer(async (req, res) => {
     return json(res, 200, sp);
   }
 
-  /* ── Khuyến mãi: thêm / sửa / bật-tắt ─────────────────────────────────── */
+  // Khuyến mãi: thêm, sửa, bật tắt
   if (p === '/khuyen-mai' && m === 'POST') {
     if (RANK[me.role] < RANK.manager) return problem(res, 403, 'Không đủ quyền thêm khuyến mãi.');
     const input = await body(req);
@@ -1009,9 +1004,9 @@ const server = createServer(async (req, res) => {
          đường dẫn là chữ ký có thể chết hoặc bị thay sau khi hợp đồng đã ký.
          Backend .NET thật cũng phải kiểm đúng chỗ này.
 
-         ⚠ KIỂM XONG HẾT RỒI MỚI ĐỘNG VÀO `hd`. Đặt hai cửa này sau
-         `hd.trangThai = den` thì hợp đồng đã sang trạng thái mới trước khi trả
-         400 — người dùng thấy lỗi mà chứng từ đã đi tiếp. */
+         Kiểm xong hết rồi mới động vào hd. Đặt hai cửa này sau
+         hd.trangThai = den thì hợp đồng đã sang trạng thái mới trước khi trả
+         400: người dùng thấy lỗi mà chứng từ đã đi tiếp. */
       if (chuKy !== undefined && den !== 'da-ky') {
         return problem(res, 400, 'Chữ ký chỉ gửi kèm ở bước ký.', {
           chuKy: ['Chỉ hợp lệ khi den = da-ky.'],
@@ -1059,7 +1054,7 @@ const server = createServer(async (req, res) => {
     }
   }
 
-  /* ── Bán vé ngày tại quầy ─────────────────────────────────────────────── */
+  // Bán vé ngày tại quầy
 
   if (seg[0] === 'ban-hang-quay') {
     /* Ca đang mở CỦA CHÍNH NGƯỜI ĐĂNG NHẬP tại CLB này. Hai thu ngân cùng CLB
@@ -1076,8 +1071,8 @@ const server = createServer(async (req, res) => {
       return json(res, 200, HANG_QUAY);
     }
 
-    /* ── CHỐT NGÀY ── Khoá một ngày làm việc của một CLB sau khi nhân viên
-       xác nhận bản tổng kết. Thu ngân làm được — đây là ngày của chính họ. */
+    /* Chốt ngày: khoá một ngày làm việc của một CLB sau khi nhân viên xác
+       nhận bản tổng kết. Thu ngân làm được, đây là ngày của chính họ. */
     if (seg[1] === 'chot-ngay' && m === 'POST') {
       const { ngay, locationId, ghiChu } = await body(req);
       if (!me.allLocations && !me.locations.some((l) => l.id === locationId)) {
@@ -1111,9 +1106,9 @@ const server = createServer(async (req, res) => {
       return json(res, 201, ban);
     }
 
-    /* ── MỘT NGÀY LÀM VIỆC ── Mọi ca trong ngày tại một CLB + trạng thái chốt.
-       Thu ngân xem được ngày của CLB mình: họ phải nhìn cả chuỗi bàn giao mới
-       xác nhận được, kể cả ca của người trực ca kia. */
+    /* Một ngày làm việc: mọi ca trong ngày tại một CLB kèm trạng thái chốt.
+       Thu ngân xem được ngày của CLB mình, vì họ phải nhìn cả chuỗi bàn giao
+       mới xác nhận được, kể cả ca của người trực ca kia. */
     if (seg[1] === 'ngay' && m === 'GET') {
       const ngay = url.searchParams.get('ngay');
       const locationId = url.searchParams.get('locationId');
@@ -1131,12 +1126,11 @@ const server = createServer(async (req, res) => {
       });
     }
 
-    /* ── GIÁM SÁT ── Danh sách ca của MỌI thu ngân, kể cả ca đã đóng.
+    /* Giám sát: danh sách ca của mọi thu ngân, kể cả ca đã đóng.
 
-       ⚠ Quyền chặn Ở ĐÂY, không phải ở frontend. Thu ngân (`staff`) gọi vào là
-       403 — đúng như quy ước "kiểm tra quyền ở frontend chỉ để ẩn nút". Và
-       người không có cờ toàn hệ thống chỉ thấy CLB mình được giao, kể cả khi
-       tự sửa tham số `locationId` trên URL. */
+       Quyền chặn ở đây chứ không phải ở frontend: thu ngân (staff) gọi vào là
+       403, và người không có cờ toàn hệ thống chỉ thấy CLB mình được giao kể cả
+       khi tự sửa tham số locationId trên URL. */
     if (seg[1] === 'ca' && !seg[2] && m === 'GET') {
       if (RANK[me.role] < RANK.leader) {
         return problem(res, 403, 'Bạn không có quyền xem ca của người khác.');
@@ -1214,14 +1208,14 @@ const server = createServer(async (req, res) => {
       const ca = CA_QUAY.find((c) => c.id === seg[2]);
       if (!ca) return problem(res, 404, 'Không tìm thấy ca.');
 
-      /* ── CHUYỂN CA ── Chốt ca đang chạy RỒI MỞ NGAY ca kế tiếp, một thao tác.
+      /* Chuyển ca: chốt ca đang chạy rồi mở ngay ca kế tiếp, một thao tác.
 
-         ⚠ KHÔNG nhận `tienDauCa`: tiền đầu ca sau LÀ tiền đếm của ca trước, do
+         Không nhận tienDauCa — tiền đầu ca sau là tiền đếm của ca trước, do
          chính chỗ này gán. Cho client gõ là dựng lại đúng lỗ hổng mà cơ chế này
-         sinh ra để bịt — hai con số do hai người gõ độc lập thì tiền bốc hơi ở
-         khớp nối mà không ca nào "sai" cả.
+         sinh ra để bịt: hai con số do hai người gõ độc lập thì tiền bốc hơi ở
+         khớp nối mà không ca nào sai cả.
 
-         ⚠ Áp NGUYÊN luật của đóng ca: lệch thì phải ghi lý do. Thiếu là mở một
+         Áp nguyên luật của đóng ca: lệch thì phải ghi lý do. Thiếu là mở một
          đường vòng — cứ bấm "chuyển ca" thay vì "đóng ca" là thoát được yêu cầu
          giải thích. */
       if (seg[3] === 'chuyen-ca' && m === 'POST') {
@@ -1338,7 +1332,7 @@ const server = createServer(async (req, res) => {
     }
   }
 
-  /* ── Dashboard ────────────────────────────────────────────────────────── */
+  // Dashboard
 
   if (seg[0] === 'tong-quan') {
     const tu = url.searchParams.get('tuNgay') ?? '0000-01-01';
@@ -1419,14 +1413,14 @@ const server = createServer(async (req, res) => {
   problem(res, 404, `Mock chưa có endpoint ${m} ${p}.`);
 });
 
-/* ── Ca quầy có sẵn để DIỄN TẬP MÀN GIÁM SÁT ──────────────────────────────
+/* Ca quầy dựng sẵn để diễn tập màn giám sát.
 
-   Dựng theo ĐÚNG cách CLB đang vận hành: lễ tân chia **2 ca một ngày** trên
-   cùng một két, ca sau nhận tiền từ ca trước. Bảy ca dưới đây phủ đúng những
-   tình huống mà màn giám sát phải phân biệt được — mỗi ca ghi rõ nó dựng cho
-   dấu hiệu nào. Số liệu tính tay, khớp với `src/features/ban-hang-quay/khungCa.ts`.
+   Dựng theo đúng cách CLB đang vận hành: lễ tân chia 2 ca một ngày trên cùng
+   một két, ca sau nhận tiền từ ca trước. Bảy ca dưới đây phủ những tình huống
+   màn giám sát phải phân biệt được, mỗi ca ghi rõ nó dựng cho dấu hiệu nào.
+   Số liệu tính tay, khớp với src/features/ban-hang-quay/khungCa.ts.
 
-   Ca sáng 06:00–14:00 · ca chiều 14:00–22:00 (xem `features/ban-hang-quay/khungCa.ts`). */
+   Ca sáng 06:00–14:00, ca chiều 14:00–22:00. */
 
 /** Tiền mặt lẽ ra phải có trong két — dùng cho cả seed lẫn luật đóng ca. */
 function tienMatKyVongCua(ca) {
@@ -1459,11 +1453,12 @@ function tienMatKyVongCua(ca) {
   const ca = (o) => ({ locationName: LOCATIONS.find((l) => l.id === o.locationId)?.name, ...o });
 
   CA_QUAY.push(
-    /* ═══ HÔM KIA · Q1 — KỊCH BẢN QUAN TRỌNG NHẤT ═══════════════════════════
-       TIỀN BỐC HƠI GIỮA HAI CA. Ca sáng đếm 800.000 và KHỚP két của nó. Ca
-       chiều khai đầu ca 600.000, cuối ca cũng KHỚP két của nó. Không ca nào
-       sai — mà 200.000 đã biến mất ở khớp nối. Đối soát từng ca riêng lẻ
-       không bao giờ thấy; chỉ chuỗi bàn giao mới thấy. */
+    /* Hôm kia, Q1 — kịch bản quan trọng nhất: tiền bốc hơi giữa hai ca.
+
+       Ca sáng đếm 800.000 và khớp két của nó; ca chiều khai đầu ca 600.000,
+       cuối ca cũng khớp két của nó. Không ca nào sai mà 200.000 đã biến mất ở
+       khớp nối. Đối soát từng ca riêng lẻ không thấy, chỉ chuỗi bàn giao mới
+       thấy. */
     ca({
       id: 'ca-seed-1', maCa: 'CA901', thuNganId: 'u-sale', thuNganTen: 'Trần Sales',
       locationId: 'q1',
@@ -1476,13 +1471,13 @@ function tienMatKyVongCua(ca) {
       id: 'ca-seed-2', maCa: 'CA902', thuNganId: 'u-ketoan', thuNganTen: 'Lê Kế Toán',
       locationId: 'q1',
       moLuc: `${homKia}T14:00`, dongLuc: `${homKia}T22:00`,
-      /* ⚠ nhận 600.000 trong khi ca trước bàn giao 800.000 → LỆCH BÀN GIAO −200.000 */
+      /* nhận 600.000 trong khi ca trước bàn giao 800.000 → lệch bàn giao −200.000 */
       tienDauCa: 600_000, tienDemCuoiCa: 780_000, ghiChuDongCa: '', trangThai: 'da-dong',
-      /* tiền mặt 180.000 → kỳ vọng 780.000, đếm 780.000 → ca này cũng KHỚP */
+      /* tiền mặt 180.000 → kỳ vọng 780.000, đếm 780.000 → ca này cũng khớp */
       giaoDich: [gd(homKia, '16:10', 180_000, 'tien-mat'), gd(homKia, '19:00', 120_000, 'the')],
     }),
 
-    /* ═══ HÔM QUA · Q1 — bàn giao KHỚP, nhưng ca chiều LỆCH KÉT không lý do ═══ */
+    /* Hôm qua, Q1 — bàn giao khớp nhưng ca chiều lệch két không lý do. */
     ca({
       id: 'ca-seed-3', maCa: 'CA903', thuNganId: 'u-sale', thuNganTen: 'Trần Sales',
       locationId: 'q1',
@@ -1496,36 +1491,36 @@ function tienMatKyVongCua(ca) {
       id: 'ca-seed-4', maCa: 'CA904', thuNganId: 'u-ketoan', thuNganTen: 'Lê Kế Toán',
       locationId: 'q1',
       moLuc: `${homQua}T14:00`, dongLuc: `${homQua}T22:00`,
-      /* nhận đúng 900.000 → bàn giao KHỚP; nhưng cuối ca THIẾU 120.000 và
-         không ghi một chữ nào → dấu hiệu "lệch không ai giải thích" + "lệch lớn" */
+      /* nhận đúng 900.000 nên bàn giao khớp, nhưng cuối ca thiếu 120.000 mà
+         không ghi chữ nào → lệch không ai giải thích, và là lệch lớn */
       tienDauCa: 900_000, tienDemCuoiCa: 1_130_000, trangThai: 'da-dong',
-      /* tiền mặt 350.000 → kỳ vọng 1.250.000, đếm 1.130.000 → THIẾU 120.000 */
+      /* tiền mặt 350.000 → kỳ vọng 1.250.000, đếm 1.130.000 → thiếu 120.000 */
       giaoDich: [gd(homQua, '15:20', 150_000, 'tien-mat'), gd(homQua, '18:45', 200_000, 'tien-mat'), gd(homQua, '20:00', 180_000, 'the')],
     }),
 
-    /* ═══ HÔM QUA · Q7 — CA CHIỀU KHÔNG AI MỞ CA ════════════════════════════
-       Chỉ có ca sáng. Cả buổi chiều két không có người chịu trách nhiệm —
-       thứ mà danh sách ca không bao giờ nói được vì nó chỉ liệt kê ca ĐÃ CÓ. */
+    /* Hôm qua, Q7 — ca chiều không ai mở ca. Chỉ có ca sáng, cả buổi chiều
+       két không có người chịu trách nhiệm; danh sách ca không nói được điều đó
+       vì nó chỉ liệt kê ca đã có. */
     ca({
       id: 'ca-seed-5', maCa: 'CA905', thuNganId: 'u-ketoan', thuNganTen: 'Lê Kế Toán',
       locationId: 'q7',
       moLuc: `${homQua}T08:00`, dongLuc: `${homQua}T13:30`,
       tienDauCa: 200_000, tienDemCuoiCa: 430_000,
       ghiChuDongCa: 'Khách bo 30k cho lễ tân, đã báo quản lý CLB.', trangThai: 'da-dong',
-      /* tiền mặt 200.000 → kỳ vọng 400.000, đếm 430.000 → THỪA 30.000 (có lý do) */
+      /* tiền mặt 200.000 → kỳ vọng 400.000, đếm 430.000 → thừa 30.000, có lý do */
       giaoDich: [gd(homQua, '09:15', 200_000, 'tien-mat'), gd(homQua, '11:00', 250_000, 'chuyen-khoan')],
     }),
 
-    /* ═══ HÔM QUA · Q7 ca đêm ngoài khung 2 ca — HUỶ NHIỀU BẤT THƯỜNG ═══════
-       Khớp két hoàn hảo, nhưng ba phiếu bị huỷ. Đúng mẫu gian lận mà đối soát
-       tiền KHÔNG BAO GIỜ nhìn thấy. Mở 22:30 nên với khung 2 ca là "ngoài
-       khung"; chuyển sang 3 ca thì nó vào đúng ca đêm. */
+    /* Hôm qua, Q7, ca đêm ngoài khung 2 ca — huỷ nhiều bất thường. Khớp két
+       hoàn hảo nhưng ba phiếu bị huỷ, đúng mẫu gian lận mà đối soát tiền không
+       nhìn thấy. Mở 22:30 nên với khung 2 ca là ngoài khung; chuyển sang 3 ca
+       thì nó vào đúng ca đêm. */
     ca({
       id: 'ca-seed-6', maCa: 'CA906', thuNganId: 'u-sale', thuNganTen: 'Trần Sales',
       locationId: 'q7',
       moLuc: `${homQua}T22:30`, dongLuc: `${homNay}T02:00`,
       tienDauCa: 100_000, tienDemCuoiCa: 250_000, ghiChuDongCa: '', trangThai: 'da-dong',
-      /* tiền mặt còn hiệu lực 150.000 → kỳ vọng 250.000, đếm 250.000 → KHỚP */
+      /* tiền mặt còn hiệu lực 150.000 → kỳ vọng 250.000, đếm 250.000 → khớp */
       giaoDich: [
         gd(homQua, '22:40', 150_000, 'tien-mat'),
         gd(homQua, '23:20', 150_000, 'tien-mat', true),
@@ -1534,7 +1529,7 @@ function tienMatKyVongCua(ca) {
       ],
     }),
 
-    /* ═══ HÔM NAY · Q1 — ca sáng ĐANG MỞ, chưa đối soát ═════════════════════ */
+    /* Hôm nay, Q1 — ca sáng đang mở, chưa đối soát. */
     ca({
       id: 'ca-seed-7', maCa: 'CA907', thuNganId: 'u-sale', thuNganTen: 'Trần Sales',
       locationId: 'q1',

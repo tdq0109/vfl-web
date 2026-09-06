@@ -8,7 +8,7 @@ import type {
   NhanVienStatus,
 } from './types';
 
-/* NƠI DUY NHẤT biết đường dẫn endpoint của nhóm Nhân viên. */
+/* Nơi duy nhất biết đường dẫn endpoint của nhóm Nhân viên. */
 
 const BASE = '/nhan-vien';
 

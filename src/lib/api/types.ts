@@ -10,18 +10,17 @@ export type IsoDate = string;
 
 /** Tài khoản ngân hàng nhận tiền chuyển khoản của một CLB.
 
-    ⚠ BACKEND LÀ NGUỒN SỰ THẬT DUY NHẤT của mấy con số này, và đó là thay đổi
-    CÓ CHỦ Ý so với hệ cũ. Bản cũ để mỗi máy tự cấu hình rồi lưu trong
-    `localStorage` (`commercial-console.html`, hàm `getBank`/`saveBank`): một
-    quầy gõ nhầm một chữ số là khách chuyển tiền vào tài khoản người lạ, và
-    không ai đối chiếu được vì mỗi máy nhớ một kiểu.
+    Backend là nguồn sự thật duy nhất của mấy con số này, và đó là thay đổi có
+    chủ ý so với hệ cũ: bản cũ để mỗi máy tự cấu hình rồi lưu trong localStorage
+    (getBank/saveBank), một quầy gõ nhầm một chữ số là khách chuyển tiền vào tài
+    khoản người lạ và không ai đối chiếu được.
 
-    Đi kèm `Location` chứ không phải một endpoint riêng: hồ sơ người dùng đã
-    mang sẵn danh sách CLB, nên màn nào cũng có ngay mà không thêm lời gọi API,
-    thêm khoá cache hay thêm trạng thái đang-tải nào.
+    Đi kèm Location chứ không phải một endpoint riêng: hồ sơ người dùng đã mang
+    sẵn danh sách CLB nên màn nào cũng có ngay, không thêm lời gọi API, khoá
+    cache hay trạng thái đang tải nào.
 
-    `bin` là mã 6 chữ số của NAPAS — tra bảng, đừng đoán. Danh sách ngân hàng
-    biết được nằm ở `@/packages/vietqr/vietqr`. */
+    bin là mã 6 chữ số của NAPAS — tra bảng, đừng đoán. Danh sách ngân hàng biết
+    được nằm ở @/packages/vietqr/vietqr. */
 export interface TaiKhoanNhanTien {
   bin: string;
   soTaiKhoan: string;
@@ -33,7 +32,8 @@ export interface Location {
   id: string;
   name: string;
   shortName?: string;
-  /** Thiếu = CLB này chưa cấu hình tài khoản; màn thu tiền không hiện mã QR. */
+  /** Thiếu nghĩa là CLB này chưa cấu hình tài khoản; màn thu tiền không hiện
+      mã QR. */
   taiKhoanNhanTien?: TaiKhoanNhanTien;
 }
 

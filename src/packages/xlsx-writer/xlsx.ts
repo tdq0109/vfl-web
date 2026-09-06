@@ -1,30 +1,29 @@
 import { dungZip, type TepZip } from './zip';
 import { STYLE, STYLES_XML, THEME_XML, type TenStyle } from './mau-xml';
 
-/* Dựng tệp .xlsx "thật" (OOXML tự viết) — HÀM THUẦN, không import React.
+/* Dựng tệp .xlsx (OOXML tự viết) — hàm thuần, chỉ dựng byte, không chạm DOM.
 
-   Port từ `commercial-console.html` ~3418–3800 (`VXL`). Giữ nguyên lý do bản cũ
-   tự viết: SheetJS bản miễn phí KHÔNG ghi được màu nền / tô đậm khi xuất, mà đó
-   chính là thứ tệp mẫu của kế toán cần.
+   Port từ commercial-console.html (VXL). Giữ nguyên lý do bản cũ tự viết:
+   SheetJS bản miễn phí không ghi được màu nền / tô đậm khi xuất, mà đó chính là
+   thứ tệp mẫu của kế toán cần.
 
-   ⚠ CHỈ DỰNG BYTE, KHÔNG CHẠM DOM. Bản cũ trộn phần dựng với phần tải về trong
-   cùng một hàm nên không thử được gì. Ở đây `dungXlsx()` trả `Uint8Array`, còn
-   `taiVe.ts` lo phần trình duyệt — cùng cách đã tách ở `signature-pad`.
+   dungXlsx() trả Uint8Array, còn taiVe.ts lo phần trình duyệt — cùng cách đã
+   tách ở signature-pad.
 
-   ⚠ NĂM CÁI BẪY, đừng gỡ cái nào khi sửa hàm này:
+   Năm chỗ đừng gỡ khi sửa:
 
-   1. TÊN CỘT KHÔNG PHẢI CƠ SỐ 26 THÔNG THƯỜNG. Excel đánh A..Z rồi AA..AZ —
-      không có "chữ số 0", nên phải trừ 1 trước mỗi lần chia. Sai một nhịp là
-      cột 27 ra "AZ" thay vì "AA", và lỗi chỉ lộ ra từ cột thứ 27 trở đi.
-   2. KHÔNG THOÁT KÝ TỰ XML. Tên hội viên có `&` hay `<` là tệp hỏng hẳn, Excel
-      từ chối mở. Đây là dữ liệu người dùng nhập nên chuyện có thật.
-   3. NGÀY PHẢI LÀ SỐ SERIAL, KHÔNG PHẢI CHỮ. Ghi chữ thì Excel canh trái, không
-      lọc theo khoảng ngày được, không dùng được hàm ngày. Mốc: 1899-12-30.
-   4. TÊN SHEET DÀI QUÁ 31 KÝ TỰ. Excel từ chối mở workbook, không phải cắt bớt.
-      Bản cũ cắt sẵn bằng `slice(0,31)` — giữ nguyên.
-   5. SỐ THỨ TỰ QUAN HỆ (rId) LỆCH VỚI DANH SÁCH SHEET. `workbook.xml` trỏ tới
-      `rId1..n`, còn styles và theme phải là `rId(n+1)`, `rId(n+2)`. Cứng hoá
-      `rId2` cho styles là workbook hai sheet trở lên hỏng. */
+   1. Tên cột không phải cơ số 26 thông thường. Excel đánh A..Z rồi AA..AZ, hệ
+      này không có "chữ số 0" nên phải trừ 1 trước mỗi lần chia. Sai một nhịp là
+      cột 27 ra "AZ", và lỗi chỉ lộ ra từ cột 27 trở đi.
+   2. Phải thoát ký tự XML. Tên hội viên có & hay < là tệp hỏng hẳn, Excel từ
+      chối mở.
+   3. Ngày phải là số serial chứ không phải chữ, nếu không Excel canh trái và
+      không lọc theo khoảng ngày được. Mốc: 1899-12-30.
+   4. Tên sheet dài quá 31 ký tự làm Excel từ chối mở workbook. Bản cũ cắt sẵn
+      bằng slice(0,31), giữ nguyên.
+   5. Số thứ tự quan hệ (rId) phải khớp danh sách sheet: workbook.xml trỏ tới
+      rId1..n, styles và theme là rId(n+1), rId(n+2). Cứng hoá rId2 cho styles
+      là workbook từ hai sheet trở lên hỏng. */
 
 export { STYLE };
 export type { TenStyle };
@@ -39,7 +38,7 @@ export interface OBang {
 
 /** Một sheet trong workbook. */
 export interface SheetXlsx {
-  /** Tên tab. Dài quá 31 ký tự sẽ bị CẮT — Excel không mở nổi tên dài hơn. */
+  /** Tên tab. Dài quá 31 ký tự sẽ bị cắt — Excel không mở nổi tên dài hơn. */
   ten: string;
   /** Các dòng, mỗi dòng là danh sách ô. Dòng 1 của sheet là `dong[0]`. */
   dong: readonly (readonly OBang[])[];
@@ -47,18 +46,16 @@ export interface SheetXlsx {
   rongCot?: readonly number[];
 }
 
-/* ── Chuỗi và toạ độ ─────────────────────────────────────────────────────── */
+// Chuỗi và toạ độ
 
-/* ⚠ Viết bằng `new RegExp` thay vì hằng regex `/'/g` — không phải cho đẹp.
-   `tools/quet-chuoi-viet.mjs` duyệt từng ký tự để tách chuỗi, và nó KHÔNG phân
-   biệt được dấu nháy nằm trong một hằng regex với dấu nháy mở đầu một chuỗi. Gặp
-   `/'/g` là nó tưởng chuỗi bắt đầu từ đó và nuốt luôn mấy chục dòng mã phía sau,
-   rồi báo cả khối là "chuỗi tiếng Việt chưa dịch". Đã dính thật một lần: con số
-   nhảy 40 → 48 mà 7 trong 8 mục là mã nguồn. */
+/* Viết bằng new RegExp thay vì hằng regex /'/g, vì tools/quet-chuoi-viet.mjs
+   duyệt từng ký tự và không phân biệt được dấu nháy trong hằng regex với dấu
+   nháy mở đầu một chuỗi. Gặp /'/g là nó tưởng chuỗi bắt đầu từ đó rồi nuốt mấy
+   chục dòng mã phía sau. */
 const NHAY_DON = new RegExp(String.fromCharCode(39), 'g');
 const NHAY_KEP = new RegExp(String.fromCharCode(34), 'g');
 
-/** Thoát năm ký tự XML bắt buộc. BẪY 2. */
+/** Thoát năm ký tự XML bắt buộc. */
 export function thoatXml(s: unknown): string {
   return String(s ?? '')
     .replace(/&/g, '&amp;')
@@ -68,10 +65,10 @@ export function thoatXml(s: unknown): string {
     .replace(NHAY_DON, '&apos;');
 }
 
-/** Tên cột Excel từ chỉ số ĐẾM TỪ 1: 1→A, 27→AA, 16384→XFD.
+/** Tên cột Excel từ chỉ số đếm từ 1: 1→A, 27→AA, 16384→XFD.
 
-    BẪY 1 — hệ đánh số này không có "chữ số 0" (bijective base-26), nên phải trừ
-    1 TRƯỚC mỗi lần lấy dư và chia. Quên trừ là cột 27 ra "AZ". */
+    Hệ đánh số này không có "chữ số 0" (bijective base-26) nên phải trừ 1 trước
+    mỗi lần lấy dư và chia. Quên trừ là cột 27 ra "AZ". */
 export function tenCot(n: number): string {
   let s = '';
   let con = Math.trunc(n);
@@ -83,11 +80,11 @@ export function tenCot(n: number): string {
   return s;
 }
 
-/** Số serial ngày kiểu Excel từ chuỗi `YYYY-MM-DD`. `null` nếu không đúng dạng.
+/** Số serial ngày kiểu Excel từ chuỗi YYYY-MM-DD. null nếu không đúng dạng.
 
-    BẪY 3 — mốc là 1899-12-30, không phải 1900-01-01: Excel cố ý giữ lỗi "năm
-    1900 là năm nhuận" của Lotus 1-2-3, và mốc lệch một ngày này bù đúng chỗ đó
-    cho MỌI ngày từ 1900-03-01 trở đi. Dùng UTC để không dính lệch múi giờ. */
+    Mốc là 1899-12-30 chứ không phải 1900-01-01: Excel cố ý giữ lỗi "năm 1900 là
+    năm nhuận" của Lotus 1-2-3, và mốc lệch một ngày này bù đúng chỗ đó cho mọi
+    ngày từ 1900-03-01 trở đi. Dùng UTC để không dính lệch múi giờ. */
 export function ngayThanhSerial(s: unknown): number | null {
   const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(String(s ?? ''));
   if (!m) return null;
@@ -96,13 +93,13 @@ export function ngayThanhSerial(s: unknown): number | null {
   return Math.round((utc - Date.UTC(1899, 11, 30)) / 86_400_000);
 }
 
-/* ── Ô và dòng ───────────────────────────────────────────────────────────── */
+// Ô và dòng
 
 /** XML của một ô.
 
-    Số ghi thẳng vào `<v>` để Excel hiểu là SỐ. Chữ ghi dạng `inlineStr` — không
-    dùng bảng chuỗi dùng chung (`sharedStrings.xml`) vì nó là một tệp nữa phải
-    đồng bộ, mà tệp báo cáo thì không đủ lớn để lợi. Giữ nguyên bản cũ. */
+    Số ghi thẳng vào <v> để Excel hiểu là số. Chữ ghi dạng inlineStr chứ không
+    dùng sharedStrings.xml — thêm một tệp nữa phải đồng bộ, mà tệp báo cáo không
+    đủ lớn để lợi. */
 export function oXml(toaDo: string, gia: GiaTriO, style?: number): string {
   const s = style ? ` s="${style}"` : '';
   if (gia === null || gia === undefined || gia === '') return `<c r="${toaDo}"${s}/>`;
@@ -144,17 +141,17 @@ function sheetXml(sheet: SheetXlsx): string {
 <worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><dimension ref="${phamVi(sheet.dong.length, soCot)}"/><sheetViews><sheetView workbookViewId="0"/></sheetViews><sheetFormatPr defaultRowHeight="15"/>${cot}<sheetData>${dongs}</sheetData></worksheet>`;
 }
 
-/** BẪY 4 — Excel TỪ CHỐI MỞ workbook có tên sheet dài quá 31 ký tự. Cắt như bản
-    cũ: mất mấy chữ cuối vẫn hơn là không mở được tệp. */
+/** Excel từ chối mở workbook có tên sheet dài quá 31 ký tự. Cắt như bản cũ:
+    mất mấy chữ cuối vẫn hơn không mở được tệp. */
 export const DAI_TEN_SHEET_TOI_DA = 31;
 
 export function catTenSheet(ten: string): string {
   return ten.slice(0, DAI_TEN_SHEET_TOI_DA);
 }
 
-/* ── Đóng gói workbook ───────────────────────────────────────────────────── */
+// Đóng gói workbook
 
-/** Dựng toàn bộ tệp .xlsx. Trả BYTE — phần tải về nằm ở `taiVe.ts`. */
+/** Dựng toàn bộ tệp .xlsx. Trả byte — phần tải về nằm ở taiVe.ts. */
 export function dungXlsx(sheet: readonly SheetXlsx[]): Uint8Array {
   if (sheet.length === 0) {
     throw new Error('xlsx-writer: workbook phải có ít nhất một sheet.');
@@ -167,7 +164,7 @@ export function dungXlsx(sheet: readonly SheetXlsx[]): Uint8Array {
     )
     .join('');
 
-  /* BẪY 5 — styles và theme đứng SAU mọi sheet trong bảng quan hệ. */
+  /* Styles và theme đứng sau mọi sheet trong bảng quan hệ. */
   const ridStyles = `rId${sheet.length + 1}`;
   const ridTheme = `rId${sheet.length + 2}`;
   const quanHe =
@@ -219,14 +216,13 @@ export function dungXlsx(sheet: readonly SheetXlsx[]): Uint8Array {
   return dungZip(tep);
 }
 
-/* ── Dựng sheet từ bảng thô ──────────────────────────────────────────────── */
+// Dựng sheet từ bảng thô
 
-/** Dựng một sheet kiểu "bảng chung" từ mảng hai chiều: dòng đầu là tiêu đề.
+/** Dựng một sheet kiểu bảng chung từ mảng hai chiều, dòng đầu là tiêu đề.
 
-    Port ý của `buildGenericSheet`: cột nào có chữ "ngày" ở tiêu đề thì giá trị
-    `YYYY-MM-DD` được ghi thành NGÀY THẬT (số serial + định dạng dd/mm/yyyy) chứ
-    không phải chữ — nhờ vậy Excel lọc và sắp xếp được. Ô không đúng dạng ISO
-    (trống, hoặc chữ tự do) vẫn giữ chữ, không vỡ bảng. */
+    Port ý của buildGenericSheet: cột nào có chữ "ngày" ở tiêu đề thì giá trị
+    YYYY-MM-DD được ghi thành ngày thật (số serial + định dạng dd/mm/yyyy) để
+    Excel lọc và sắp xếp được. Ô không đúng dạng ISO vẫn giữ chữ. */
 export function bangThanhSheet(
   ten: string,
   bang: readonly (readonly GiaTriO[])[],

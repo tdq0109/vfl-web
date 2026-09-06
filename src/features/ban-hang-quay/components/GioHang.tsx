@@ -139,9 +139,9 @@ export function GioHang({
       {/* Chỉ hiện khi thu bằng chuyển khoản. Mã mang đúng tổng giỏ hàng, nên
           thêm bớt món là mã đổi theo.
 
-          ⚠ Nội dung chuyển khoản ở quầy là MÃ CA, không phải mã giao dịch: tiền
-          về TRƯỚC khi giao dịch được ghi, nên lúc dựng mã chưa có mã giao dịch
-          nào tồn tại. Kế toán đối chiếu theo ca — đúng cách phiếu đối soát cuối
+          Nội dung chuyển khoản ở quầy là mã ca chứ không phải mã giao dịch:
+          tiền về trước khi giao dịch được ghi, nên lúc dựng mã chưa có mã giao
+          dịch nào tồn tại. Kế toán đối chiếu theo ca — đúng cách phiếu đối soát cuối
           ca đang làm, nơi tiền chuyển khoản vốn đã tách riêng khỏi tiền mặt. */}
       {phuongThuc === 'chuyen-khoan' ? (
         <KhoiChuyenKhoan

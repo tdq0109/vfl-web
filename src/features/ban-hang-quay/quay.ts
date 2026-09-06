@@ -1,26 +1,22 @@
 import type { Vnd } from '@/lib/api/types';
 import { VAO_KET, type CaThuNgan, type DongHang, type GiaoDich, type PhuongThuc } from './types';
 
-/* Tính tiền tại quầy — HÀM THUẦN, không import React.
+/* Tính tiền tại quầy — hàm thuần, không import React.
 
-   ⚠ BA HÀM TRẢ VỀ KHOÁ i18n, KHÔNG PHẢI CÂU TIẾNG VIỆT — `moTaChenhLech` ·
-   `viSaoKhongBanDuoc` · `viSaoKhongDongDuocCa`. Màn gọi `t(khoa)` để lấy chữ.
-   Không gọi `t()` ngay tại đây: hàm thuần không có ngôn ngữ hiện hành để mà tra.
-   Cùng cách làm với `san-pham/gia.ts` và `dat-lich/lich.ts`.
+   Ba hàm moTaChenhLech, viSaoKhongBanDuoc và viSaoKhongDongDuocCa trả khoá i18n
+   chứ không trả câu tiếng Việt; màn gọi t(khoa). null vẫn giữ nghĩa "không có
+   lỗi". Cùng cách với san-pham/gia.ts và dat-lich/lich.ts.
 
-   `null` vẫn giữ nghĩa "không có lỗi"; mọi khoá trả ra ở đây phải có thật
-   đều có thật trong từ điển.
+   Đây là chỗ tiền mặt thật đi qua tay người. Sai một phép tính là cuối ca thu
+   ngân phải bù tiền túi, hoặc tiền thất thoát mà không ai biết.
 
-   Đây là chỗ tiền mặt thật đi qua tay người. Sai một phép tính ở đây là cuối ca
-   thu ngân phải bù tiền túi, hoặc tiền thất thoát mà không ai biết.
+   Hai chỗ đừng gỡ khi sửa:
 
-   ⚠ HAI CÁI BẪY, đừng gỡ cái nào khi sửa hàm này:
-
-   1. CHỈ TIỀN MẶT VÀO KÉT. Chuyển khoản và quẹt thẻ vào tài khoản ngân hàng.
-      Cộng chúng vào tiền mặt kỳ vọng thì ca nào cũng báo "thiếu tiền" đúng bằng
-      doanh thu không tiền mặt — và thu ngân bị nghi oan.
-   2. GIAO DỊCH ĐÃ HUỶ KHÔNG TÍNH VÀO BẤT KỲ TỔNG NÀO. Quên lọc thì huỷ xong
-      vẫn đòi thu ngân số tiền đã trả lại cho khách. */
+   1. Chỉ tiền mặt vào két; chuyển khoản và quẹt thẻ vào tài khoản ngân hàng.
+      Cộng chúng vào tiền mặt kỳ vọng thì ca nào cũng báo thiếu tiền đúng bằng
+      doanh thu không tiền mặt, và thu ngân bị nghi oan.
+   2. Giao dịch đã huỷ không tính vào bất kỳ tổng nào. Quên lọc thì huỷ xong vẫn
+      đòi thu ngân số tiền đã trả lại cho khách. */
 
 /** Thành tiền một dòng hàng. */
 export function thanhTien(dong: Pick<DongHang, 'donGia' | 'soLuong'>): Vnd {
@@ -57,20 +53,20 @@ export function doanhThuCa(ca: Pick<CaThuNgan, 'giaoDich'>): Vnd {
   return giaoDichConHieuLuc(ca.giaoDich).reduce((tong, g) => tong + g.tongTien, 0);
 }
 
-/** Tiền mặt thu trong ca — CHỈ các phương thức vào két. */
+/** Tiền mặt thu trong ca — chỉ các phương thức vào két. */
 export function tienMatThuTrongCa(ca: Pick<CaThuNgan, 'giaoDich'>): Vnd {
   return giaoDichConHieuLuc(ca.giaoDich)
     .filter((g) => VAO_KET[g.phuongThuc])
     .reduce((tong, g) => tong + g.tongTien, 0);
 }
 
-/** Tiền mặt LẼ RA phải có trong két cuối ca = tiền đầu ca + tiền mặt thu được. */
+/** Tiền mặt lẽ ra phải có trong két cuối ca = tiền đầu ca + tiền mặt thu. */
 export function tienMatKyVong(ca: Pick<CaThuNgan, 'tienDauCa' | 'giaoDich'>): Vnd {
   return ca.tienDauCa + tienMatThuTrongCa(ca);
 }
 
-/** Chênh lệch giữa tiền đếm được và tiền kỳ vọng.
-    Dương = thừa, âm = THIẾU, 0 = khớp. */
+/** Chênh lệch giữa tiền đếm được và tiền kỳ vọng. Dương là thừa, âm là
+    thiếu, 0 là khớp. */
 export function chenhLech(demDuoc: Vnd, kyVong: Vnd): number {
   return demDuoc - kyVong;
 }
@@ -82,18 +78,17 @@ export function loaiChenhLech(lech: number): LoaiChenhLech {
   return lech > 0 ? 'thua' : 'thieu';
 }
 
-/** KHOÁ i18n mô tả chênh lệch cho người vận hành đọc.
+/** Khoá i18n mô tả chênh lệch cho người vận hành đọc.
 
-    Trả KHOÁ, còn SỐ TIỀN thì màn tự truyền: `t(khoa, { soTien: money(Math.abs(lech)) })`.
-    Phép chọn khớp/thừa/thiếu VẪN Ở ĐÂY vì nó là quy tắc có test, chỉ có chữ đi
-    ra ngoài — cùng cách với `dat-lich/lich.ts::moTaTrungLich()`. Khoá "khớp"
-    không có chỗ trống nên truyền thừa `soTien` cũng vô hại. */
+    Trả khoá, còn số tiền thì màn tự truyền:
+    t(khoa, { soTien: money(Math.abs(lech)) }). Phép chọn khớp/thừa/thiếu ở lại
+    đây vì nó là quy tắc, chỉ có chữ đi ra ngoài. */
 export function moTaChenhLech(lech: number): string {
   if (lech === 0) return 'quay.khopKet';
   return lech > 0 ? 'quay.thua' : 'quay.thieu';
 }
 
-/** Vì sao chưa bán được — KHOÁ i18n, null nghĩa là bán được. */
+/** Vì sao chưa bán được — khoá i18n, null nghĩa là bán được. */
 export function viSaoKhongBanDuoc(
   ca: Pick<CaThuNgan, 'trangThai'> | null,
   dong: readonly DongHang[],
@@ -105,20 +100,16 @@ export function viSaoKhongBanDuoc(
   return null;
 }
 
-/** Vì sao chưa đóng được ca — KHOÁ i18n, null nghĩa là đóng được.
+/** Vì sao chưa đóng được ca — khoá i18n, null nghĩa là đóng được.
 
-    ⚠ LUẬT CUỐI CÙNG — LỆCH KÉT THÌ BẮT BUỘC GHI LÝ DO — TỪNG CHỈ NẰM Ở COMPONENT.
-    `types.ts` khai nó là quy tắc thiết kế, `DoiSoatCa.tsx` tự tính lấy một biến
-    `thieuLyDo` để chặn nút, nhưng hàm thuần thì không biết gì, và mock cũng
-    không chặn. Nghĩa là luật chỉ tồn tại ở đúng một cái nút bấm: ai gọi thẳng
-    API là đóng được ca lệch mà không giải thích một chữ.
+    Luật "lệch két thì bắt buộc ghi lý do" từng chỉ nằm ở component:
+    DoiSoatCa.tsx tự tính một biến thieuLyDo để chặn nút, còn hàm thuần và mock
+    thì không biết gì. Nghĩa là luật chỉ tồn tại ở đúng một cái nút bấm — ai gọi
+    thẳng API là đóng được ca lệch mà không giải thích một chữ, và dấu hiệu
+    "lệch không ai giải thích" bên giamSat.ts mất nghĩa. Nay luật nằm ở đây và
+    mock chặn 400 y như vậy.
 
-    Điều đó phá đúng thứ màn Giám sát ca dựa vào — dấu hiệu "lệch không ai giải
-    thích" (xem `giamSat.ts::chuYCuaCa()`) chỉ có nghĩa khi ghi lý do là bắt
-    buộc thật. Nên luật dời về đây, có test, và mock chặn 400 y như vậy.
-
-    Vì phải biết CÓ LỆCH HAY KHÔNG nên hàm cần cả `tienDauCa` và `giaoDich` —
-    đó là lý do tham số thứ nhất rộng hơn trước. */
+    Vì phải biết có lệch hay không nên hàm cần cả tienDauCa và giaoDich. */
 export function viSaoKhongDongDuocCa(
   ca: Pick<CaThuNgan, 'trangThai' | 'tienDauCa' | 'giaoDich'> | null,
   tienDem: number | null,

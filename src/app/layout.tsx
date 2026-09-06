@@ -16,15 +16,14 @@ export async function generateMetadata(): Promise<Metadata> {
   return { title: t('app.name'), description: t('app.tagline') };
 }
 
-/* ⚠ `lang` LẤY TỪ COOKIE, không phải hằng "vi".
+/* lang lấy từ cookie, không phải hằng "vi".
 
-   Trình đọc màn hình chọn giọng đọc theo thuộc tính này. Trước đây nó luôn là
-   "vi" và `NgonNguProvider` sửa lại sau khi hydrate — nghĩa là trong suốt lần
-   dựng HTML đầu, máy đọc tiếng Anh bằng giọng tiếng Việt. Đọc cookie tại đây là
-   đúng ngay từ byte đầu.
+   Trình đọc màn hình chọn giọng theo thuộc tính này. Trước đây nó luôn là "vi"
+   và NgonNguProvider sửa lại sau khi hydrate, nghĩa là trong suốt lần dựng HTML
+   đầu thì máy đọc tiếng Anh bằng giọng tiếng Việt.
 
-   Cùng giá trị đó truyền xuống `Providers` làm ảnh chụp server của kho ngôn
-   ngữ, nên client không phải đoán lại và không lệch hydration. */
+   Cùng giá trị đó truyền xuống Providers làm ảnh chụp server của kho ngôn ngữ,
+   nên client không phải đoán lại và không lệch hydration. */
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const ngonNgu = await ngonNguTrenServer();
 

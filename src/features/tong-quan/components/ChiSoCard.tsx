@@ -7,11 +7,11 @@ import { chieuThayDoi, moTaThayDoi, phanTramThayDoi } from '../tong-quan';
 
 /* Một ô chỉ số + mức thay đổi so với kỳ trước.
 
-   Thuần trình bày, nhưng phần SO SÁNH gọi hàm thuần đã có test: kỳ trước bằng 0
-   thì hiện “mới”, không hiện “+∞%”.
+   Thuần trình bày, nhưng phần so sánh gọi hàm thuần: kỳ trước bằng 0 thì hiện
+   "mới", không hiện "+∞%".
 
-   `tangLaTot = false` cho các chỉ số mà tăng là xấu (công nợ) — tô màu theo Ý
-   NGHĨA, không theo dấu. */
+   tangLaTot = false cho các chỉ số mà tăng là xấu (công nợ) — tô màu theo ý
+   nghĩa, không theo dấu. */
 
 interface Props {
   /** Chữ ĐÃ DỊCH, không phải khoá — màn gọi `t()` rồi truyền vào. */

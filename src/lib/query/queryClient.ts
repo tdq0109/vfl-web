@@ -1,8 +1,8 @@
 import { QueryClient } from '@tanstack/react-query';
 
-/* Tạo một QueryClient mới. GỌI TRONG `useState` ở `app/providers.tsx`, ĐỪNG tạo
-   ở module scope: trên server module scope dùng chung giữa các request → hai
-   người dùng khác nhau thấy cache của nhau. Đó là lỗi RÒ RỈ DỮ LIỆU. */
+/* Tạo một QueryClient mới. Gọi trong useState ở app/providers.tsx, đừng tạo ở
+   module scope: trên server, module scope dùng chung giữa các request nên hai
+   người dùng khác nhau sẽ thấy cache của nhau. */
 export function makeQueryClient(): QueryClient {
   return new QueryClient({
     defaultOptions: {

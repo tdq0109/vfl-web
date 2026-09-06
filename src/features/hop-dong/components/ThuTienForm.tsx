@@ -17,9 +17,9 @@ import type { HopDong, ThanhToanInput } from '../types';
 
 /* Ghi phiếu thu cho hợp đồng.
 
-   Mặc định điền đúng phần CÒN PHẢI THU — trường hợp thường gặp nhất là thu một
-   lần đủ. Thu từng phần vẫn gõ được, nhưng thu THỪA thì chặn: thu thừa và trả
-   góp là ngoại lệ của Bước 12b, cần bút toán riêng. */
+   Mặc định điền đúng phần còn phải thu, vì thu một lần đủ là trường hợp thường
+   gặp nhất. Thu từng phần vẫn gõ được, nhưng thu thừa thì chặn: thu thừa và trả
+   góp cần bút toán riêng, chưa làm. */
 
 interface Props {
   hopDong: HopDong;

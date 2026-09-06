@@ -44,7 +44,7 @@ export function useSanPhamBanDuoc(locationId: string | undefined, enabled: boole
   });
 }
 
-/** Chỉ khuyến mãi ĐANG CHẠY mới áp được — trạng thái suy từ ngày, không lưu. */
+/** Chỉ khuyến mãi đang chạy mới áp được — trạng thái suy từ ngày, không lưu. */
 export function useKhuyenMaiDangChay(enabled: boolean) {
   return useQuery({
     queryKey: keys.khuyenMai.all,

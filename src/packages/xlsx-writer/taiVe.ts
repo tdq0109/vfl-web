@@ -1,15 +1,14 @@
 import { dungXlsx, type SheetXlsx } from './xlsx';
 
-/* Phần CHẠM TRÌNH DUYỆT của gói — mỏng nhất có thể.
+/* Phần chạm trình duyệt của gói, mỏng nhất có thể.
 
-   Mọi phép dựng byte nằm ở `xlsx.ts` và `zip.ts`, đều là hàm thuần có test. Ở
-   đây chỉ còn ba việc không test bằng node được: dựng `Blob`, tạo thẻ `<a>`, và
-   thu hồi URL. Bản cũ trộn cả ba với phần dựng XML trong một hàm nên không thử
-   được gì — đây đúng là chỗ tách ra, cùng cách `signature-pad` tách phần canvas.
+   Mọi phép dựng byte nằm ở xlsx.ts và zip.ts, đều là hàm thuần. Ở đây chỉ còn
+   ba việc không chạy được ngoài trình duyệt: dựng Blob, tạo thẻ <a>, và thu hồi
+   URL. Bản cũ trộn cả ba với phần dựng XML trong một hàm.
 
-   ⚠ PHẢI THU HỒI `objectURL`. Mỗi lần xuất mà không gọi `revokeObjectURL` là giữ
-   lại nguyên tệp trong bộ nhớ tab cho tới khi tải lại trang. Quầy xuất báo cáo
-   cả ngày trên một tab thì đó là rò rỉ thật. */
+   Phải thu hồi objectURL: mỗi lần xuất mà không gọi revokeObjectURL là giữ lại
+   nguyên tệp trong bộ nhớ tab cho tới khi tải lại trang. Quầy xuất báo cáo cả
+   ngày trên một tab thì đó là rò rỉ thật. */
 
 /** Kiểu MIME chính thức của .xlsx. Sai kiểu thì một số trình duyệt đổi đuôi tệp. */
 export const MIME_XLSX =

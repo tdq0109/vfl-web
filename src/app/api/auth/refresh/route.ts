@@ -11,8 +11,8 @@ export async function POST(): Promise<NextResponse> {
   const refreshToken = await getRefreshToken();
   if (!refreshToken) {
     /* Route handler chạy trong ngữ cảnh request nên đọc được cookie ngôn ngữ.
-       `client.ts` đưa thẳng `title` này lên màn qua `ApiError`, nên nó là chữ
-       cho NGƯỜI DÙNG đọc — phải dịch. */
+       client.ts đưa thẳng title này lên màn qua ApiError, nên nó là chữ cho
+       người dùng đọc và phải dịch. */
     const t = await tTrenServer();
     return NextResponse.json({ title: t('loi.phienKetThuc') }, { status: 401 });
   }

@@ -27,10 +27,10 @@ export function useDanhSachHlv(locationId?: string) {
   });
 }
 
-/** Lịch của một HLV trong tuần, MỌI CLB — dùng để dò trùng trước khi lưu.
+/** Lịch của một HLV trong tuần, mọi CLB — dùng để dò trùng trước khi lưu.
 
     Chỉ chạy khi đã chọn HLV. Cố ý không truyền CLB: xem chú thích ở
-    `datLichApi.lichHlv` và `timTrungLichHlv`. */
+    datLichApi.lichHlv và timTrungLichHlv. */
 export function useLichHlv(hlvId: string | undefined, tuNgay: string) {
   return useQuery({
     queryKey: keys.datLich.hlv(hlvId ?? '', tuNgay),
